@@ -1,0 +1,116 @@
+{
+  "welcome_new_player": {
+    "id": "welcome_new_player",
+    "trigger": "first_login",
+    "nodes": [
+      {
+        "id": "welcome_1",
+        "speaker": "Overseer",
+        "text": "Welcome, young one. We are the TekTribe — keepers of the old ways, weavers of the new. You have arrived at a time of awakening.",
+        "choices": [{"text": "I'm ready to learn.", "next": "welcome_2"}]
+      },
+      {
+        "id": "welcome_2",
+        "speaker": "Overseer",
+        "text": "The Tek has slept long in the earth. Now it stirs. You will bond with creatures of the old world — companions who carry the memory of the ARKs within them.",
+        "choices": [{"text": "How do I begin?", "next": "welcome_3"}]
+      },
+      {
+        "id": "welcome_3",
+        "speaker": "Overseer",
+        "text": "An egg will find you. Care for it. Warm it. The bond you forge in these early days will echo through generations. The Tribe watches with hope.",
+        "choices": [{"text": "I won't let you down.", "next": null}]
+      }
+    ]
+  },
+  "first_egg_received": {
+    "id": "first_egg_received",
+    "trigger": "first_egg",
+    "nodes": [
+      {
+        "id": "egg_1",
+        "speaker": "Overseer",
+        "text": "The egg chooses its keeper as much as the keeper chooses it. Place it in the incubator. Keep it warm. The Tek within responds to care.",
+        "choices": [{"text": "I'll care for it.", "next": null}]
+      }
+    ]
+  },
+  "first_hatch": {
+    "id": "first_hatch",
+    "trigger": "first_hatch",
+    "nodes": [
+      {
+        "id": "hatch_1",
+        "speaker": "Overseer",
+        "text": "A new life enters the world. This companion will grow with you — learn from you, bond with you. The bond is the foundation of all that follows.",
+        "choices": [{"text": "What is the bond?", "next": "hatch_2"}]
+      },
+      {
+        "id": "hatch_2",
+        "speaker": "Overseer",
+        "text": "The bond is trust made visible. It grows through care, through shared hardship, through time. A bonded companion is stronger, braver, more resilient. It is the heart of the TekTribe way.",
+        "choices": [{"text": "I understand.", "next": null}]
+      }
+    ]
+  },
+  "first_care_action": {
+    "id": "first_care_action",
+    "trigger": "first_care",
+    "nodes": [
+      {
+        "id": "care_1",
+        "speaker": "Overseer",
+        "text": "Well done. Your companion feels your attention. The daily rhythm of care — feeding, cleaning, reassuring — this is the practice. This is the ritual.",
+        "choices": [{"text": "I'll keep caring for them.", "next": null}]
+      }
+    ]
+  },
+  "first_expedition_dispatch": {
+    "id": "first_expedition_dispatch",
+    "trigger": "first_expedition",
+    "nodes": [
+      {
+        "id": "expedition_1",
+        "speaker": "Overseer",
+        "text": "Your companion ventures into the world beyond the camp. They will face challenges, discover resources, and return changed. Trust in their strength.",
+        "choices": [{"text": "Stay safe out there.", "next": null}]
+      }
+    ]
+  },
+  "first_expedition_return": {
+    "id": "first_expedition_return",
+    "trigger": "first_expedition_return",
+    "nodes": [
+      {
+        "id": "return_1",
+        "speaker": "Overseer",
+        "text": "They return. Each journey teaches them something new. The world is vast, and the TekTribe explores it one step at a time.",
+        "choices": [{"text": "What did they find?", "next": null}]
+      }
+    ]
+  },
+  "first_mini_game": {
+    "id": "first_mini_game",
+    "trigger": "first_training",
+    "nodes": [
+      {
+        "id": "training_1",
+        "speaker": "Overseer",
+        "text": "Training is not punishment — it is ceremony. Through play, your companion sharpens their abilities and deepens their bond with you. The Tek honors effort.",
+        "choices": [{"text": "Let's train together.", "next": null}]
+      }
+    ]
+  },
+  "daily_greeting": {
+    "id": "daily_greeting",
+    "trigger": "daily",
+    "nodes": [
+      {
+        "id": "daily_1",
+        "speaker": "Overseer",
+        "text": "The Tribe greets you on this day. Your companions remember your care. The cycle continues.",
+        "choices": [{"text": "Thank you, Overseer.", "next": null}]
+      }
+    ]
+  }
+}

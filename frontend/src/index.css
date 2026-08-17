@@ -725,3 +725,133 @@ body {
   color: #ffd700;
   font-weight: 600;
 }
+
+/* Overseer */
+.overseer-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 100;
+  padding: 1rem;
+}
+
+.overseer-dialog-card {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-teal);
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 500px;
+  width: 100%;
+  position: relative;
+}
+
+.dialog-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0.5rem;
+}
+
+.dialog-close:hover {
+  color: var(--color-text);
+}
+
+.dialog-portrait {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.dialog-content {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.dialog-speaker {
+  display: block;
+  color: var(--color-teal);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.dialog-text {
+  color: var(--color-text);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.dialog-choices {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.dialog-choice {
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  border: 1px solid var(--color-teal);
+  border-radius: 8px;
+  color: var(--color-teal);
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.dialog-choice:hover {
+  background: rgba(0, 212, 255, 0.1);
+}
+
+/* Overseer Avatar */
+.overseer-avatar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-small { width: 40px; height: 40px; }
+.avatar-medium { width: 60px; height: 60px; }
+.avatar-large { width: 100px; height: 100px; }
+
+.avatar-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 212, 255, 0.4) 0%, transparent 70%);
+}
+
+.avatar-core {
+  position: relative;
+  width: 60%;
+  height: 60%;
+  border-radius: 50%;
+  background: radial-gradient(circle, #00d4ff 0%, #0066cc 100%);
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
+}
+
+.overseer-avatar.animated .avatar-glow {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.overseer-avatar.animated .avatar-core {
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.1); opacity: 1; }
+}
+
+@keyframes glow {
+  from { box-shadow: 0 0 20px rgba(0, 212, 255, 0.6); }
+  to { box-shadow: 0 0 40px rgba(0, 212, 255, 1); }
+}
