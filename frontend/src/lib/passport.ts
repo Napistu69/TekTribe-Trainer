@@ -4,7 +4,6 @@ let authInstance: Auth | null = null;
 
 /**
  * Initialize the Immutable Passport Auth instance.
- * Must be called once at app startup.
  */
 export function initPassport(clientId: string, redirectUri: string) {
   authInstance = new Auth({
@@ -15,9 +14,16 @@ export function initPassport(clientId: string, redirectUri: string) {
 }
 
 /**
- * Get the Auth instance. Throws if not initialized.
+ * Get the Auth instance. Auto-initializes from env vars if needed.
  */
 export function getAuth(): Auth {
+  if (!authInstance) {
+    const clientId = import.meta.env.VITE_CLIENT_ID;
+    const redirectUri = `${window.location.origin}/callback`;
+    if (clientId) {
+      initPassport(clientId, redirectUri);
+    }
+  }
   if (!authInstance) {
     throw new Error('Passport not initialized. Call initPassport() first.');
   }
@@ -26,7 +32,6 @@ export function getAuth(): Auth {
 
 /**
  * Trigger the Passport login flow (redirect-based).
- * Redirects to Passport login page.
  */
 export async function loginWithPassport() {
   const auth = getAuth();
@@ -76,7 +81,7 @@ export function getWalletAddressFromUser(user: any): string | null {
 }
 
 /**
- * Extract the ID token (used as passport_proof for backend).
+ * Extract the ID token.
  */
 export function getIdToken(user: any): string | null {
   return user?.idToken || null;
