@@ -22,6 +22,7 @@ export function CallbackPage() {
         const email = getEmailFromUser(passportUser);
         const walletAddress = getWalletAddressFromUser(passportUser);
         const idToken = getIdToken(passportUser);
+        const passportId = passportUser?.profile?.sub || passportUser?.idToken || '';
 
         if (!email) {
           throw new Error('Email not provided by Passport');
@@ -35,7 +36,7 @@ export function CallbackPage() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               email,
-              passport_proof: idToken || 'passport_unverified',
+              passport_proof: idToken || passportId,
               wallet_address: walletAddress || '',
             }),
           }
