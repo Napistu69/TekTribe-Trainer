@@ -86,3 +86,21 @@ class CompanionResponse(BaseModel):
     health_status: float
     breeding_cooldown_until: Optional[str] = None
     on_chain_record: Optional[dict] = None
+
+
+# === Training Schemas ===
+
+class TrainingSubmitRequest(BaseModel):
+    """Request body for POST /training/submit."""
+    companion_uuid: str
+    game_id: str
+    score: float = Field(..., ge=0, le=100)
+    duration_seconds: float = Field(..., ge=5, le=300)
+
+
+class TrainingResultResponse(BaseModel):
+    """Response body for POST /training/submit."""
+    score: float
+    stat_gains: dict
+    bond_gained: int
+    dust_earned: int
