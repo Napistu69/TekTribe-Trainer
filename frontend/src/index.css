@@ -1491,3 +1491,33 @@ body {
   color: var(--color-text);
   margin-top: 0.5rem;
 }
+
+.callback-loading, .callback-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 1rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.callback-loading p {
+  color: var(--color-teal);
+  font-size: 1.2rem;
+}
+
+.callback-error p {
+  color: #ff6b6b;
+}
+
+.callback-error button {
+  padding: 0.75rem 1.5rem;
+  background: var(--color-purple);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+}

@@ -9,6 +9,7 @@ import { TrainingSelect } from './components/training/TrainingSelect';
 import { ExpeditionMap } from './components/expedition/ExpeditionMap';
 import { LoginScreen } from './components/auth/LoginScreen';
 import { AuthGuard } from './components/auth/AuthGuard';
+import { CallbackPage } from './components/auth/CallbackPage';
 import { useEffect } from 'react';
 import './index.css';
 
@@ -28,6 +29,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginScreen />} />
+        <Route path="/callback" element={<CallbackPage />} />
         <Route
           path="/"
           element={
