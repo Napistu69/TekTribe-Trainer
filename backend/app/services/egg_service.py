@@ -1,0 +1,176 @@
+"""Egg pull engine — server-side weighted random with pity and lockdown."""
+import json
+import secrets
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+from typing import Optional
+
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.config import settings
+from app.models import Egg
+
+# Load roster data
+ROSTER_PATH = Path(__file__).parent.parent / "data" / "roster_v0_2.json"
+with open(ROSTER_PATH) as f:
+    ROSTER = json.load(f)
+
+CREATURES = ROSTER["creatures"]
+RARITY_ORDER = ROSTER["rarity_order"]
+PITY_THRESHOLD = ROSTER["pity_threshold"]
+PITY_MIN_RARITY = ROSTER["pity_minimum_rarity"]
+LOCKDOWN_MAX_EGGS = ROSTER["lockdown_max_eggs"]
+LOCKDOWN_DAILY_LIMIT = ROSTER["lockdown_daily_limit"]
+
+# Build weighted list
+WEIGHTS = {c["creature_id"]: c["hatch_rate_percent"] for c in CREATURES}
+TOTAL_WEIGHT = sum(WEIGHTS.values())
+
+
+def _get_pity_min_index() -> int:
+    """Get the index of the minimum rarity that counts as a 'pity success'."""
+    return RARITY_ORDER.index(PITY_MIN_RARITY)
+
+
+def _is_rarity_at_least(rarity: str, minimum: str) -> bool:
+    """Check if rarity is >= minimum in the rarity hierarchy."""
+    return RARITY_ORDER.index(rarity) >= RARITY_ORDER.index(minimum)
+
+
+def _weighted_random_select() -> dict:
+    """Select a creature using cryptographically secure weighted random."""
+    rand = secrets.randbelow(TOTAL_WEIGHT)
+    cumulative = 0
+    for creature in CREATURES:
+        cumulative += creature["hatch_rate_percent"]
+        if rand < cumulative:
+            return creature
+    return CREATURES[-1]  # Fallback
+
+
+async def _count_user_pulls(db: AsyncSession, user_id: str) -> int:
+    """Count total eggs pulled by user (for pity tracking)."""
+    result = await db.execute(
+        select(Egg).where(Egg.user_id == user_id)
+    )
+    return len(result.scalars().all())
+
+
+async def _count_pulls_since_rare(db: AsyncSession, user_id: str) -> int:
+    """Count pulls since last Rare+ (for pity counter)."""
+    result = await db.execute(
+        select(Egg).where(Egg.user_id == user_id).order_by(Egg.pulled_at.desc())
+    )
+    eggs = result.scalars().all()
+    
+    count = 0
+    for egg in eggs:
+        # Check if this egg was Rare+
+        creature = next((c for c in CREATURES if c["creature_id"] == egg.species), None)
+        if creature and _is_rarity_at_least(creature["rarity"], PITY_MIN_RARITY):
+            break
+        count += 1
+    return count
+
+
+async def _count_eggs_today(db: AsyncSession, user_id: str) -> int:
+    """Count eggs pulled today (UTC)."""
+    today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+    result = await db.execute(
+        select(Egg).where(
+            Egg.user_id == user_id,
+            Egg.pulled_at >= today_start
+        )
+    )
+    return len(result.scalars().all())
+
+
+async def can_pull(db: AsyncSession, user_id: str) -> tuple[bool, Optional[str]]:
+    """Check if user can pull an egg. Returns (allowed, reason)."""
+    # Check lockdown limits
+    total_eggs = await _count_user_pulls(db, user_id)
+    
+    # During lockdown: max 3 eggs total
+    if total_eggs >= LOCKDOWN_MAX_EGGS:
+        return False, "Lockdown egg limit reached (max 3 during lockdown)"
+    
+    # Daily limit: 1 per day (plus starter)
+    eggs_today = await _count_eggs_today(db, user_id)
+    if eggs_today >= LOCKDOWN_DAILY_LIMIT:
+        return False, "Daily egg pull limit reached"
+    
+    return True, None
+
+
+async def pull_egg(db: AsyncSession, user_id: str, source: str = "starter") -> Egg:
+    """Pull a new egg. Server-side RNG determines species.
+    
+    Pity rule: guaranteed Rare+ within 10 pulls.
+    """
+    # Check pity counter
+    pulls_since_rare = await _count_pulls_since_rare(db, user_id)
+    
+    if pulls_since_rare >= PITY_THRESHOLD - 1:
+        # Pity triggered — guarantee Rare+
+        rare_creatures = [c for c in CREATURES if _is_rarity_at_least(c["rarity"], PITY_MIN_RARITY)]
+        weights = [c["hatch_rate_percent"] for c in rare_creatures]
+        total = sum(weights)
+        rand = secrets.randbelow(total)
+        cumulative = 0
+        selected = rare_creatures[-1]
+        for i, w in enumerate(weights):
+            cumulative += w
+            if rand < cumulative:
+                selected = rare_creatures[i]
+                break
+    else:
+        # Normal pull
+        selected = _weighted_random_select()
+    
+    # Create egg (species hidden until hatch)
+    egg = Egg(
+        user_id=user_id,
+        species=selected["creature_id"],
+        rarity=selected["rarity"],
+        source=source,
+        pulled_at=datetime.now(timezone.utc),
+        hatched=False,
+        temperature=0.5,
+        stability=0.5,
+    )
+    db.add(egg)
+    await db.commit()
+    await db.refresh(egg)
+    return egg
+
+
+async def pull_starter_egg(db: AsyncSession, user_id: str) -> Egg:
+    """Pull the starter egg for a new account."""
+    return await pull_egg(db, user_id, source="starter")
+
+
+async def convert_duplicate(db: AsyncSession, user_id: str, egg_uuid: str) -> Optional[int]:
+    """Convert a duplicate egg to shards. Returns shard amount."""
+    result = await db.execute(
+        select(Egg).where(Egg.user_id == user_id, Egg.uuid == egg_uuid)
+    )
+    egg = result.scalar_one_or_none()
+    if not egg or egg.hatched:
+        return None
+    
+    creature = next((c for c in CREATURES if c["creature_id"] == egg.species), None)
+    if not creature:
+        return None
+    
+    shards = creature["duplicate_yield_shards"]
+    
+    # Delete the egg and award shards
+    await db.delete(egg)
+    
+    # Award shards via currency service
+    from app.services.currency_service import award_shards
+    await award_shards(user_id, shards, "duplicate_conversion")
+    
+    await db.commit()
+    return shards
