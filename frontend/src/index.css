@@ -323,3 +323,290 @@ body {
 .btn-secondary:hover {
   border-color: var(--color-teal);
 }
+
+/* Expedition */
+.expedition-map {
+  padding: 1rem;
+}
+
+.expedition-map h2 {
+  color: var(--color-teal);
+  margin-bottom: 0.5rem;
+}
+
+.expedition-map .subtitle {
+  color: var(--color-text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.biomes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.biome-card {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.2s;
+  text-align: left;
+}
+
+.biome-card:hover:not(.locked) {
+  border-color: var(--color-teal);
+  transform: translateY(-2px);
+}
+
+.biome-card.selected {
+  border-color: var(--color-teal);
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), transparent);
+}
+
+.biome-card.locked {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.biome-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.biome-name {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.lock-icon {
+  font-size: 0.8rem;
+}
+
+.biome-description {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+}
+
+.biome-risk {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+}
+
+.risk-label {
+  color: var(--color-text-muted);
+}
+
+.risk-value {
+  font-weight: 600;
+}
+
+.risk-value.low { color: #00ff88; }
+.risk-value.medium { color: #ffd700; }
+.risk-value.high { color: #ff4444; }
+
+.dispatch-panel {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1rem;
+  margin: 1rem;
+}
+
+.dispatch-panel h3 {
+  color: var(--color-teal);
+  margin-bottom: 1rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  color: var(--color-text-muted);
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.form-group select {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text);
+  font-size: 1rem;
+}
+
+.hint {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.duration-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.duration-btn {
+  padding: 0.5rem;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+
+.duration-btn.selected {
+  border-color: var(--color-teal);
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), transparent);
+}
+
+.duration-label {
+  display: block;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.duration-desc {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.dispatch-btn {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.active-expeditions {
+  padding: 1rem;
+}
+
+.active-expeditions h3 {
+  color: var(--color-teal);
+  margin-bottom: 1rem;
+}
+
+.empty {
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: 2rem;
+}
+
+.expedition-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.expedition-item.ready {
+  border-color: var(--color-teal);
+}
+
+.expedition-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.expedition-item .biome {
+  font-weight: 600;
+  color: var(--color-text);
+  text-transform: capitalize;
+}
+
+.countdown {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.ready-text {
+  color: var(--color-teal);
+  font-weight: 600;
+}
+
+.btn-small {
+  padding: 0.5rem 1rem;
+  background: var(--color-purple);
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.btn-small:hover {
+  opacity: 0.9;
+}
+
+.expedition-result-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 100;
+  padding: 1rem;
+}
+
+.expedition-result-card {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-teal);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+}
+
+.expedition-result-card h2 {
+  color: var(--color-teal);
+  margin-bottom: 1rem;
+}
+
+.story {
+  color: var(--color-text-muted);
+  margin-bottom: 1.5rem;
+  font-style: italic;
+}
+
+.rewards {
+  margin-bottom: 1.5rem;
+}
+
+.reward {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.reward-label {
+  color: var(--color-text-muted);
+}
+
+.reward-value {
+  color: var(--color-teal);
+  font-weight: 600;
+}
+
+.reward-value.positive { color: #00ff88; }
+.reward-value.negative { color: #ff4444; }
+.reward.special .reward-value { color: #ffd700; }
+.reward.injury .reward-value { color: #ff4444; }
