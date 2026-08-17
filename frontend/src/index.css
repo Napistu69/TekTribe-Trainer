@@ -1,0 +1,47 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --color-bg-primary: #0f0f1e;
+  --color-bg-secondary: #1a1a2e;
+  --color-teal: #00d4ff;
+  --color-teal-dark: #0099bb;
+  --color-purple: #6d4aff;
+  --color-text: #e0e0e0;
+  --color-text-muted: #999;
+  --color-border: #2a2a3e;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: linear-gradient(180deg, #0f0f1e 0%, #1a1a2e 100%);
+  color: var(--color-text);
+  min-height: 100vh;
+}
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 1rem;
+}
+
+.loading-screen h1 {
+  font-size: 2rem;
+  color: var(--color-teal);
+}
+
+.loading-screen p {
+  color: var(--color-text-muted);
+}
