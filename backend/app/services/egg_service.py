@@ -89,16 +89,9 @@ async def _count_eggs_today(db: AsyncSession, user_id: str) -> int:
 async def can_pull(db: AsyncSession, user_id: str) -> tuple[bool, Optional[str]]:
     """Check if user can pull an egg. Returns (allowed, reason)."""
     # Check lockdown limits
-    total_eggs = await _count_user_pulls(db, user_id)
-    
-    # During lockdown: max 3 eggs total
-    if total_eggs >= LOCKDOWN_MAX_EGGS:
-        return False, "Lockdown egg limit reached (max 3 during lockdown)"
-    
-    # Daily limit: 1 per day (plus starter)
-    eggs_today = await _count_eggs_today(db, user_id)
-    if eggs_today >= LOCKDOWN_DAILY_LIMIT:
-        return False, "Daily egg pull limit reached"
+    from app.services.lockdown_service import can_perform
+    if not await can_perform(user_id, "egg_pull"):
+        return False, "Lockdown egg limit reached (max 3 during lockdown, 1 per day)"
     
     return True, None
 

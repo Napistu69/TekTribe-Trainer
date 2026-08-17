@@ -10,6 +10,7 @@ from app.api.training import router as training_router
 from app.api.expeditions import router as expeditions_router
 from app.api.economy import router as economy_router
 from app.api.dialogue import router as dialogue_router
+from app.api.lockdown import router as lockdown_router
 
 app = FastAPI(
     title="TekTribe Trainer API",
@@ -35,6 +36,7 @@ app.include_router(training_router, prefix="/api")
 app.include_router(expeditions_router, prefix="/api")
 app.include_router(economy_router, prefix="/api")
 app.include_router(dialogue_router, prefix="/api")
+app.include_router(lockdown_router, prefix="/api")
 
 
 @app.get("/health")
