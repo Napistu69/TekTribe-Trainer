@@ -87,3 +87,70 @@ async def spend_dust(user_id: str, amount: int, sink: str) -> tuple[bool, int]:
         })
         await session.commit()
         return True, ledger.dust_balance
+
+
+async def get_transaction_history(user_id: str, limit: int = 50) -> list[dict]:
+    """Get recent transaction history for a user."""
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(
+            select(CurrencyLedger).where(CurrencyLedger.user_id == user_id)
+        )
+        ledger = result.scalar_one_or_none()
+        if not ledger:
+            return []
+        
+        # Return most recent transactions
+        return ledger.transaction_log[-limit:][::-1]
+
+
+async def apply_shop_effect(db: AsyncSession, user_id: str, companion_uuid: str, item: dict) -> dict:
+    """Apply a shop item's effect."""
+    from app.models import Companion, CareState
+    
+    effect = item.get("effect", {})
+    effect_type = effect.get("type")
+    
+    if effect_type == "care":
+        # Apply care action
+        result = await db.execute(
+            select(CareState).where(CareState.companion_uuid == companion_uuid)
+        )
+        care_state = result.scalar_one_or_none()
+        if care_state:
+            action = effect.get("action")
+            value = effect.get("value", 0)
+            if action == "feed":
+                care_state.hunger = min(1.0, care_state.hunger + value)
+            return {"type": "care", "action": action, "applied": True}
+    
+    elif effect_type == "heal":
+        # Heal companion
+        result = await db.execute(
+            select(Companion).where(Companion.uuid == companion_uuid, Companion.user_id == user_id)
+        )
+        companion = result.scalar_one_or_none()
+        if companion:
+            companion.health_status = min(1.0, companion.health_status + effect.get("value", 0))
+            await db.commit()
+            return {"type": "heal", "value": effect.get("value"), "applied": True}
+    
+    elif effect_type == "care_all":
+        # Restore all meters
+        result = await db.execute(
+            select(CareState).where(CareState.companion_uuid == companion_uuid)
+        )
+        care_state = result.scalar_one_or_none()
+        if care_state:
+            value = effect.get("value", 0.7)
+            care_state.hunger = value
+            care_state.energy = value
+            care_state.morale = value
+            care_state.cleanliness = value
+            await db.commit()
+            return {"type": "care_all", "value": value, "applied": True}
+    
+    elif effect_type == "incubation_boost":
+        # Boost incubation — handled by egg service
+        return {"type": "incubation_boost", "value": effect.get("value"), "applied": True}
+    
+    return {"type": "unknown", "applied": False}

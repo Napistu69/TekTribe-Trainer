@@ -106,6 +106,37 @@ class TrainingResultResponse(BaseModel):
     dust_earned: int
 
 
+# === Economy Schemas ===
+
+class EconomyBalanceResponse(BaseModel):
+    """Response body for GET /economy/balance."""
+    dust: int
+    shard: int = 0
+    cuboid: int = 0
+    ele: int = 0
+
+
+class EconomyHistoryResponse(BaseModel):
+    """Response body for GET /economy/history."""
+    transactions: list[dict]
+
+
+class ShopItemResponse(BaseModel):
+    """Shop item data."""
+    item_id: str
+    name: str
+    description: str
+    cost: int
+    effect: dict
+    category: str
+
+
+class ShopPurchaseRequest(BaseModel):
+    """Request body for POST /economy/shop/purchase."""
+    item_id: str
+    companion_uuid: str
+
+
 # === Expedition Schemas ===
 
 class ExpeditionDispatchRequest(BaseModel):

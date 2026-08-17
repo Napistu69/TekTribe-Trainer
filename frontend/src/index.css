@@ -610,3 +610,118 @@ body {
 .reward-value.negative { color: #ff4444; }
 .reward.special .reward-value { color: #ffd700; }
 .reward.injury .reward-value { color: #ff4444; }
+
+/* Economy */
+.balance-display {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.balance-display.compact {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  padding: 0.25rem 0.75rem;
+}
+
+.dust-icon {
+  color: #ffd700;
+  font-size: 1rem;
+}
+
+.dust-value {
+  color: #ffd700;
+  font-weight: 600;
+}
+
+.balance-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.currency-icon {
+  font-size: 1.2rem;
+}
+
+.currency-icon.dust { color: #ffd700; }
+
+.currency-label {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+.currency-value {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.shop-view {
+  padding: 1rem;
+}
+
+.shop-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.shop-header h2 {
+  color: var(--color-teal);
+}
+
+.shop-balance {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  padding: 0.25rem 0.75rem;
+  color: #ffd700;
+  font-weight: 600;
+}
+
+.shop-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.shop-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.item-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.item-name {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.item-description {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.item-purchase {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.item-cost {
+  color: #ffd700;
+  font-weight: 600;
+}
