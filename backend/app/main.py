@@ -3,6 +3,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.auth import router as auth_router
+from app.api.eggs import router as eggs_router
+from app.api.companions import router as companions_router
 
 app = FastAPI(
     title="TekTribe Trainer API",
@@ -21,6 +23,8 @@ app.add_middleware(
 
 # Routers
 app.include_router(auth_router, prefix="/api")
+app.include_router(eggs_router, prefix="/api")
+app.include_router(companions_router, prefix="/api")
 
 
 @app.get("/health")
