@@ -10,7 +10,6 @@ interface AuthState {
   isNewUser: boolean;
   lockdownActive: boolean;
   
-  // Actions
   setAuth: (data: {
     userId: string;
     sessionToken: string;
@@ -55,21 +54,6 @@ export const useAuthStore = create<AuthState>()(
           lockdownActive: true,
         }),
     }),
-    {
-      name: 'tektribe-auth',
-      // Persist to localStorage (survives page reload)
-      storage: {
-        getItem: (name) => {
-          const str = localStorage.getItem(name);
-          return str ? JSON.parse(str) : null;
-        },
-        setItem: (name, value) => {
-          localStorage.setItem(name, JSON.stringify(value));
-        },
-        removeItem: (name) => {
-          localStorage.removeItem(name);
-        },
-      },
-    }
+    { name: 'tektribe-auth' }
   )
 );

@@ -1,8 +1,5 @@
 import { useState, useEffect } from 'react';
-import { EggShelf } from '../components/hatchery/EggShelf';
-import { IncubatorControls } from '../components/hatchery/IncubatorControls';
-import { HatchButton } from '../components/hatchery/HatchButton';
-import { PullEggButton } from '../components/hatchery/PullEggButton';
+import { useAuthStore } from '../stores/authStore';
 
 interface Egg {
   uuid: string;
@@ -14,21 +11,39 @@ interface Egg {
   stability: number;
 }
 
+const RARITY_COLORS: Record<string, string> = {
+  common: '#808080',
+  uncommon: '#00ff00',
+  rare: '#0080ff',
+  epic: '#ff00ff',
+  ascendant: '#00ffff',
+  legendary: '#ffd700',
+  mythic: '#ff0000',
+};
+
+const RARITY_GLOW: Record<string, string> = {
+  common: '0 0 10px #808080',
+  uncommon: '0 0 15px #00ff00',
+  rare: '0 0 20px #0080ff',
+  epic: '0 0 25px #ff00ff',
+  ascendant: '0 0 30px #00ffff',
+  legendary: '0 0 35px #ffd700',
+  mythic: '0 0 40px #ff0000',
+};
+
 export function HatcheryView() {
   const [eggs, setEggs] = useState<Egg[]>([]);
   const [selectedEgg, setSelectedEgg] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  
+  const [message, setMessage] = useState<string | null>(null);
+  const sessionToken = useAuthStore((s) => s.sessionToken);
+
   const fetchEggs = async () => {
-    const token = localStorage.getItem('tektribe-auth');
-    if (!token) return;
-    
+    if (!sessionToken) return;
     try {
-      const auth = JSON.parse(token);
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/eggs`, {
-        headers: { Authorization: `Bearer ${auth.sessionToken}` },
+        headers: { Authorization: `Bearer ${sessionToken}` },
       });
-      
       if (response.ok) {
         const data = await response.json();
         setEggs(data);
@@ -37,73 +52,138 @@ export function HatcheryView() {
       console.error('Failed to fetch eggs:', err);
     }
   };
-  
+
   useEffect(() => {
     fetchEggs();
-    const interval = setInterval(fetchEggs, 30000);
+    const interval = setInterval(fetchEggs, 10000);
     return () => clearInterval(interval);
-  }, []);
-  
+  }, [sessionToken]);
+
   const handlePullEgg = async () => {
-    const token = localStorage.getItem('tektribe-auth');
-    if (!token) return;
-    
+    if (!sessionToken) return;
     setLoading(true);
+    setMessage(null);
     try {
-      const auth = JSON.parse(token);
-      await fetch(`${import.meta.env.VITE_API_URL}/api/eggs/pull`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/eggs/pull`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${auth.sessionToken}` },
+        headers: { Authorization: `Bearer ${sessionToken}` },
       });
-      await fetchEggs();
+      if (response.ok) {
+        const egg = await response.json();
+        setMessage(`🥚 A ${egg.rarity} egg has arrived!`);
+        await fetchEggs();
+      } else {
+        const err = await response.json();
+        setMessage(err.detail || 'Failed to pull egg');
+      }
     } catch (err) {
-      console.error('Failed to pull egg:', err);
+      setMessage('Network error');
     } finally {
       setLoading(false);
     }
   };
-  
+
   const handleHatch = async (eggUuid: string) => {
-    const token = localStorage.getItem('tektribe-auth');
-    if (!token) return;
-    
+    if (!sessionToken) return;
     setLoading(true);
+    setMessage(null);
     try {
-      const auth = JSON.parse(token);
-      await fetch(`${import.meta.env.VITE_API_URL}/api/eggs/${eggUuid}/hatch`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/eggs/${eggUuid}/hatch`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${auth.sessionToken}` },
+        headers: { Authorization: `Bearer ${sessionToken}` },
       });
-      await fetchEggs();
-      setSelectedEgg(null);
+      if (response.ok) {
+        const companion = await response.json();
+        setMessage(`🎉 A ${companion.species} has hatched!`);
+        await fetchEggs();
+        setSelectedEgg(null);
+      } else {
+        const err = await response.json();
+        setMessage(err.detail || 'Failed to hatch egg');
+      }
     } catch (err) {
-      console.error('Failed to hatch egg:', err);
+      setMessage('Network error');
     } finally {
       setLoading(false);
     }
   };
-  
+
+  const selected = eggs.find(e => e.uuid === selectedEgg);
+
   return (
     <div className="hatchery-view">
       <div className="hatchery-header">
-        <h1>Hatchery</h1>
-        <PullEggButton onClick={handlePullEgg} loading={loading} />
+        <h1>🥚 Hatchery</h1>
+        <button 
+          className="btn-primary pull-egg-btn" 
+          onClick={handlePullEgg} 
+          disabled={loading}
+        >
+          {loading ? '...' : 'Pull Egg'}
+        </button>
       </div>
-      
-      <EggShelf
-        eggs={eggs}
-        selectedEgg={selectedEgg}
-        onSelectEgg={setSelectedEgg}
-      />
-      
-      {selectedEgg && (
-        <div className="incubator-section">
-          <IncubatorControls egg={eggs.find(e => e.uuid === selectedEgg)} />
-          <HatchButton
-            egg={eggs.find(e => e.uuid === selectedEgg)}
-            onHatch={() => handleHatch(selectedEgg)}
-            loading={loading}
-          />
+
+      {message && <div className="game-message">{message}</div>}
+
+      <div className="egg-shelf">
+        {eggs.length === 0 ? (
+          <div className="empty-shelf">
+            <p>No eggs yet. Pull your first egg to begin!</p>
+          </div>
+        ) : (
+          eggs.map((egg) => (
+            <div
+              key={egg.uuid}
+              className={`egg-card ${selectedEgg === egg.uuid ? 'selected' : ''}`}
+              onClick={() => setSelectedEgg(egg.uuid)}
+            >
+              <div 
+                className="egg-visual"
+                style={{ 
+                  backgroundColor: RARITY_COLORS[egg.rarity] || '#808080',
+                  boxShadow: RARITY_GLOW[egg.rarity] || 'none',
+                }}
+              />
+              <span className="egg-rarity">{egg.rarity}</span>
+            </div>
+          ))
+        )}
+      </div>
+
+      {selected && (
+        <div className="incubator-panel">
+          <h3>Incubator</h3>
+          <div className="incubator-egg">
+            <div 
+              className="egg-visual large"
+              style={{ 
+                backgroundColor: RARITY_COLORS[selected.rarity] || '#808080',
+                boxShadow: RARITY_GLOW[selected.rarity] || 'none',
+              }}
+            />
+            <p className="incubator-rarity">{selected.rarity.toUpperCase()}</p>
+          </div>
+          <div className="incubator-controls">
+            <div className="control-row">
+              <label>Temperature</label>
+              <div className="meter">
+                <div className="meter-fill" style={{ width: `${selected.temperature * 100}%` }} />
+              </div>
+            </div>
+            <div className="control-row">
+              <label>Stability</label>
+              <div className="meter">
+                <div className="meter-fill" style={{ width: `${selected.stability * 100}%` }} />
+              </div>
+            </div>
+          </div>
+          <button 
+            className="btn-primary hatch-btn"
+            onClick={() => handleHatch(selected.uuid)}
+            disabled={loading}
+          >
+            {loading ? 'Hatching...' : 'Hatch Egg'}
+          </button>
         </div>
       )}
     </div>
