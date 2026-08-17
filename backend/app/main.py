@@ -7,6 +7,7 @@ from app.api.eggs import router as eggs_router
 from app.api.companions import router as companions_router
 from app.api.care import router as care_router
 from app.api.training import router as training_router
+from app.api.expeditions import router as expeditions_router
 
 app = FastAPI(
     title="TekTribe Trainer API",
@@ -29,6 +30,7 @@ app.include_router(eggs_router, prefix="/api")
 app.include_router(companions_router, prefix="/api")
 app.include_router(care_router, prefix="/api")
 app.include_router(training_router, prefix="/api")
+app.include_router(expeditions_router, prefix="/api")
 
 
 @app.get("/health")

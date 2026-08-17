@@ -104,3 +104,23 @@ class TrainingResultResponse(BaseModel):
     stat_gains: dict
     bond_gained: int
     dust_earned: int
+
+
+# === Expedition Schemas ===
+
+class ExpeditionDispatchRequest(BaseModel):
+    """Request body for POST /expeditions/dispatch."""
+    companion_uuid: str
+    biome_zone: str
+    duration_hours: str  # "2h", "6h", "12h", "24h"
+
+
+class ExpeditionResponse(BaseModel):
+    """Response body for expedition endpoints."""
+    uuid: str
+    companion_uuid: str
+    biome_zone: str
+    dispatched_at: datetime
+    returns_at: datetime
+    status: str
+    risk_level: float

@@ -1,0 +1,96 @@
+{
+  "biomes": [
+    {
+      "zone_id": "verdant_hollow",
+      "name": "Verdant Hollow",
+      "theme": "New life, gentle introduction",
+      "description": "A lush forest clearing with gentle creatures and abundant resources. Perfect for new companions.",
+      "base_risk": 0.1,
+      "base_dust_reward": 10,
+      "duration_multipliers": {"2h": 1.0, "6h": 2.5, "12h": 4.0, "24h": 6.0},
+      "resources": ["basic_food", "common_materials", "dust_deposits"],
+      "encounter_types": ["friendly_creatures", "foraging_puzzles", "gentle_exploration"],
+      "compendium_fragments": ["tribe_origins_1", "tribe_origins_2", "tribe_origins_3"],
+      "in_phase1": true
+    },
+    {
+      "zone_id": "mirelands",
+      "name": "Mirelands",
+      "theme": "Decay and renewal",
+      "description": "A swampy wetland teeming with rare herbs and hidden dangers.",
+      "base_risk": 0.25,
+      "base_dust_reward": 20,
+      "duration_multipliers": {"2h": 1.0, "6h": 2.5, "12h": 4.0, "24h": 6.0},
+      "resources": ["rare_herbs", "mutagenic_compounds", "ancient_relics"],
+      "encounter_types": ["hazard_navigation", "creature_encounters", "swamp_puzzles"],
+      "compendium_fragments": ["gsm_delta_1", "gsm_delta_2"],
+      "in_phase1": false
+    },
+    {
+      "zone_id": "stonecrest",
+      "name": "Stonecrest",
+      "theme": "Endurance and perspective",
+      "description": "Mountain peaks offering rare minerals and challenging climbs.",
+      "base_risk": 0.35,
+      "base_dust_reward": 30,
+      "duration_multipliers": {"2h": 1.0, "6h": 2.5, "12h": 4.0, "24h": 6.0},
+      "resources": ["minerals", "shard_precursors", "shelter_materials"],
+      "encounter_types": ["climbing_challenges", "weather_survival", "altitude_encounters"],
+      "compendium_fragments": ["void_center_1", "void_center_2"],
+      "in_phase1": false
+    },
+    {
+      "zone_id": "emberfall",
+      "name": "Emberfall",
+      "theme": "Transformation and danger",
+      "description": "Volcanic terrain with rare minerals and extreme hazards.",
+      "base_risk": 0.5,
+      "base_dust_reward": 45,
+      "duration_multipliers": {"2h": 1.0, "6h": 2.5, "12h": 4.0, "24h": 6.0},
+      "resources": ["rare_minerals", "thermal_energy", "cuboid_shards"],
+      "encounter_types": ["extreme_hazard", "rare_creature_encounters", "lava_navigation"],
+      "compendium_fragments": ["fire_transition_1", "fire_transition_2"],
+      "in_phase1": false
+    },
+    {
+      "zone_id": "tek_ruins",
+      "name": "Tek-Ruins",
+      "theme": "Memory and the Oracle",
+      "description": "Ancient ruins filled with Oracle fragments and technological remnants.",
+      "base_risk": 0.4,
+      "base_dust_reward": 50,
+      "duration_multipliers": {"2h": 1.0, "6h": 2.5, "12h": 4.0, "24h": 6.0},
+      "resources": ["oracle_fragments", "data_crystals", "technological_remnants"],
+      "encounter_types": ["puzzle_solving", "oracle_dialogue", "ancient_defenses"],
+      "compendium_fragments": ["compendium_chapter_1", "compendium_chapter_2", "compendium_chapter_3"],
+      "in_phase1": false
+    },
+    {
+      "zone_id": "the_threshold",
+      "name": "The Threshold",
+      "theme": "The space between ARKs",
+      "description": "A liminal space between worlds, filled with legacy fragments and rescue signals.",
+      "base_risk": 0.6,
+      "base_dust_reward": 75,
+      "duration_multipliers": {"2h": 1.0, "6h": 2.5, "12h": 4.0, "24h": 6.0},
+      "resources": ["legacy_fragments", "rescue_signals", "arkport_materials"],
+      "encounter_types": ["rescue_encounters", "dimensional_anomalies", "legacy_memories"],
+      "compendium_fragments": ["master_weave_1", "master_weave_2", "master_weave_prophecy"],
+      "in_phase1": false
+    }
+  ],
+  "durations": {
+    "2h": {"hours": 2, "label": "Short"},
+    "6h": {"hours": 6, "label": "Medium"},
+    "12h": {"hours": 12, "label": "Long"},
+    "24h": {"hours": 24, "label": "Extended"}
+  },
+  "injury_chances": {
+    "2h": 0.05,
+    "6h": 0.10,
+    "12h": 0.15,
+    "24h": 0.20
+  },
+  "oracle_fragment_chance": 0.05,
+  "oracle_fragment_chance_tek_ruins": 0.15
+}
