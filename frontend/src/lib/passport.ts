@@ -25,13 +25,12 @@ export function getAuth(): Auth {
 }
 
 /**
- * Trigger the Passport login flow (popup-based).
- * Returns the user object on success.
+ * Trigger the Passport login flow (redirect-based).
+ * Redirects to Passport login page.
  */
 export async function loginWithPassport() {
   const auth = getAuth();
-  const user = await auth.login();
-  return user;
+  await auth.loginWithRedirect();
 }
 
 /**
