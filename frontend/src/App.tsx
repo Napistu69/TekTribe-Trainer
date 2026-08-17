@@ -1,59 +1,50 @@
-import { useEffect } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { AppShell } from './components/layout/AppShell';
 import { initPassport } from './lib/passport';
 import { registerServiceWorker } from './service-worker-registration';
-import { AuthGuard } from './components/auth/AuthGuard';
-import { LoginScreen } from './components/auth/LoginScreen';
+import { OverseerDialog } from './components/overseer/OverseerDialog';
 import { useAuthStore } from './stores/authStore';
+import { HatcheryView } from './views/HatcheryView';
+import { CampView } from './views/CampView';
+import { TrainingSelect } from './components/training/TrainingSelect';
+import { ExpeditionMap } from './components/expedition/ExpeditionMap';
+import { useEffect } from 'react';
 import './index.css';
 
 function App() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
-  // Initialize service worker
   useEffect(() => {
     registerServiceWorker();
   }, []);
 
-  // Initialize Passport SDK
   useEffect(() => {
     const clientId = import.meta.env.VITE_CLIENT_ID;
-    const redirectUri = `${window.location.origin}/callback`;
-    
     if (clientId) {
-      initPassport(clientId, redirectUri);
+      initPassport(clientId, `${window.location.origin}/callback`);
     }
   }, []);
 
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public routes */}
         <Route
           path="/login"
           element={
-            isAuthenticated ? <Navigate to="/" replace /> : <LoginScreen />
+            isAuthenticated ? <Navigate to="/" replace /> : <div>Login</div>
           }
         />
-
-        {/* Protected routes */}
-        <Route
-          path="/"
-          element={
-            <AuthGuard>
-              <div className="app-shell">
-                <div className="loading-screen">
-                  <h1>TekTribe Trainer</h1>
-                  <p>Loading the Hatchery...</p>
-                </div>
-              </div>
-            </AuthGuard>
-          }
-        />
-
-        {/* Catch all - redirect to home */}
+        {isAuthenticated && (
+          <Route element={<AppShell />}>
+            <Route path="/" element={<HatcheryView />} />
+            <Route path="/camp" element={<CampView />} />
+            <Route path="/training" element={<TrainingSelect companionSpecies="" onSelect={() => {}} />} />
+            <Route path="/explore" element={<ExpeditionMap onSelectBiome={() => {}} />} />
+          </Route>
+        )}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      <OverseerDialog />
     </BrowserRouter>
   );
 }
