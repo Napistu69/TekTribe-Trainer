@@ -18,14 +18,24 @@ app = FastAPI(
     version="0.1.0",
 )
 
-# CORS for Vite dev server
+# CORS for frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[
+        "http://localhost:5173",
+        "https://napisnest.com",
+        "https://www.napisnest.com",
+        "https://tektribe-trainer.vercel.app",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get("/")
+async def root():
+    return {"message": "TekTribe Trainer API", "docs": "/docs"}
 
 # Routers
 app.include_router(auth_router, prefix="/api")
