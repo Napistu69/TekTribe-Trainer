@@ -15,41 +15,42 @@ async def login(
     request: LoginRequest,
     db: AsyncSession = Depends(get_db),
 ):
-    """Authenticate a user via Immutable Passport.
-    
-    For Phase 1, we trust the Passport SDK proof from the frontend.
-    Production should verify the proof server-side.
-    """
-    # Validate basic fields
-    if not request.email:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email is required",
+    """Authenticate a user via Immutable Passport."""
+    try:
+        if not request.email:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email is required",
+            )
+
+        user, is_new_user = await user_service.get_or_create_user(
+            db=db,
+            email=request.email,
+            passport_id=request.passport_proof,
+            wallet_address=request.wallet_address,
         )
 
-    # Get or create user
-    user, is_new_user = await user_service.get_or_create_user(
-        db=db,
-        email=request.email,
-        passport_id=request.passport_proof,
-        wallet_address=request.wallet_address,
-    )
+        token = create_session_token(user.id)
+        await session_service.create_session(user.id, token)
 
-    # Create session token
-    token = create_session_token(user.id)
-    await session_service.create_session(user.id, token)
-
-    return AuthResponse(
-        user_id=user.id,
-        session_token=token,
-        is_new_user=is_new_user,
-        lockdown_state={
-            "is_active": True,
-            "graduated_at": None,
-            "care_actions_completed": 0,
-            "min_bond_achieved": 0,
-        },
-    )
+        return AuthResponse(
+            user_id=user.id,
+            session_token=token,
+            is_new_user=is_new_user,
+            lockdown_state={
+                "is_active": True,
+                "graduated_at": None,
+                "care_actions_completed": 0,
+                "min_bond_achieved": 0,
+            },
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Login error: {str(e)}",
+        )
 
 
 @router.get("/me", response_model=UserResponse)
