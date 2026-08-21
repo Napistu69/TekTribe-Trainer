@@ -13,8 +13,8 @@ class HatcheryScene extends Phaser.Scene {
 
   preload() {
     this.load.spritesheet('raptor_attack', '/assets/Creatures/Raptor_Adult_Attack_Sprite_Sheet.png', {
-      frameWidth: 200,
-      frameHeight: 200,
+      frameWidth: 256,
+      frameHeight: 819,
     });
     
     this.load.image('egg_common', '/assets/Hatch System/Egg_Common.png');
@@ -51,8 +51,8 @@ class HatcheryScene extends Phaser.Scene {
     });
 
     // Raptor sprite
-    const raptor = this.add.sprite(centerX - 150, centerY + 20, 'raptor_attack');
-    raptor.setScale(1.5);
+    const raptor = this.add.sprite(centerX - 150, centerY + 50, 'raptor_attack');
+    raptor.setScale(0.4);
     raptor.play('raptor_attack');
 
     // Egg display
