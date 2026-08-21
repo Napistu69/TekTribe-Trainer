@@ -305,6 +305,75 @@ body::before {
   font-size: 1.1rem;
 }
 
+.hatch-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Tutorial Overlay */
+.tutorial-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: fadeIn 0.3s ease;
+}
+
+.tutorial-card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 400px;
+  text-align: center;
+}
+
+.tutorial-card h3 {
+  color: var(--color-teal);
+  margin-bottom: 1rem;
+}
+
+.tutorial-card p {
+  color: var(--color-text-muted);
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.tutorial-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.tutorial-dots {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-border);
+}
+
+.dot.active {
+  background: var(--color-teal);
+}
+
+/* Incubation Timer */
+.incubation-timer {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-teal);
+  font-variant-numeric: tabular-nums;
+}
+
 /* Phaser Container */
 .phaser-container {
   margin: 1rem 0;
@@ -316,6 +385,362 @@ body::before {
 
 .phaser-container canvas {
   display: block;
+}
+
+/* Camp View */
+.camp-view {
+  padding: 1rem;
+}
+
+.companion-selector {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  overflow-x: auto;
+}
+
+.companion-tab {
+  padding: 0.5rem 1rem;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.companion-tab.active {
+  border-color: var(--color-teal);
+  background: rgba(0, 212, 255, 0.1);
+}
+
+.companion-display {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 1.5rem;
+}
+
+.companion-visual {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.companion-image {
+  width: 150px;
+  height: 150px;
+  border-radius: 12px;
+  object-fit: contain;
+  background: var(--color-bg-primary);
+  padding: 0.5rem;
+}
+
+.companion-info h2 {
+  color: var(--color-teal);
+  margin-bottom: 0.5rem;
+}
+
+.life-stage {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: rgba(0, 212, 255, 0.1);
+  border-radius: 12px;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.bond-bar {
+  margin-top: 0.5rem;
+}
+
+.bond-bar span {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.care-meters {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.care-meter-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+
+.care-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}
+
+.care-action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.care-action-btn:hover {
+  border-color: var(--color-teal);
+  transform: translateY(-2px);
+}
+
+.care-action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.care-icon {
+  font-size: 1.5rem;
+}
+
+.care-label {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+/* Training View */
+.training-view {
+  padding: 1rem;
+}
+
+.minigame-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.minigame-card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.minigame-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-teal);
+}
+
+.minigame-card.selected {
+  border-color: var(--color-teal);
+  background: rgba(0, 212, 255, 0.1);
+}
+
+.minigame-icon {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.minigame-card h3 {
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+.difficulty {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.minigame-detail {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.minigame-detail h3 {
+  color: var(--color-teal);
+  margin-bottom: 0.5rem;
+}
+
+.trains-list {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem 0;
+}
+
+.train-tag {
+  padding: 0.25rem 0.5rem;
+  background: rgba(0, 212, 255, 0.1);
+  border-radius: 8px;
+  font-size: 0.8rem;
+}
+
+.train-btn {
+  margin-top: 1rem;
+}
+
+/* Explore View */
+.explore-view {
+  padding: 1rem;
+}
+
+.biome-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.biome-card {
+  position: relative;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.biome-card:hover:not(.locked) {
+  transform: translateY(-2px);
+  border-color: var(--color-teal);
+}
+
+.biome-card.selected {
+  border-color: var(--color-teal);
+  background: rgba(0, 212, 255, 0.1);
+}
+
+.biome-card.locked {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.biome-info h3 {
+  color: var(--color-teal);
+  margin-bottom: 0.25rem;
+  font-size: 0.95rem;
+}
+
+.biome-info p {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.biome-resources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.resource-tag {
+  padding: 0.15rem 0.4rem;
+  background: rgba(0, 212, 255, 0.1);
+  border-radius: 6px;
+  font-size: 0.7rem;
+}
+
+.risk-meter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.risk-meter .meter.small {
+  height: 4px;
+}
+
+.meter-fill.risk {
+  background: linear-gradient(90deg, #00ff00, #ffff00, #ff0000);
+}
+
+.lock-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 12px;
+}
+
+.dispatch-panel {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 1.5rem;
+}
+
+.dispatch-panel h3 {
+  color: var(--color-teal);
+  margin-bottom: 1rem;
+}
+
+.duration-select {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.duration-btn {
+  flex: 1;
+  padding: 0.75rem;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.duration-btn.active {
+  border-color: var(--color-teal);
+  background: rgba(0, 212, 255, 0.1);
+}
+
+.dispatch-btn {
+  width: 100%;
+}
+
+.expeditions-panel {
+  margin-top: 1.5rem;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 1.5rem;
+}
+
+.expeditions-panel h3 {
+  color: var(--color-teal);
+  margin-bottom: 1rem;
+}
+
+.expedition-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.85rem;
+}
+
+.expedition-row:last-child {
+  border-bottom: none;
 }
 
 /* Login */

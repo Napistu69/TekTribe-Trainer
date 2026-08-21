@@ -5,8 +5,8 @@ import { registerServiceWorker } from './service-worker-registration';
 import { OverseerDialog } from './components/overseer/OverseerDialog';
 import { HatcheryView } from './views/HatcheryView';
 import { CampView } from './views/CampView';
-import { TrainingSelect } from './components/training/TrainingSelect';
-import { ExpeditionMap } from './components/expedition/ExpeditionMap';
+import { TrainingView } from './views/TrainingView';
+import { ExploreView } from './views/ExploreView';
 import { LoginScreen } from './components/auth/LoginScreen';
 import { AuthGuard } from './components/auth/AuthGuard';
 import { CallbackPage } from './components/auth/CallbackPage';
@@ -40,8 +40,8 @@ function App() {
         >
           <Route index element={<HatcheryView />} />
           <Route path="camp" element={<CampView />} />
-          <Route path="training" element={<TrainingSelect companionSpecies="" onSelect={() => {}} />} />
-          <Route path="explore" element={<ExpeditionMap onSelectBiome={() => {}} />} />
+          <Route path="training" element={<TrainingView />} />
+          <Route path="explore" element={<ExploreView />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

@@ -1,55 +1,84 @@
 import { useState, useEffect } from 'react';
-import { CompanionSelector } from '../components/camp/CompanionSelector';
-import { CompanionModel } from '../components/camp/CompanionModel';
-import { CareMeters } from '../components/camp/CareMeters';
-import { CareActions } from '../components/camp/CareActions';
-import { StatsPanel } from '../components/camp/StatsPanel';
-import { PersonalityCard } from '../components/camp/PersonalityCard';
-import { BondProgress } from '../components/camp/BondProgress';
-import { LifeStageBadge } from '../components/camp/LifeStageBadge';
+import { useAuthStore } from '../stores/authStore';
 
 interface Companion {
   uuid: string;
   species: string;
-  name: string | null;
+  name: string;
   life_stage: string;
-  health_status: number;
   bond_level: number;
-  base_stats: Record<string, number>;
-  mutated_stats: Record<string, number>;
-  personality_type: string;
-  personality_traits: string[];
-  behavioral_quirks: string[];
+  care_state: {
+    hunger: number;
+    energy: number;
+    morale: number;
+    cleanliness: number;
+  };
 }
 
-interface CareState {
-  hunger: number;
-  energy: number;
-  morale: number;
-  cleanliness: number;
+interface CareAction {
+  action: string;
+  label: string;
+  icon: string;
+}
+
+const CARE_ACTIONS: CareAction[] = [
+  { action: 'feed', label: 'Feed', icon: '🌿' },
+  { action: 'clean', label: 'Clean', icon: '🧼' },
+  { action: 'reassure', label: 'Reassure', icon: '💚' },
+  { action: 'train', label: 'Train', icon: '⚡' },
+];
+
+const LIFE_STAGE_LABELS: Record<string, string> = {
+  egg: '🥚 Egg',
+  hatchling: '🐣 Hatchling',
+  juvenile: '🦕 Juvenile',
+  adult: '🦖 Adult',
+  elder: '👑 Elder',
+};
+
+const COMPANION_IMAGES: Record<string, string> = {
+  parasaur: '/assets/Creatures/Raptor_Adult.png',
+  dilo: '/assets/Creatures/Raptor_Adult.png',
+  trike: '/assets/Creatures/Raptor_Adult.png',
+  ptera: '/assets/Creatures/Raptor_Adult.png',
+  raptor: '/assets/Creatures/Raptor_Adult.png',
+  rex: '/assets/Creatures/Raptor_Adult.png',
+};
+
+function CareMeter({ label, value, color }: { label: string; value: number; color: string }) {
+  return (
+    <div className="care-meter">
+      <div className="care-meter-label">
+        <span>{label}</span>
+        <span>{Math.round(value * 100)}%</span>
+      </div>
+      <div className="meter">
+        <div className="meter-fill" style={{ width: `${value * 100}%`, background: color }} />
+      </div>
+    </div>
+  );
 }
 
 export function CampView() {
-  const [companions, setCompanions] = useState<Companion[]>([]);
+  const [companion, setCompanion] = useState<Companion | null>(null);
   const [selectedCompanion, setSelectedCompanion] = useState<string | null>(null);
-  const [careState, setCareState] = useState<CareState | null>(null);
+  const [companions, setCompanions] = useState<Companion[]>([]);
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const sessionToken = useAuthStore((s) => s.sessionToken);
 
   const fetchCompanions = async () => {
-    const token = localStorage.getItem('tektribe-auth');
-    if (!token) return;
-
+    if (!sessionToken) return;
     try {
-      const auth = JSON.parse(token);
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/companions`, {
-        headers: { Authorization: `Bearer ${auth.sessionToken}` },
+        headers: { Authorization: `Bearer ${sessionToken}` },
       });
-
       if (response.ok) {
         const data = await response.json();
         setCompanions(data);
         if (data.length > 0 && !selectedCompanion) {
           setSelectedCompanion(data[0].uuid);
+          setCompanion(data[0]);
         }
       }
     } catch (err) {
@@ -57,93 +86,110 @@ export function CampView() {
     }
   };
 
-  const fetchCareState = async (uuid: string) => {
-    const token = localStorage.getItem('tektribe-auth');
-    if (!token) return;
-
-    try {
-      const auth = JSON.parse(token);
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/care/${uuid}`, {
-        headers: { Authorization: `Bearer ${auth.sessionToken}` },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setCareState(data);
-      }
-    } catch (err) {
-      console.error('Failed to fetch care state:', err);
-    }
-  };
-
   useEffect(() => {
     fetchCompanions();
-  }, []);
+  }, [sessionToken]);
 
   useEffect(() => {
     if (selectedCompanion) {
-      fetchCareState(selectedCompanion);
+      const c = companions.find(c => c.uuid === selectedCompanion);
+      if (c) setCompanion(c);
     }
-  }, [selectedCompanion]);
+  }, [selectedCompanion, companions]);
 
   const handleCareAction = async (action: string) => {
-    if (!selectedCompanion) return;
+    if (!sessionToken || !selectedCompanion) return;
     setLoading(true);
+    setMessage(null);
     try {
-      const token = localStorage.getItem('tektribe-auth');
-      if (!token) return;
-      const auth = JSON.parse(token);
-      await fetch(`${import.meta.env.VITE_API_URL}/api/care/${selectedCompanion}/${action}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/companions/${selectedCompanion}/care`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${auth.sessionToken}` },
+        headers: { Authorization: `Bearer ${sessionToken}` },
+        body: JSON.stringify({ action }),
       });
-      await fetchCareState(selectedCompanion);
+      if (response.ok) {
+        setMessage(`${action} successful!`);
+        await fetchCompanions();
+      } else {
+        const err = await response.json();
+        setMessage(err.detail || 'Care action failed');
+      }
     } catch (err) {
-      console.error('Care action failed:', err);
+      setMessage('Network error');
     } finally {
       setLoading(false);
     }
   };
 
-  const companion = companions.find(c => c.uuid === selectedCompanion);
-
-  if (companions.length === 0) {
+  if (!companion) {
     return (
       <div className="camp-view">
         <h1>Camp</h1>
-        <p className="empty">No companions yet. Hatch an egg to begin!</p>
+        <div className="empty-camp">
+          <p>No companions yet. Hatch an egg to get started!</p>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="camp-view">
-      <div className="camp-header">
-        <h1>Camp</h1>
-        <LifeStageBadge stage={companion?.life_stage || 'unknown'} />
+      <h1>Camp</h1>
+
+      {message && <div className="game-message">{message}</div>}
+
+      <div className="companion-selector">
+        {companions.map(c => (
+          <button
+            key={c.uuid}
+            className={`companion-tab ${selectedCompanion === c.uuid ? 'active' : ''}`}
+            onClick={() => setSelectedCompanion(c.uuid)}
+          >
+            {c.species}
+          </button>
+        ))}
       </div>
 
-      <CompanionSelector
-        companions={companions}
-        selected={selectedCompanion}
-        onSelect={setSelectedCompanion}
-      />
-
-      {companion && (
-        <div className="camp-content">
-          <div className="camp-left">
-            <CompanionModel companion={companion} />
-            <BondProgress bondLevel={companion.bond_level} />
-          </div>
-
-          <div className="camp-right">
-            <CareMeters careState={careState} />
-            <CareActions onAction={handleCareAction} disabled={loading} />
-            <PersonalityCard companion={companion} />
-            <StatsPanel companion={companion} />
+      <div className="companion-display">
+        <div className="companion-visual">
+          <img
+            src={COMPANION_IMAGES[companion.species] || COMPANION_IMAGES.raptor}
+            alt={companion.species}
+            className="companion-image"
+          />
+          <div className="companion-info">
+            <h2>{companion.name || companion.species}</h2>
+            <span className="life-stage">{LIFE_STAGE_LABELS[companion.life_stage]}</span>
+            <div className="bond-bar">
+              <span>Bond: {companion.bond_level}/1000</span>
+              <div className="meter">
+                <div className="meter-fill" style={{ width: `${(companion.bond_level / 1000) * 100}%` }} />
+              </div>
+            </div>
           </div>
         </div>
-      )}
+
+        <div className="care-meters">
+          <CareMeter label="Hunger" value={companion.care_state.hunger} color="#ff6b6b" />
+          <CareMeter label="Energy" value={companion.care_state.energy} color="#ffd93d" />
+          <CareMeter label="Morale" value={companion.care_state.morale} color="#6bcb77" />
+          <CareMeter label="Cleanliness" value={companion.care_state.cleanliness} color="#4d96ff" />
+        </div>
+
+        <div className="care-actions">
+          {CARE_ACTIONS.map(a => (
+            <button
+              key={a.action}
+              className="care-action-btn"
+              onClick={() => handleCareAction(a.action)}
+              disabled={loading}
+            >
+              <span className="care-icon">{a.icon}</span>
+              <span className="care-label">{a.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
