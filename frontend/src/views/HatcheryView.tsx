@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '../stores/authStore';
+import { PhaserGame } from '../components/game/PhaserGame';
 
 interface Egg {
   uuid: string;
@@ -19,16 +20,6 @@ const RARITY_COLORS: Record<string, string> = {
   ascendant: '#00ffff',
   legendary: '#ffd700',
   mythic: '#ff0000',
-};
-
-const RARITY_GLOW: Record<string, string> = {
-  common: '0 0 10px #808080',
-  uncommon: '0 0 15px #00ff00',
-  rare: '0 0 20px #0080ff',
-  epic: '0 0 25px #ff00ff',
-  ascendant: '0 0 30px #00ffff',
-  legendary: '0 0 35px #ffd700',
-  mythic: '0 0 40px #ff0000',
 };
 
 export function HatcheryView() {
@@ -108,12 +99,10 @@ export function HatcheryView() {
     }
   };
 
-  const selected = eggs.find(e => e.uuid === selectedEgg);
-
   return (
     <div className="hatchery-view">
       <div className="hatchery-header">
-        <h1>🥚 Hatchery</h1>
+        <h1>Hatchery</h1>
         <button 
           className="btn-primary pull-egg-btn" 
           onClick={handlePullEgg} 
@@ -125,6 +114,8 @@ export function HatcheryView() {
 
       {message && <div className="game-message">{message}</div>}
 
+      <PhaserGame width={800} height={500} />
+      
       <div className="egg-shelf">
         {eggs.length === 0 ? (
           <div className="empty-shelf">
@@ -141,7 +132,7 @@ export function HatcheryView() {
                 className="egg-visual"
                 style={{ 
                   backgroundColor: RARITY_COLORS[egg.rarity] || '#808080',
-                  boxShadow: RARITY_GLOW[egg.rarity] || 'none',
+                  boxShadow: `0 0 20px ${RARITY_COLORS[egg.rarity] || '#808080'}`,
                 }}
               />
               <span className="egg-rarity">{egg.rarity}</span>
@@ -150,36 +141,11 @@ export function HatcheryView() {
         )}
       </div>
 
-      {selected && (
+      {selectedEgg && (
         <div className="incubator-panel">
-          <h3>Incubator</h3>
-          <div className="incubator-egg">
-            <div 
-              className="egg-visual large"
-              style={{ 
-                backgroundColor: RARITY_COLORS[selected.rarity] || '#808080',
-                boxShadow: RARITY_GLOW[selected.rarity] || 'none',
-              }}
-            />
-            <p className="incubator-rarity">{selected.rarity.toUpperCase()}</p>
-          </div>
-          <div className="incubator-controls">
-            <div className="control-row">
-              <label>Temperature</label>
-              <div className="meter">
-                <div className="meter-fill" style={{ width: `${selected.temperature * 100}%` }} />
-              </div>
-            </div>
-            <div className="control-row">
-              <label>Stability</label>
-              <div className="meter">
-                <div className="meter-fill" style={{ width: `${selected.stability * 100}%` }} />
-              </div>
-            </div>
-          </div>
           <button 
             className="btn-primary hatch-btn"
-            onClick={() => handleHatch(selected.uuid)}
+            onClick={() => handleHatch(selectedEgg)}
             disabled={loading}
           >
             {loading ? 'Hatching...' : 'Hatch Egg'}
