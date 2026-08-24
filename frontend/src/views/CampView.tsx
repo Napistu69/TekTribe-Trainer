@@ -45,6 +45,15 @@ const COMPANION_IMAGES: Record<string, string> = {
   rex: '/assets/Creatures/rex_character.png',
 };
 
+const COMPANION_SCALE: Record<string, number> = {
+  parasaur: 0.7,
+  dilo: 0.8,
+  raptor: 0.85,
+  trike: 0.9,
+  ptera: 0.8,
+  rex: 1.0,
+};
+
 function CareMeter({ label, value, color }: { label: string; value: number; color: string }) {
   return (
     <div className="care-meter">
@@ -156,6 +165,7 @@ export function CampView() {
             src={COMPANION_IMAGES[companion.species] || COMPANION_IMAGES.raptor}
             alt={companion.species}
             className="companion-image"
+            style={{ transform: `scale(${COMPANION_SCALE[companion.species] || 1})` }}
           />
           <div className="companion-info">
             <h2>{companion.name || companion.species}</h2>
