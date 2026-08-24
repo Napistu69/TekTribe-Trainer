@@ -25,7 +25,7 @@ const CARE_ACTIONS: CareAction[] = [
   { action: 'feed', label: 'Feed', icon: '🌿' },
   { action: 'clean', label: 'Clean', icon: '🧼' },
   { action: 'imprint', label: 'Imprint', icon: '💚' },
-  { action: 'train', label: 'Train', icon: '⚡' },
+  { action: 'rest', label: 'Rest', icon: '💤' },
 ];
 
 const LIFE_STAGE_LABELS: Record<string, string> = {
