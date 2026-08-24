@@ -524,7 +524,7 @@ body::before {
 
 .meter-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--color-teal), var(--color-purple));
+  background: linear-gradient(90deg, var(--color-cyan), var(--color-emerald));
   transition: width 0.3s;
 }
 
