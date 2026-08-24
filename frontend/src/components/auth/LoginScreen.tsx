@@ -23,8 +23,12 @@ export function LoginScreen() {
     <div className="login-screen">
       <div className="login-card">
         <div className="login-logo">
-          <div className="logo-circle" />
-          <h1>TekTribe Trainer</h1>
+          <img
+            src="/assets/Overseer & Lore/overseer.png"
+            alt="Overseer"
+            className="overseer-logo"
+          />
+          <h1>TekTribe</h1>
           <p className="tagline">Bond with the Past, Explore the Future</p>
         </div>
 
