@@ -24,7 +24,7 @@ interface CareAction {
 const CARE_ACTIONS: CareAction[] = [
   { action: 'feed', label: 'Feed', icon: '🌿' },
   { action: 'clean', label: 'Clean', icon: '🧼' },
-  { action: 'reassure', label: 'Reassure', icon: '💚' },
+  { action: 'imprint', label: 'Imprint', icon: '💚' },
   { action: 'train', label: 'Train', icon: '⚡' },
 ];
 
@@ -111,10 +111,9 @@ export function CampView() {
     setLoading(true);
     setMessage(null);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/companions/${selectedCompanion}/care`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/care/${selectedCompanion}/${action}`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${sessionToken}` },
-        body: JSON.stringify({ action }),
       });
       if (response.ok) {
         setMessage(`${action} successful!`);

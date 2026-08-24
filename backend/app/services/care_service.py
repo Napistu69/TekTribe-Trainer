@@ -12,7 +12,7 @@ from app.models import CareState, Companion, BondEvent
 CARE_ACTIONS = {
     "feed": {"hunger": 0.4, "bond": 2, "cooldown_hours": 2},
     "clean": {"cleanliness": 0.5, "bond": 1, "cooldown_hours": 4},
-    "reassure": {"morale": 0.3, "bond": 3, "cooldown_hours": 3},
+    "imprint": {"morale": 0.3, "bond": 3, "cooldown_hours": 3},
     "rest": {"energy": 0.5, "bond": 1, "cooldown_hours": 2},
     "observe": {"bond": 1, "cooldown_hours": 1},
 }
