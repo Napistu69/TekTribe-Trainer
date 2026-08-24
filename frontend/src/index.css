@@ -26,11 +26,70 @@
   --color-text: var(--color-stone);
   --color-text-muted: #888;
   --color-border: #2a2a4e;
-  --color-bg-primary: #0a0a1a;
+  --color-bg-primary: #006C00;        /* Forest Coloring — ARK deep green */
   --color-bg-card: #1a1a3e;
   --color-bg-card-hover: #2a2a5e;
   --color-danger: #ff4444;
   --color-success: var(--color-emerald);
+  
+  /* ARK Palette — creature region colors */
+  --ark-red: #FF0000;
+  --ark-blue: #0000FF;
+  --ark-green: #00FF00;
+  --ark-yellow: #FFFF00;
+  --ark-cyan: #00FFFF;
+  --ark-magenta: #FF00FF;
+  --ark-light-green: #C0FFBA;
+  --ark-light-grey: #C8CACA;
+  --ark-light-brown: #786759;
+  --ark-light-orange: #FFB46C;
+  --ark-light-yellow: #FFFA8A;
+  --ark-light-red: #FF756C;
+  --ark-dark-grey: #7B7B7B;
+  --ark-black: #3B3B3B;
+  --ark-brown: #593A2A;
+  --ark-dark-green: #224900;
+  --ark-dark-red: #812118;
+  --ark-white: #FFFFFF;
+  --ark-forest: #006C00;
+  --ark-hunter: #006600;
+  --ark-emerald: #00B200;
+  --ark-spring: #00FF7F;
+  --ark-turquoise: #00C5AB;
+  --ark-teal: #14849C;
+  --ark-cyan-full: #00FFFF;
+  --ark-glacial: #ACEAFF;
+  --ark-ocean: #54A5A5;
+  --ark-sapphire: #0059B2;
+  --ark-azures: #007EFF;
+  --ark-baby-blue: #72B8FF;
+  --ark-cotton-candy: #FFBEFF;
+  --ark-orchid: #D88CD8;
+  --ark-gold: #FFBF00;
+  --ark-tangerine: #FFA328;
+  --ark-peach: #FFA73A;
+  --ark-cantaloupe: #FFB872;
+  --ark-salmon: #FFBEBE;
+  --ark-latte: #D8B28C;
+  --ark-dirt: #A57B54;
+  --ark-tan: #CBB166;
+  --ark-sand: #E6C872;
+  --ark-parchment: #FFEFBE;
+  --ark-mud: #423726;
+  --ark-bark: #594828;
+  --ark-leather: #98813F;
+  --ark-camel: #B29B59;
+  --ark-cream: #F5F5DB;
+  --ark-actual-black: #171717;
+  --ark-shadow: #363636;
+  --ark-charcoal: #4E4E4E;
+  --ark-gunmetal: #666666;
+  --ark-slate: #7F7F7F;
+  --ark-steel: #989898;
+  --ark-silver: #CBCBCB;
+  --ark-wisp: #E6E6E6;
+  --ark-near-white: #EDEDED;
+  --ark-near-black: #515151;
 }
 
 @font-face {
@@ -42,7 +101,7 @@
 
 body {
   font-family: 'Segoe UI', system-ui, sans-serif;
-  background: var(--color-bg-primary);
+  background: var(--ark-forest);
   color: var(--color-text);
   min-height: 100vh;
   overflow-x: hidden;

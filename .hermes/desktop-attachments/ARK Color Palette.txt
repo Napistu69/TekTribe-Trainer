@@ -1,0 +1,690 @@
+ARK Color Palette
+
+
+ID: 1 Red
+sRGB:#FF0000
+Linear:1.0, 0.0, 0.0
+ID: 2 Blue
+sRGB:#0000FF
+Linear:0.0, 0.0, 1.0
+ID: 3 Green
+sRGB:#00FF00
+Linear:0.0, 1.0, 0.0
+ID: 4 Yellow
+sRGB:#FFFF00
+Linear:1.0, 1.0, 0.0
+ID: 5 Cyan
+sRGB:#00FFFF
+Linear:0.0, 1.0, 1.0
+ID: 6 Magenta
+sRGB:#FF00FF
+Linear:1.0, 0.0, 1.0
+ID: 7 Light Green
+sRGB:#C0FFBA
+Linear:0.532, 1.0, 0.5
+ID: 8 Light Grey
+sRGB:#C8CACA
+Linear:0.581, 0.6, 0.594
+ID: 9 Light Brown
+sRGB:#786759
+Linear:0.19, 0.137, 0.099
+ID: 10 Light Orange
+sRGB:#FFB46C
+Linear:1.0, 0.462, 0.15
+ID: 11 Light Yellow
+sRGB:#FFFA8A
+Linear:1.0, 0.952, 0.26
+ID: 12 Light Red
+sRGB:#FF756C
+Linear:1.0, 0.181, 0.15
+ID: 13 Dark Grey
+sRGB:#7B7B7B
+Linear:0.2, 0.2, 0.2
+ID: 14 Black
+sRGB:#3B3B3B
+Linear:0.04, 0.04, 0.04
+ID: 15 Brown
+sRGB:#593A2A
+Linear:0.1, 0.039, 0.019
+ID: 16 Dark Green
+sRGB:#224900
+Linear:0.012, 0.065, 0.0
+ID: 17 Dark Red
+sRGB:#812118
+Linear:0.225, 0.011, 0.006
+ID: 18 White
+sRGB:#FFFFFF
+Linear:1.0, 1.0, 1.0
+ID: 19 Dino Light Red
+sRGB:#FFA8A8
+Linear:1.0, 0.4, 0.4
+ID: 20 Dino Dark Red
+sRGB:#592B2B
+Linear:0.1, 0.02, 0.02
+ID: 21 Dino Light Orange
+sRGB:#FFB694
+Linear:1.0, 0.475, 0.3
+ID: 22 Dino Dark Orange
+sRGB:#88532F
+Linear:0.25, 0.084, 0.025
+ID: 23 Dino Light Yellow
+sRGB:#CACAA0
+Linear:0.6, 0.6, 0.36
+ID: 24 Dino Dark Yellow
+sRGB:#94946C
+Linear:0.3, 0.3, 0.15
+ID: 25 Dino Light Green
+sRGB:#E0FFE0
+Linear:0.75, 1.0, 0.75
+ID: 26 Dino Medium Green
+sRGB:#799479
+Linear:0.195, 0.3, 0.195
+ID: 27 Dino Dark Green
+sRGB:#224122
+Linear:0.013, 0.05, 0.013
+ID: 28 Dino Light Blue
+sRGB:#D9E0FF
+Linear:0.7, 0.75, 1.0
+ID: 29 Dino Dark Blue
+sRGB:#394263
+Linear:0.037, 0.052, 0.125
+ID: 30 Dino Light Purple
+sRGB:#E4D9FF
+Linear:0.78, 0.7, 1.0
+ID: 31 Dino Dark Purple
+sRGB:#403459
+Linear:0.049, 0.03, 0.1
+ID: 32 Dino Light Brown
+sRGB:#FFE0BA
+Linear:1.0, 0.75, 0.5
+ID: 33 Dino Medium Brown
+sRGB:#948575
+Linear:0.3, 0.24, 0.18
+ID: 34 Dino Dark Brown
+sRGB:#594E41
+Linear:0.1, 0.075, 0.05
+ID: 35 Dino Darker Grey
+sRGB:#595959
+Linear:0.1, 0.1, 0.1
+ID: 36 Dino Albino
+sRGB:#FFFFFF
+Linear:1.75, 1.75, 1.75
+
+Notes: This color cannot be correctly represented in the sRGB color space. In game, it is 50% brighter than White.
+ID: 37 BigFoot0
+sRGB:#B79683
+Linear:0.48, 0.31, 0.231
+ID: 38 BigFoot4
+sRGB:#EADAD5
+Linear:0.825, 0.705, 0.668
+ID: 39 BigFoot5
+sRGB:#D0A794
+Linear:0.635, 0.393, 0.302
+ID: 40 WolfFur
+sRGB:#C3B39F
+Linear:0.555, 0.459, 0.352
+ID: 41 DarkWolfFur
+sRGB:#887666
+Linear:0.25, 0.185, 0.134
+ID: 42 DragonBase0
+sRGB:#A0664B
+Linear:0.36, 0.133, 0.067
+ID: 43 DragonBase1
+sRGB:#CB7956
+Linear:0.605, 0.193, 0.091
+ID: 44 DragonFire
+sRGB:#BC4F00
+Linear:0.51, 0.077, 0.0
+ID: 45 DragonGreen0
+sRGB:#79846C
+Linear:0.193, 0.235, 0.15
+ID: 46 DragonGreen1
+sRGB:#909C79
+Linear:0.286, 0.34, 0.192
+ID: 47 DragonGreen2
+sRGB:#A5A48B
+Linear:0.385, 0.375, 0.263
+ID: 48 DragonGreen3
+sRGB:#74939C
+Linear:0.177, 0.296, 0.34
+ID: 49 WyvernPurple0
+sRGB:#787496
+Linear:0.191, 0.175, 0.31
+ID: 50 WyvernPurple1
+sRGB:#B0A2C0
+Linear:0.442, 0.369, 0.535
+ID: 51 WyvernBlue0
+sRGB:#6281A7
+Linear:0.122, 0.224, 0.395
+ID: 52 WyvernBlue1
+sRGB:#485C75
+Linear:0.063, 0.107, 0.18
+ID: 53 Dino Medium Blue
+sRGB:#5FA4EA
+Linear:0.116, 0.38, 0.825
+ID: 54 Dino Deep Blue
+sRGB:#4568D4
+Linear:0.057, 0.139, 0.665
+ID: 55 NearWhite
+sRGB:#EDEDED
+Linear:0.85, 0.85, 0.85
+ID: 56 NearBlack
+sRGB:#515151
+Linear:0.08, 0.08, 0.08
+ID: 57 DarkTurquoise
+sRGB:#184546
+Linear:0.006, 0.056, 0.058
+ID: 58 MediumTurquoise
+sRGB:#007060
+Linear:0.0, 0.165, 0.117
+ID: 59 Turquoise
+sRGB:#00C5AB
+Linear:0.0, 0.565, 0.413
+ID: 60 GreenSlate
+sRGB:#40594C
+Linear:0.048, 0.1, 0.07
+ID: 61 Sage
+sRGB:#3E4F40
+Linear:0.045, 0.076, 0.048
+ID: 62 DarkWarmGray
+sRGB:#3B3938
+Linear:0.041, 0.037, 0.036
+ID: 63 MediumWarmGray
+sRGB:#585554
+Linear:0.098, 0.089, 0.086
+ID: 64 LightWarmGray
+sRGB:#9B9290
+Linear:0.332, 0.292, 0.283
+ID: 65 DarkCement
+sRGB:#525B56
+Linear:0.082, 0.105, 0.093
+ID: 66 LightCement
+sRGB:#8AA196
+Linear:0.258, 0.361, 0.309
+ID: 67 LightPink
+sRGB:#E8B0FF
+Linear:0.807, 0.44, 1.0
+ID: 68 DeepPink
+sRGB:#FF119A
+Linear:1.0, 0.003, 0.328
+ID: 69 DarkViolet
+sRGB:#730046
+Linear:0.175, 0.0, 0.06
+ID: 70 DarkMagenta
+sRGB:#B70042
+Linear:0.479, 0.0, 0.051
+ID: 71 BurntSienna
+sRGB:#7E331E
+Linear:0.212, 0.03, 0.009
+ID: 72 MediumAutumn
+sRGB:#A93000
+Linear:0.402, 0.026, 0.0
+ID: 73 Vermillion
+sRGB:#EF3100
+Linear:0.863, 0.027, 0.0
+ID: 74 Coral
+sRGB:#FF5834
+Linear:1.0, 0.098, 0.031
+ID: 75 Orange
+sRGB:#FF7F00
+Linear:1.0, 0.216, 0.0
+ID: 76 Peach
+sRGB:#FFA73A
+Linear:1.0, 0.392, 0.04
+ID: 77 LightAutumn
+sRGB:#AE7000
+Linear:0.429, 0.165, 0.0
+ID: 78 Mustard
+sRGB:#949427
+Linear:0.301, 0.301, 0.017
+ID: 79 ActualBlack
+sRGB:#171717
+Linear:0.005, 0.005, 0.005
+ID: 80 MidnightBlue
+sRGB:#191D36
+Linear:0.006, 0.009, 0.033
+ID: 81 DarkBlue
+sRGB:#152B3A
+Linear:0.004, 0.02, 0.038
+ID: 82 BlackSands
+sRGB:#302531
+Linear:0.026, 0.014, 0.027
+ID: 83 LemonLime
+sRGB:#A8FF44
+Linear:0.397, 1.0, 0.054
+ID: 84 Mint
+sRGB:#38E985
+Linear:0.036, 0.815, 0.238
+ID: 85 Jade
+sRGB:#008840
+Linear:0.0, 0.25, 0.048
+ID: 86 PineGreen
+sRGB:#0F552E
+Linear:0.002, 0.089, 0.023
+ID: 87 SpruceGreen
+sRGB:#005B45
+Linear:0.0, 0.105, 0.056
+ID: 88 LeafGreen
+sRGB:#5B9725
+Linear:0.105, 0.314, 0.014
+ID: 89 DarkLavender
+sRGB:#5E275F
+Linear:0.112, 0.017, 0.114
+ID: 90 MediumLavender
+sRGB:#853587
+Linear:0.238, 0.032, 0.246
+ID: 91 Lavender
+sRGB:#BD77BE
+Linear:0.515, 0.188, 0.521
+ID: 92 DarkTeal
+sRGB:#0E404A
+Linear:0.002, 0.048, 0.067
+ID: 93 MediumTeal
+sRGB:#105563
+Linear:0.002, 0.089, 0.125
+ID: 94 Teal
+sRGB:#14849C
+Linear:0.004, 0.235, 0.337
+ID: 95 PowderBlue
+sRGB:#82A7FF
+Linear:0.227, 0.392, 1.0
+ID: 96 Glacial
+sRGB:#ACEAFF
+Linear:0.418, 0.823, 1.0
+ID: 97 Cammo
+sRGB:#505118
+Linear:0.078, 0.08, 0.006
+ID: 98 DryMoss
+sRGB:#766E3F
+Linear:0.184, 0.159, 0.047
+ID: 99 Custard
+sRGB:#C0BD5E
+Linear:0.533, 0.515, 0.112
+ID: 100 Cream
+sRGB:#F4FFC0
+Linear:0.905, 1.0, 0.533
+ID: XX Forest Coloring
+sRGB:#006C00
+Linear:0.0, 0.15, 0.0
+
+ID: 128 Burn Coloring
+sRGB:#360000
+Linear:0.033, 0.0, 0.0
+ID: 129 Scab Coloring
+sRGB:#660000
+Linear:0.133, 0.0, 0.0
+ID: 130 Gore Coloring
+sRGB:#B20000
+Linear:0.451, 0.0, 0.0
+ID: 131 Red Coloring
+sRGB:#FF0000
+Linear:1.0, 0.0, 0.0
+ID: 132 Tulip Coloring
+sRGB:#FF7272
+Linear:1.0, 0.171, 0.171
+ID: 133 Salmon Coloring
+sRGB:#FFBEBE
+Linear:1.0, 0.521, 0.521
+ID: 134 Incense Coloring
+sRGB:#D88C8C
+Linear:0.694, 0.266, 0.266
+ID: 135 Edocha Coloring
+sRGB:#A55454
+Linear:0.381, 0.086, 0.086
+ID: 136 Bronze Coloring
+sRGB:#361F00
+Linear:0.033, 0.01, 0.0
+ID: 137 Terracotta Coloring
+sRGB:#663600
+Linear:0.133, 0.033, 0.0
+ID: 138 Windsor Coloring
+sRGB:#B25900
+Linear:0.451, 0.1, 0.0
+ID: 139 Orange Coloring
+sRGB:#FF7E00
+Linear:1.0, 0.212, 0.0
+ID: 140 Cantaloupe Coloring
+sRGB:#FFB872
+Linear:1.0, 0.485, 0.171
+ID: 141 Peach Coloring
+sRGB:#FFDEBE
+Linear:1.0, 0.738, 0.521
+ID: 142 Latte Coloring
+sRGB:#D8B28C
+Linear:0.694, 0.451, 0.266
+ID: 143 Dirt Coloring
+sRGB:#A57B54
+Linear:0.381, 0.202, 0.086
+ID: 144 Drab Coloring
+sRGB:#363600
+Linear:0.033, 0.033, 0.0
+ID: 145 Olive Coloring
+sRGB:#666600
+Linear:0.133, 0.133, 0.0
+ID: 146 Citron Coloring
+sRGB:#B1B200
+Linear:0.445, 0.451, 0.0
+ID: 147 Yellow Coloring
+sRGB:#FFFF00
+Linear:1.0, 1.0, 0.0
+ID: 148 Canary Coloring
+sRGB:#FFFF72
+Linear:1.0, 1.0, 0.171
+ID: 149 Buttermilk Coloring
+sRGB:#FFFFBE
+Linear:1.0, 1.0, 0.521
+ID: 150 Khaki Coloring
+sRGB:#D8D88C
+Linear:0.694, 0.694, 0.266
+ID: 151 Mold Coloring
+sRGB:#A5A554
+Linear:0.381, 0.381, 0.086
+ID: 152 Swamp Coloring
+sRGB:#1F3600
+Linear:0.01, 0.033, 0.0
+ID: 153 Avocado Coloring
+sRGB:#366600
+Linear:0.033, 0.133, 0.0
+ID: 154 Orc Coloring
+sRGB:#59B200
+Linear:0.1, 0.451, 0.0
+ID: 155 Chartreuse Coloring
+sRGB:#7FFF00
+Linear:0.216, 1.0, 0.0
+ID: 156 Menthol Coloring
+sRGB:#B8FF72
+Linear:0.485, 1.0, 0.171
+ID: 157 Nyanza Coloring
+sRGB:#DEFFBE
+Linear:0.738, 1.0, 0.521
+ID: 158 Putrescence Coloring
+sRGB:#B2D88C
+Linear:0.451, 0.694, 0.266
+ID: 159 Filth Coloring
+sRGB:#7BA554
+Linear:0.202, 0.381, 0.086
+ID: 160 Nori Coloring
+sRGB:#003600
+Linear:0.0, 0.033, 0.0
+ID: 161 Hunter Coloring
+sRGB:#006600
+Linear:0.0, 0.133, 0.0
+ID: 162 Emerald Coloring
+sRGB:#00B200
+Linear:0.0, 0.451, 0.0
+ID: 163 Green Coloring
+sRGB:#00FF00
+Linear:0.0, 1.0, 0.0
+ID: 164 Mint Coloring
+sRGB:#72FF72
+Linear:0.171, 1.0, 0.171
+ID: 165 Pistachio Coloring
+sRGB:#BEFFBE
+Linear:0.521, 1.0, 0.521
+ID: 166 Celadon Coloring
+sRGB:#8CD88C
+Linear:0.266, 0.694, 0.266
+ID: 167 Chateau Coloring
+sRGB:#54A554
+Linear:0.086, 0.381, 0.086
+ID: 168 Jungle Coloring
+sRGB:#003620
+Linear:0.0, 0.033, 0.01
+ID: 169 Forest Coloring
+sRGB:#006636
+Linear:0.0, 0.133, 0.033
+ID: 170 Lagoon Coloring
+sRGB:#00B259
+Linear:0.0, 0.451, 0.1
+ID: 171 Spring Coloring
+sRGB:#00FF7F
+Linear:0.0, 1.0, 0.216
+ID: 172 Aquamarine Coloring
+sRGB:#72FFB8
+Linear:0.171, 1.0, 0.485
+ID: 173 Seafoam Coloring
+sRGB:#BEFFDE
+Linear:0.521, 1.0, 0.738
+ID: 174 Turquoise Coloring
+sRGB:#8CD8B2
+Linear:0.266, 0.694, 0.451
+ID: 175 Shamrock Coloring
+sRGB:#54A57B
+Linear:0.086, 0.381, 0.202
+ID: 176 Mariana Coloring
+sRGB:#003636
+Linear:0.0, 0.033, 0.033
+ID: 177 Skobeloff Coloring
+sRGB:#006666
+Linear:0.0, 0.133, 0.133
+ID: 178 Teal Coloring
+sRGB:#00B2B2
+Linear:0.0, 0.451, 0.451
+ID: 179 Cyan Coloring
+sRGB:#00FFFF
+Linear:0.0, 1.0, 1.0
+ID: 180 Electricity Coloring
+sRGB:#72FFFF
+Linear:0.171, 1.0, 1.0
+ID: 181 Celeste Coloring
+sRGB:#BEFFFF
+Linear:0.521, 1.0, 1.0
+ID: 182 Crystal Coloring
+sRGB:#8CD8D8
+Linear:0.266, 0.694, 0.694
+ID: 183 Ocean Coloring
+sRGB:#54A5A5
+Linear:0.086, 0.381, 0.381
+ID: 184 Cetecean Coloring
+sRGB:#002036
+Linear:0.0, 0.01, 0.033
+ID: 185 Prussian Coloring
+sRGB:#003666
+Linear:0.0, 0.033, 0.133
+ID: 186 Sapphire Coloring
+sRGB:#0059B2
+Linear:0.0, 0.1, 0.451
+ID: 187 Azure Coloring
+sRGB:#007EFF
+Linear:0.0, 0.212, 1.0
+ID: 188 Babyblue Coloring
+sRGB:#72B8FF
+Linear:0.171, 0.485, 1.0
+ID: 189 Cornflower Coloring
+sRGB:#BEDEFF
+Linear:0.521, 0.738, 1.0
+ID: 190 Overcast Coloring
+sRGB:#8BB1D8
+Linear:0.262, 0.445, 0.694
+ID: 191 Moonstone Coloring
+sRGB:#547BA5
+Linear:0.086, 0.202, 0.381
+ID: 192 Midnight Coloring
+sRGB:#000036
+Linear:0.0, 0.0, 0.033
+ID: 193 Navy Coloring
+sRGB:#000066
+Linear:0.0, 0.0, 0.133
+ID: 194 Cobalt Coloring
+sRGB:#0000B2
+Linear:0.0, 0.0, 0.451
+ID: 195 Blue Coloring
+sRGB:#0000FF
+Linear:0.0, 0.0, 1.0
+ID: 196 Denim Coloring
+sRGB:#7272FF
+Linear:0.171, 0.171, 1.0
+ID: 197 Ice Coloring
+sRGB:#BEBEFF
+Linear:0.521, 0.521, 1.0
+ID: 198 Frost Coloring
+sRGB:#8B8BD8
+Linear:0.262, 0.262, 0.694
+ID: 199 Deepfreeze Coloring
+sRGB:#5454A5
+Linear:0.086, 0.086, 0.381
+ID: 200 Twilight Coloring
+sRGB:#1F0036
+Linear:0.01, 0.0, 0.033
+ID: 201 Eminence Coloring
+sRGB:#360066
+Linear:0.033, 0.0, 0.133
+ID: 202 Indigo Coloring
+sRGB:#5900B2
+Linear:0.1, 0.0, 0.451
+ID: 203 Violet Coloring
+sRGB:#7F00FF
+Linear:0.216, 0.0, 1.0
+ID: 204 Lilac Coloring
+sRGB:#B872FF
+Linear:0.485, 0.171, 1.0
+ID: 205 Lavender Coloring
+sRGB:#DEBEFF
+Linear:0.738, 0.521, 1.0
+ID: 206 Mauve Coloring
+sRGB:#B28CD8
+Linear:0.451, 0.266, 0.694
+ID: 207 Royalty Coloring
+sRGB:#7B54A5
+Linear:0.202, 0.086, 0.381
+ID: 208 Eggplant Coloring
+sRGB:#360036
+Linear:0.033, 0.0, 0.033
+ID: 209 Plum Coloring
+sRGB:#660066
+Linear:0.133, 0.0, 0.133
+ID: 210 Purple Coloring
+sRGB:#B100B2
+Linear:0.445, 0.0, 0.451
+ID: 211 Magenta Coloring
+sRGB:#FF00FF
+Linear:1.0, 0.0, 1.0
+ID: 212 Pink Coloring
+sRGB:#FF72FF
+Linear:1.0, 0.171, 1.0
+ID: 213 Cottoncandy Coloring
+sRGB:#FFBEFF
+Linear:1.0, 0.521, 1.0
+ID: 214 Orchid Coloring
+sRGB:#D88CD8
+Linear:0.694, 0.266, 0.694
+ID: 215 Bruise Coloring
+sRGB:#A554A5
+Linear:0.381, 0.086, 0.381
+ID: 216 Raisin Coloring
+sRGB:#36001F
+Linear:0.033, 0.0, 0.01
+ID: 217 Tyrian Coloring
+sRGB:#660036
+Linear:0.133, 0.0, 0.033
+ID: 218 Lust Coloring
+sRGB:#B20059
+Linear:0.451, 0.0, 0.1
+ID: 219 Fuschia Coloring
+sRGB:#FF007E
+Linear:1.0, 0.0, 0.212
+ID: 220 Flamingo Coloring
+sRGB:#FF72B8
+Linear:1.0, 0.171, 0.485
+ID: 221 Valentine Coloring
+sRGB:#FFBEDE
+Linear:1.0, 0.521, 0.738
+ID: 222 Kobi Coloring
+sRGB:#D88CB2
+Linear:0.694, 0.266, 0.451
+ID: 223 Rouge Coloring
+sRGB:#A5547B
+Linear:0.381, 0.086, 0.202
+ID: 224 Black Coloring
+sRGB:#1F1F1F
+Linear:0.01, 0.01, 0.01
+ID: 225 Shadow Coloring
+sRGB:#363636
+Linear:0.033, 0.033, 0.033
+ID: 226 Charcoal Coloring
+sRGB:#4E4E4E
+Linear:0.074, 0.074, 0.074
+ID: 227 Gunmetal Coloring
+sRGB:#666666
+Linear:0.133, 0.133, 0.133
+ID: 228 Slate Coloring
+sRGB:#7F7F7F
+Linear:0.216, 0.216, 0.216
+ID: 229 Steel Coloring
+sRGB:#989898
+Linear:0.319, 0.319, 0.319
+ID: 230 Grey Coloring
+sRGB:#B2B2B2
+Linear:0.451, 0.451, 0.451
+ID: 231 Silver Coloring
+sRGB:#CBCBCB
+Linear:0.604, 0.604, 0.604
+ID: 232 Wisp Coloring
+sRGB:#E6E6E6
+Linear:0.791, 0.791, 0.791
+ID: 233 White Coloring
+sRGB:#FFFFFF
+Linear:1.0, 1.0, 1.0
+ID: 234 Mud Coloring
+sRGB:#423726
+Linear:0.051, 0.035, 0.016
+ID: 235 Bark Coloring
+sRGB:#594828
+Linear:0.1, 0.063, 0.018
+ID: 236 Brown Coloring
+sRGB:#7F6430
+Linear:0.216, 0.127, 0.026
+ID: 237 Leather Coloring
+sRGB:#98813F
+Linear:0.319, 0.223, 0.047
+ID: 238 Camel Coloring
+sRGB:#B29B59
+Linear:0.451, 0.332, 0.1
+ID: 239 Tan Coloring
+sRGB:#CBB166
+Linear:0.604, 0.445, 0.133
+ID: 240 Sand Coloring
+sRGB:#E6C872
+Linear:0.791, 0.584, 0.171
+ID: 241 Parchment Coloring
+sRGB:#FFEFBE
+Linear:1.0, 0.863, 0.521
+ID: 242 Cream Coloring
+sRGB:#F5F5DB
+Linear:0.913, 0.913, 0.716
+ID: 243 Brick Coloring
+sRGB:#98452A
+Linear:0.319, 0.056, 0.019
+ID: 244 Tangerine Coloring
+sRGB:#FFA328
+Linear:1.0, 0.371, 0.018
+ID: 245 Gold Coloring
+sRGB:#FFBF00
+Linear:1.0, 0.527, 0.0
+ID: 246 Mustard Coloring
+sRGB:#F0F035
+Linear:0.871, 0.871, 0.032
+ID: 247 Craggy-Dew Coloring
+sRGB:#B2E919
+Linear:0.451, 0.815, 0.006
+ID: 248 Grass Coloring
+sRGB:#277233
+Linear:0.016, 0.171, 0.03
+ID: 249 Stream Coloring
+sRGB:#2EC5B5
+Linear:0.023, 0.565, 0.468
+ID: 250 Marine Coloring
+sRGB:#007088
+Linear:0.0, 0.165, 0.25
+ID: 251 Haze Coloring
+sRGB:#545871
+Linear:0.086, 0.098, 0.168
+ID: 252 Dusk Coloring
+sRGB:#8E4FA4
+Linear:0.275, 0.076, 0.376
+ID: 253 Thistle Coloring
+sRGB:#E6C2DC
+Linear:0.791, 0.546, 0.723
+ID: 254 Bubblegum Coloring
+sRGB:#FFBECE
+Linear:1.0, 0.521, 0.624
