@@ -39,10 +39,10 @@ const LIFE_STAGE_LABELS: Record<string, string> = {
 const COMPANION_IMAGES: Record<string, string> = {
   parasaur: '/assets/Creatures/parasaur_character.png',
   dilo: '/assets/Creatures/dilo_character.png',
-  trike: '/assets/Creatures/Raptor_Adult.png',
-  ptera: '/assets/Creatures/Raptor_Adult.png',
+  trike: '/assets/Creatures/trike_character.png',
+  ptera: '/assets/Creatures/ptera_character.png',
   raptor: '/assets/Creatures/Raptor_Adult.png',
-  rex: '/assets/Creatures/Raptor_Adult.png',
+  rex: '/assets/Creatures/rex_character.png',
 };
 
 function CareMeter({ label, value, color }: { label: string; value: number; color: string }) {
