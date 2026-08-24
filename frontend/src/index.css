@@ -25,7 +25,7 @@
   /* Semantic */
   --color-text: var(--color-stone);
   --color-text-muted: #888;
-  --color-border: #2a2a4e;
+  --color-border: #2a4e3a;           /* Forest green border */
   --color-bg-primary: #006C00;        /* Forest Coloring — ARK deep green */
   --color-bg-card: #1a3e2a;          /* ARK Dark Green - card background */
   --color-bg-card-hover: #2a5e3e;    /* Hunter green hover */
