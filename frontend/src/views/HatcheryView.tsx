@@ -74,7 +74,9 @@ export function HatcheryView() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [tutorialStep, setTutorialStep] = useState(0);
-  const [showTutorial, setShowTutorial] = useState(true);
+  const [showTutorial, setShowTutorial] = useState(() => {
+    return localStorage.getItem('tutorial-done') !== 'true';
+  });
   const [now, setNow] = useState(Date.now());
   const sessionToken = useAuthStore((s) => s.sessionToken);
   const mountedRef = useRef(true);

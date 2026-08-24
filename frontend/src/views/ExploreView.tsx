@@ -12,11 +12,27 @@ interface Biome {
 
 interface Expedition {
   uuid: string;
+  companion_uuid: string;
   biome_zone: string;
   dispatched_at: string;
   returns_at: string;
   status: string;
   risk_level: number;
+  result?: {
+    success: boolean;
+    dust_gained: number;
+    companion_injured: boolean;
+    oracle_fragment_found: boolean;
+    encounter_story: string;
+    bond_change: number;
+    resources_gained: string[];
+  };
+}
+
+interface Companion {
+  uuid: string;
+  species: string;
+  current_state: string;
 }
 
 const BIOMES: Biome[] = [
@@ -40,7 +56,10 @@ export function ExploreView() {
   const [duration, setDuration] = useState<string>('2h');
   const [dispatchMsg, setDispatchMsg] = useState<string | null>(null);
   const [expeditions, setExpeditions] = useState<Expedition[]>([]);
+  const [history, setHistory] = useState<Expedition[]>([]);
+  const [companions, setCompanions] = useState<Companion[]>([]);
   const [loading, setLoading] = useState(false);
+  const [now, setNow] = useState(Date.now());
   const sessionToken = useAuthStore((s) => s.sessionToken);
   const mountedRef = useRef(true);
 
@@ -51,6 +70,12 @@ export function ExploreView() {
     };
   }, []);
 
+  // Timer for countdown
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
   const fetchExpeditions = async () => {
     if (!sessionToken) return;
     try {
@@ -59,60 +84,80 @@ export function ExploreView() {
       });
       if (!response.ok) return;
       const data = await response.json();
-      if (mountedRef.current) {
-        setExpeditions(data);
-      }
+      if (mountedRef.current) setExpeditions(data);
     } catch (err) {
       console.error('Failed to fetch expeditions:', err);
     }
   };
 
+  const fetchHistory = async () => {
+    if (!sessionToken) return;
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/expeditions/history`, {
+        headers: { Authorization: `Bearer ${sessionToken}` },
+      });
+      if (!response.ok) return;
+      const data = await response.json();
+      if (mountedRef.current) setHistory(data);
+    } catch (err) {
+      console.error('Failed to fetch history:', err);
+    }
+  };
+
+  const fetchCompanions = async () => {
+    if (!sessionToken) return;
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/companions`, {
+        headers: { Authorization: `Bearer ${sessionToken}` },
+      });
+      if (!response.ok) return;
+      const data = await response.json();
+      if (mountedRef.current) setCompanions(data);
+    } catch (err) {
+      console.error('Failed to fetch companions:', err);
+    }
+  };
+
   useEffect(() => {
     fetchExpeditions();
+    fetchHistory();
+    fetchCompanions();
   }, [sessionToken]);
 
   const handleDispatch = async () => {
     if (!sessionToken || !selectedBiome || loading) return;
-    
-    if (mountedRef.current) setLoading(true);
-    if (mountedRef.current) setDispatchMsg(null);
-    
+
+    setLoading(true);
+    setDispatchMsg(null);
+
     try {
-      // Get first available companion
-      const companionsResp = await fetch(`${import.meta.env.VITE_API_URL}/api/companions`, {
-        headers: { Authorization: `Bearer ${sessionToken}` },
-      });
-      if (!companionsResp.ok) {
-        if (mountedRef.current) setDispatchMsg('Failed to fetch companions');
-        if (mountedRef.current) setLoading(false);
+      const availableCompanions = companions.filter(c => c.current_state !== 'on_expedition');
+      if (availableCompanions.length === 0) {
+        setDispatchMsg('No companions available (all on expedition)');
+        setLoading(false);
         return;
       }
-      const companions = await companionsResp.json();
-      if (!companions || companions.length === 0) {
-        if (mountedRef.current) setDispatchMsg('No companions available');
-        if (mountedRef.current) setLoading(false);
-        return;
-      }
-      
-      const companionUuid = companions[0].uuid;
-      
+
+      const companionUuid = availableCompanions[0].uuid;
+
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/expeditions/dispatch`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${sessionToken}` },
         body: JSON.stringify({ companion_uuid: companionUuid, biome_zone: selectedBiome, duration_hours: duration }),
       });
-      
+
       if (!mountedRef.current) return;
-      
+
       if (response.ok) {
-        if (mountedRef.current) setDispatchMsg('Expedition dispatched!');
+        setDispatchMsg('Expedition dispatched!');
         await fetchExpeditions();
+        await fetchCompanions();
       } else {
         try {
           const err = await response.json();
-          if (mountedRef.current) setDispatchMsg(err.detail || 'Dispatch failed');
+          setDispatchMsg(err.detail || 'Dispatch failed');
         } catch {
-          if (mountedRef.current) setDispatchMsg('Dispatch failed');
+          setDispatchMsg('Dispatch failed');
         }
       }
     } catch (err) {
@@ -122,6 +167,46 @@ export function ExploreView() {
       if (mountedRef.current) setLoading(false);
     }
   };
+
+  const handleCollect = async (expeditionUuid: string) => {
+    if (!sessionToken) return;
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/expeditions/${expeditionUuid}/collect`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${sessionToken}` },
+      });
+
+      if (!mountedRef.current) return;
+
+      if (response.ok) {
+        await fetchExpeditions();
+        await fetchHistory();
+        await fetchCompanions();
+      } else {
+        try {
+          const err = await response.json();
+          setDispatchMsg(err.detail || 'Collect failed');
+        } catch {
+          setDispatchMsg('Collect failed');
+        }
+      }
+    } catch (err) {
+      console.error('Collect error:', err);
+      if (mountedRef.current) setDispatchMsg('Network error');
+    }
+  };
+
+  const getCountdown = (returnsAt: string) => {
+    const diff = new Date(returnsAt).getTime() - now;
+    if (diff <= 0) return 'Ready!';
+    const hours = Math.floor(diff / 3600000);
+    const minutes = Math.floor((diff % 3600000) / 60000);
+    const seconds = Math.floor((diff % 60000) / 1000);
+    return `${hours}h ${minutes}m ${seconds}s`;
+  };
+
+  const isReady = (returnsAt: string) => new Date(returnsAt).getTime() <= now;
 
   const selected = BIOMES.find(b => b.zone_id === selectedBiome);
 
@@ -181,9 +266,30 @@ export function ExploreView() {
           <h3>Active Expeditions</h3>
           {expeditions.map(exp => (
             <div key={exp.uuid} className="expedition-row">
+              <div className="expedition-info">
+                <span className="expedition-biome">{exp.biome_zone}</span>
+                <span className="expedition-countdown">{getCountdown(exp.returns_at)}</span>
+              </div>
+              {isReady(exp.returns_at) ? (
+                <button className="btn-primary collect-btn" onClick={() => handleCollect(exp.uuid)}>
+                  Collect
+                </button>
+              ) : (
+                <span className="expedition-status">Exploring...</span>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {history.length > 0 && (
+        <div className="history-panel">
+          <h3>Expedition History</h3>
+          {history.slice(0, 5).map(exp => (
+            <div key={exp.uuid} className="history-row">
               <span>{exp.biome_zone}</span>
-              <span>{exp.status}</span>
-              <span>{new Date(exp.returns_at).toLocaleTimeString()}</span>
+              <span>{exp.result?.success ? 'Success' : 'Failed'}</span>
+              <span>+{exp.result?.dust_gained || 0} dust</span>
             </div>
           ))}
         </div>
