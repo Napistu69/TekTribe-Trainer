@@ -11,7 +11,8 @@ export function AppShell() {
   const tabs = [
     { id: 'map', label: 'Map', image: '/assets/Habitat & Camp/habitat.png', path: '/' },
     { id: 'hatchery', label: 'Hatchery', image: '/assets/Habitat & Camp/hatchery.png', path: '/hatchery' },
-    { id: 'camp', label: 'Camp', image: '/assets/Habitat & Camp/nursery.png', path: '/camp' },
+    { id: 'nursery', label: 'Nursery', image: '/assets/Habitat & Camp/nursery.png', path: '/nursery' },
+    { id: 'camp', label: 'Camp', image: '/assets/Habitat & Camp/camp_bg.jpg', path: '/camp' },
     { id: 'training', label: 'Training', image: '/assets/Habitat & Camp/habitat.png', path: '/training' },
     { id: 'explore', label: 'Explore', image: '/assets/Habitat & Camp/expedition_gate.png', path: '/explore' },
     { id: 'overseer', label: 'Overseer', image: '/assets/Overseer & Lore/overseer.png', path: '/overseer' },

@@ -5,6 +5,7 @@ import { registerServiceWorker } from './service-worker-registration';
 import { OverseerDialog } from './components/overseer/OverseerDialog';
 import { HatcheryView } from './views/HatcheryView';
 import { CampView } from './views/CampView';
+import { NurseryView } from './views/NurseryView';
 import { TrainingView } from './views/TrainingView';
 import { ExploreView } from './views/ExploreView';
 import { OverseerView } from './views/OverseerView';
@@ -43,6 +44,7 @@ function App() {
           <Route index element={<MapView />} />
           <Route path="hatchery" element={<HatcheryView />} />
           <Route path="camp" element={<CampView />} />
+          <Route path="nursery" element={<NurseryView />} />
           <Route path="training" element={<TrainingView />} />
           <Route path="explore" element={<ExploreView />} />
           <Route path="overseer" element={<OverseerView />} />

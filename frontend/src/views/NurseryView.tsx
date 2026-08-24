@@ -68,7 +68,7 @@ function CareMeter({ label, value, color }: { label: string; value: number; colo
   );
 }
 
-export function CampView() {
+export function NurseryView() {
   const [companion, setCompanion] = useState<Companion | null>(null);
   const [selectedCompanion, setSelectedCompanion] = useState<string | null>(null);
   const [companions, setCompanions] = useState<Companion[]>([]);
@@ -94,17 +94,17 @@ export function CampView() {
       const data = await response.json();
       if (!mountedRef.current) return;
 
-      // Filter to adult and elder only
-      const campCompanions = data.filter((c: Companion) =>
-        c.life_stage === 'adult' || c.life_stage === 'elder'
+      // Filter to hatchlings and juveniles only
+      const nurseryCompanions = data.filter((c: Companion) =>
+        c.life_stage === 'hatchling' || c.life_stage === 'juvenile'
       );
 
-      setCompanions(campCompanions);
-      if (campCompanions.length > 0) {
+      setCompanions(nurseryCompanions);
+      if (nurseryCompanions.length > 0) {
         if (!selectedCompanion) {
-          setSelectedCompanion(campCompanions[0].uuid);
+          setSelectedCompanion(nurseryCompanions[0].uuid);
         }
-        setCompanion(campCompanions[0]);
+        setCompanion(nurseryCompanions[0]);
       }
     } catch (err) {
       console.error('Failed to fetch companions:', err);
@@ -157,55 +157,49 @@ export function CampView() {
 
   if (!companion) {
     return (
-      <div className="camp-view">
-        <h1>Camp</h1>
-        <div className="empty-camp">
-          <p>No adult companions yet. Raise a companion to adulthood to unlock the camp!</p>
+      <div className="nursery-view">
+        <h1>Nursery</h1>
+        <div className="empty-nursery">
+          <p>No hatchlings or juveniles yet. Hatch an egg to get started!</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="camp-view">
-      <div className="camp-background">
-        <img
-          src="/assets/Habitat & Camp/camp_bg.jpg"
-          alt="Camp"
-          className="camp-bg-image"
-        />
-        <div className="camp-dino-stage">
+    <div className="nursery-view">
+      <h1>Nursery</h1>
+
+      {message && <div className="game-message">{message}</div>}
+
+      <div className="companion-selector">
+        {companions.map(c => (
+          <button
+            key={c.uuid}
+            className={`companion-tab ${selectedCompanion === c.uuid ? 'active' : ''}`}
+            onClick={() => setSelectedCompanion(c.uuid)}
+          >
+            {c.species}
+          </button>
+        ))}
+      </div>
+
+      <div className="companion-display">
+        <div className="companion-visual">
           <img
             src={COMPANION_IMAGES[companion.species] || COMPANION_IMAGES.raptor}
             alt={companion.species}
-            className="camp-dino-image"
-            style={{ transform: `scale(${COMPANION_SCALE[companion.species] || 1})` }}
+            className="companion-image"
+            style={{ transform: `scale(${COMPANION_SCALE[companion.species] || 1})`, opacity: loading ? 0.5 : 1 }}
           />
-        </div>
-      </div>
-
-      <div className="camp-info-panel">
-        {message && <div className="game-message">{message}</div>}
-
-        <div className="companion-selector">
-          {companions.map(c => (
-            <button
-              key={c.uuid}
-              className={`companion-tab ${selectedCompanion === c.uuid ? 'active' : ''}`}
-              onClick={() => setSelectedCompanion(c.uuid)}
-            >
-              {c.species}
-            </button>
-          ))}
-        </div>
-
-        <div className="companion-info">
-          <h2>{companion.name || companion.species}</h2>
-          <span className="life-stage">{LIFE_STAGE_LABELS[companion.life_stage]}</span>
-          <div className="bond-bar">
-            <span>Bond: {companion.bond_level}/1000</span>
-            <div className="meter">
-              <div className="meter-fill" style={{ width: `${(companion.bond_level / 1000) * 100}%` }} />
+          <div className="companion-info">
+            <h2>{companion.name || companion.species}</h2>
+            <span className="life-stage">{LIFE_STAGE_LABELS[companion.life_stage]}</span>
+            <div className="bond-bar">
+              <span>Bond: {companion.bond_level}/1000</span>
+              <div className="meter">
+                <div className="meter-fill" style={{ width: `${(companion.bond_level / 1000) * 100}%` }} />
+              </div>
             </div>
           </div>
         </div>
