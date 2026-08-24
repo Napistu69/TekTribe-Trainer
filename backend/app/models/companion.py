@@ -34,7 +34,7 @@ class Companion(Base):
     life_stage: Mapped[str] = mapped_column(String(20), default="hatchling")
     maturation_progress: Mapped[float] = mapped_column(Float, default=0.0)
 
-    # Stats (ARK-adjacent)
+    # Stats (game-adjacent)
     base_stats: Mapped[dict] = mapped_column(JSONB, default={})
     mutated_stats: Mapped[dict] = mapped_column(JSONB, default={})
 

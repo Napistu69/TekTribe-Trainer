@@ -18,7 +18,7 @@ async def generate_hidden_potential() -> float:
 def generate_base_stats(species: str) -> dict:
     """Generate base stats for a creature based on species.
     
-    Returns ARK-adjacent stats: health, stamina, strength, speed, intelligence, bond_affinity.
+    Returns game-adjacent stats: health, stamina, strength, speed, intelligence, bond_affinity.
     """
     # Species-specific base stat templates
     templates = {

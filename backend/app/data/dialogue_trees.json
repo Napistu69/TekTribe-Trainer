@@ -12,7 +12,7 @@
       {
         "id": "welcome_2",
         "speaker": "Overseer",
-        "text": "The Tek has slept long in the earth. Now it stirs. You will bond with creatures of the old world — companions who carry the memory of the ARKs within them.",
+        "text": "The Tek has slept long in the earth. Now it stirs. You will bond with creatures of the old world — companions who carry the memory of the worlds within them.",
         "choices": [{"text": "How do I begin?", "next": "welcome_3"}]
       },
       {

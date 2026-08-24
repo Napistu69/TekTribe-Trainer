@@ -68,12 +68,12 @@
     {
       "zone_id": "the_threshold",
       "name": "The Threshold",
-      "theme": "The space between ARKs",
+      "theme": "The space between worlds",
       "description": "A liminal space between worlds, filled with legacy fragments and rescue signals.",
       "base_risk": 0.6,
       "base_dust_reward": 75,
       "duration_multipliers": {"2h": 1.0, "6h": 2.5, "12h": 4.0, "24h": 6.0},
-      "resources": ["legacy_fragments", "rescue_signals", "arkport_materials"],
+      "resources": ["legacy_fragments", "rescue_signals", "portal_materials"],
       "encounter_types": ["rescue_encounters", "dimensional_anomalies", "legacy_memories"],
       "compendium_fragments": ["master_weave_1", "master_weave_2", "master_weave_prophecy"],
       "in_phase1": false

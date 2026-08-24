@@ -25,7 +25,7 @@ const BIOMES: Biome[] = [
   { zone_id: 'stonecrest', name: 'Stonecrest', description: 'Endurance and perspective in the mountains', resources: ['Minerals', 'Shard precursors'], risk_level: 0.5, in_phase1: false },
   { zone_id: 'emberfall', name: 'Emberfall', description: 'Transformation and danger in the volcanic zone', resources: ['Rare minerals', 'Cuboid shards'], risk_level: 0.7, in_phase1: false },
   { zone_id: 'tek_ruins', name: 'Tek-Ruins', description: 'Memory and the Oracle in ancient ruins', resources: ['Oracle fragments', 'Data crystals'], risk_level: 0.8, in_phase1: false },
-  { zone_id: 'threshold', name: 'The Threshold', description: 'The space between ARKs', resources: ['Legacy fragments', 'Rescue signals'], risk_level: 0.9, in_phase1: false },
+  { zone_id: 'threshold', name: 'The Threshold', description: 'The space between worlds', resources: ['Legacy fragments', 'Rescue signals'], risk_level: 0.9, in_phase1: false },
 ];
 
 const DURATION_OPTIONS = [
