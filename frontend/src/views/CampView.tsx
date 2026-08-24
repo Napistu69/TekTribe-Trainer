@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuthStore } from '../stores/authStore';
 
 interface Companion {
@@ -75,6 +75,14 @@ export function CampView() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const sessionToken = useAuthStore((s) => s.sessionToken);
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   const fetchCompanions = async () => {
     if (!sessionToken) return;
@@ -82,15 +90,16 @@ export function CampView() {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/companions`, {
         headers: { Authorization: `Bearer ${sessionToken}` },
       });
-      if (response.ok) {
-        const data = await response.json();
-        setCompanions(data);
-        if (data.length > 0) {
-          if (!selectedCompanion) {
-            setSelectedCompanion(data[0].uuid);
-          }
-          setCompanion(data[0]);
+      if (!response.ok) return;
+      const data = await response.json();
+      if (!mountedRef.current) return;
+      
+      setCompanions(data);
+      if (data.length > 0) {
+        if (!selectedCompanion) {
+          setSelectedCompanion(data[0].uuid);
         }
+        setCompanion(data[0]);
       }
     } catch (err) {
       console.error('Failed to fetch companions:', err);
@@ -109,56 +118,37 @@ export function CampView() {
   }, [selectedCompanion, companions]);
 
   const handleCareAction = async (action: string) => {
-    if (!sessionToken || !selectedCompanion) return;
+    if (!sessionToken || !selectedCompanion || loading) return;
+    
     setLoading(true);
     setMessage(null);
+    
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/care/${selectedCompanion}/${action}`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${sessionToken}` },
       });
+      
+      if (!mountedRef.current) return;
+      
       if (response.ok) {
         setMessage(`${action} successful!`);
         await fetchCompanions();
       } else {
-        const err = await response.json();
-        setMessage(err.detail || 'Care action failed');
+        try {
+          const err = await response.json();
+          setMessage(err.detail || 'Care action failed');
+        } catch {
+          setMessage('Care action failed');
+        }
       }
     } catch (err) {
-      setMessage('Network error');
+      console.error('Care action error:', err);
+      if (mountedRef.current) setMessage('Network error');
     } finally {
-      setLoading(false);
+      if (mountedRef.current) setLoading(false);
     }
   };
-
-  // Show loading overlay instead of blank screen
-  if (loading) {
-    return (
-      <div className="camp-view">
-        <h1>Camp</h1>
-        <div className="loading-overlay">
-          <p>Performing action...</p>
-        </div>
-        {/* Keep rendering current companion if available */}
-        {companion && (
-          <div className="companion-display">
-            <div className="companion-visual">
-              <img
-                src={COMPANION_IMAGES[companion.species] || COMPANION_IMAGES.raptor}
-                alt={companion.species}
-                className="companion-image"
-                style={{ transform: `scale(${COMPANION_SCALE[companion.species] || 1})`, opacity: 0.5 }}
-              />
-              <div className="companion-info">
-                <h2>{companion.name || companion.species}</h2>
-                <span className="life-stage">{LIFE_STAGE_LABELS[companion.life_stage]}</span>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  }
 
   if (!companion) {
     return (
@@ -195,7 +185,7 @@ export function CampView() {
             src={COMPANION_IMAGES[companion.species] || COMPANION_IMAGES.raptor}
             alt={companion.species}
             className="companion-image"
-            style={{ transform: `scale(${COMPANION_SCALE[companion.species] || 1})` }}
+            style={{ transform: `scale(${COMPANION_SCALE[companion.species] || 1})`, opacity: loading ? 0.5 : 1 }}
           />
           <div className="companion-info">
             <h2>{companion.name || companion.species}</h2>

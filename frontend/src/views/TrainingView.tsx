@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useAuthStore } from '../stores/authStore';
 
 interface MiniGame {
@@ -37,28 +37,52 @@ export function TrainingView() {
   const [training, setTraining] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const sessionToken = useAuthStore((s) => s.sessionToken);
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   const handleTrain = async (gameId: string) => {
-    if (!sessionToken) return;
-    setTraining(true);
-    setMessage(null);
+    if (!sessionToken || !gameId || training) return;
+    
+    if (mountedRef.current) setTraining(true);
+    if (mountedRef.current) setMessage(null);
+    
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/training/submit`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${sessionToken}` },
         body: JSON.stringify({ minigame_id: gameId, score: Math.floor(Math.random() * 100) }),
       });
+      
+      if (!mountedRef.current) return;
+      
       if (response.ok) {
-        const result = await response.json();
-        setMessage(`Training complete! +${result.bond_gained} bond, +${result.dust_earned} dust`);
+        try {
+          const result = await response.json();
+          if (mountedRef.current) {
+            setMessage(`Training complete! +${result.bond_gained} bond, +${result.dust_earned} dust`);
+          }
+        } catch {
+          if (mountedRef.current) setMessage('Training complete!');
+        }
       } else {
-        const err = await response.json();
-        setMessage(err.detail || 'Training failed');
+        try {
+          const err = await response.json();
+          if (mountedRef.current) setMessage(err.detail || 'Training failed');
+        } catch {
+          if (mountedRef.current) setMessage('Training failed');
+        }
       }
     } catch (err) {
-      setMessage('Network error');
+      console.error('Training error:', err);
+      if (mountedRef.current) setMessage('Network error');
     } finally {
-      setTraining(false);
+      if (mountedRef.current) setTraining(false);
     }
   };
 

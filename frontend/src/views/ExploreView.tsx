@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuthStore } from '../stores/authStore';
 
 interface Biome {
@@ -40,7 +40,16 @@ export function ExploreView() {
   const [duration, setDuration] = useState<string>('2h');
   const [dispatchMsg, setDispatchMsg] = useState<string | null>(null);
   const [expeditions, setExpeditions] = useState<Expedition[]>([]);
+  const [loading, setLoading] = useState(false);
   const sessionToken = useAuthStore((s) => s.sessionToken);
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   const fetchExpeditions = async () => {
     if (!sessionToken) return;
@@ -48,8 +57,9 @@ export function ExploreView() {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/expeditions/active`, {
         headers: { Authorization: `Bearer ${sessionToken}` },
       });
-      if (response.ok) {
-        const data = await response.json();
+      if (!response.ok) return;
+      const data = await response.json();
+      if (mountedRef.current) {
         setExpeditions(data);
       }
     } catch (err) {
@@ -62,22 +72,36 @@ export function ExploreView() {
   }, [sessionToken]);
 
   const handleDispatch = async () => {
-    if (!sessionToken || !selectedBiome) return;
+    if (!sessionToken || !selectedBiome || loading) return;
+    
+    if (mountedRef.current) setLoading(true);
+    if (mountedRef.current) setDispatchMsg(null);
+    
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/expeditions/dispatch`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${sessionToken}` },
         body: JSON.stringify({ companion_uuid: 'default', biome_zone: selectedBiome, duration_hours: duration }),
       });
+      
+      if (!mountedRef.current) return;
+      
       if (response.ok) {
-        setDispatchMsg('Expedition dispatched!');
+        if (mountedRef.current) setDispatchMsg('Expedition dispatched!');
         await fetchExpeditions();
       } else {
-        const err = await response.json();
-        setDispatchMsg(err.detail || 'Dispatch failed');
+        try {
+          const err = await response.json();
+          if (mountedRef.current) setDispatchMsg(err.detail || 'Dispatch failed');
+        } catch {
+          if (mountedRef.current) setDispatchMsg('Dispatch failed');
+        }
       }
     } catch (err) {
-      setDispatchMsg('Network error');
+      console.error('Dispatch error:', err);
+      if (mountedRef.current) setDispatchMsg('Network error');
+    } finally {
+      if (mountedRef.current) setLoading(false);
     }
   };
 
@@ -128,8 +152,8 @@ export function ExploreView() {
               </button>
             ))}
           </div>
-          <button className="btn-primary dispatch-btn" onClick={handleDispatch}>
-            Dispatch Expedition
+          <button className="btn-primary dispatch-btn" onClick={handleDispatch} disabled={loading}>
+            {loading ? 'Dispatching...' : 'Dispatch Expedition'}
           </button>
         </div>
       )}

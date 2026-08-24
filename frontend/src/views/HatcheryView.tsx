@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuthStore } from '../stores/authStore';
 
 interface Egg {
@@ -21,14 +21,15 @@ const RARITY_IMAGES: Record<string, string> = {
   mythic: '/assets/Hatch System/Egg_Mythic.png',
 };
 
+// Doctrine-compliant rarity colors (no magenta/Synthetic)
 const RARITY_COLORS: Record<string, string> = {
-  common: '#808080',
-  uncommon: '#00ff00',
-  rare: '#0080ff',
-  epic: '#ff00ff',
-  ascendant: '#00ffff',
-  legendary: '#ffd700',
-  mythic: '#ff0000',
+  common: '#808080',      // grey
+  uncommon: '#00ff00',    // Natural green
+  rare: '#00d4ff',        // Tier 2 cyan
+  epic: '#00ff88',        // Tier 2 emerald (Zero Point)
+  ascendant: '#4a9b8f',   // Tier 2 patina copper
+  legendary: '#d4a84b',   // Tier 2 gold
+  mythic: '#ff4444',      // Natural red (positive terminal)
 };
 
 const INCUBATION_TIME_MS = 30000;
@@ -76,6 +77,14 @@ export function HatcheryView() {
   const [showTutorial, setShowTutorial] = useState(true);
   const [now, setNow] = useState(Date.now());
   const sessionToken = useAuthStore((s) => s.sessionToken);
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => setNow(Date.now()), 1000);
@@ -88,8 +97,9 @@ export function HatcheryView() {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/eggs`, {
         headers: { Authorization: `Bearer ${sessionToken}` },
       });
-      if (response.ok) {
-        const data = await response.json();
+      if (!response.ok) return;
+      const data = await response.json();
+      if (mountedRef.current) {
         setEggs(data);
       }
     } catch (err) {
@@ -104,51 +114,82 @@ export function HatcheryView() {
   }, [sessionToken]);
 
   const handlePullEgg = async () => {
-    if (!sessionToken) return;
-    setLoading(true);
-    setMessage(null);
+    if (!sessionToken || loading) return;
+    
+    if (mountedRef.current) setLoading(true);
+    if (mountedRef.current) setMessage(null);
+    
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/eggs/pull`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${sessionToken}` },
       });
+      
+      if (!mountedRef.current) return;
+      
       if (response.ok) {
-        const egg = await response.json();
-        setMessage(`A ${egg.rarity} egg has arrived!`);
-        await fetchEggs();
+        try {
+          const egg = await response.json();
+          if (mountedRef.current) setMessage(`A ${egg.rarity} egg has arrived!`);
+          await fetchEggs();
+        } catch {
+          if (mountedRef.current) setMessage('Egg pulled!');
+        }
       } else {
-        const err = await response.json();
-        setMessage(err.detail || 'Failed to pull egg');
+        try {
+          const err = await response.json();
+          if (mountedRef.current) setMessage(err.detail || 'Failed to pull egg');
+        } catch {
+          if (mountedRef.current) setMessage('Failed to pull egg');
+        }
       }
     } catch (err) {
-      setMessage('Network error');
+      console.error('Pull egg error:', err);
+      if (mountedRef.current) setMessage('Network error');
     } finally {
-      setLoading(false);
+      if (mountedRef.current) setLoading(false);
     }
   };
 
   const handleHatch = async (eggUuid: string) => {
-    if (!sessionToken) return;
-    setLoading(true);
-    setMessage(null);
+    if (!sessionToken || loading) return;
+    
+    if (mountedRef.current) setLoading(true);
+    if (mountedRef.current) setMessage(null);
+    
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/eggs/${eggUuid}/hatch`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${sessionToken}` },
       });
+      
+      if (!mountedRef.current) return;
+      
       if (response.ok) {
-        const companion = await response.json();
-        setMessage(`A ${companion.species} has hatched!`);
-        await fetchEggs();
-        setSelectedEgg(null);
+        try {
+          const companion = await response.json();
+          if (mountedRef.current) setMessage(`A ${companion.species} has hatched!`);
+          await fetchEggs();
+          if (mountedRef.current) setSelectedEgg(null);
+        } catch {
+          if (mountedRef.current) {
+            setMessage('Companion hatched!');
+            setSelectedEgg(null);
+          }
+        }
       } else {
-        const err = await response.json();
-        setMessage(err.detail || 'Failed to hatch egg');
+        try {
+          const err = await response.json();
+          if (mountedRef.current) setMessage(err.detail || 'Failed to hatch egg');
+        } catch {
+          if (mountedRef.current) setMessage('Failed to hatch egg');
+        }
       }
     } catch (err) {
-      setMessage('Network error');
+      console.error('Hatch error:', err);
+      if (mountedRef.current) setMessage('Network error');
     } finally {
-      setLoading(false);
+      if (mountedRef.current) setLoading(false);
     }
   };
 
