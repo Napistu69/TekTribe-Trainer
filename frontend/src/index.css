@@ -27,9 +27,9 @@
   --color-text-muted: #888;
   --color-border: #2a2a4e;
   --color-bg-primary: #006C00;        /* Forest Coloring — ARK deep green */
-  --color-bg-card: #1a1a3e;
-  --color-bg-card-hover: #2a2a5e;
-  --color-danger: #ff4444;
+  --color-bg-card: #1a3e2a;          /* ARK Dark Green - card background */
+  --color-bg-card-hover: #2a5e3e;    /* Hunter green hover */
+  --color-border: #2a4e3a;           /* Forest green border */
   --color-success: var(--color-emerald);
   
   /* ARK Palette — creature region colors */
@@ -244,7 +244,7 @@ body::before {
   position: fixed;
   inset: 0;
   background: 
-    radial-gradient(ellipse at 20% 50%, rgba(109, 74, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at 20% 50%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
     radial-gradient(ellipse at 80% 50%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
   pointer-events: none;
   z-index: 0;
@@ -264,7 +264,7 @@ body::before {
   justify-content: space-between;
   align-items: center;
   padding: 0.75rem 1rem;
-  background: rgba(18, 18, 42, 0.9);
+  background: rgba(0, 60, 0, 0.9);
   border-bottom: 1px solid var(--color-border);
   position: sticky;
   top: 0;
@@ -304,7 +304,7 @@ body::before {
   left: 0;
   right: 0;
   display: flex;
-  background: rgba(18, 18, 42, 0.95);
+  background: rgba(0, 60, 0, 0.95);
   border-top: 1px solid var(--color-border);
   z-index: 50;
   backdrop-filter: blur(10px);
@@ -321,7 +321,7 @@ body::before {
 }
 
 .nav-tab.active {
-  background: rgba(0, 212, 255, 0.1);
+  background: rgba(0, 255, 136, 0.1);
 }
 
 .nav-icon {
@@ -346,17 +346,17 @@ body::before {
   font-size: 1rem;
   font-weight: 600;
   color: white;
-  background: linear-gradient(135deg, var(--color-purple), var(--color-teal-dark));
+  background: linear-gradient(135deg, var(--color-teal), var(--color-emerald));
   border: none;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 4px 15px rgba(109, 74, 255, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
 }
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(109, 74, 255, 0.5);
+  box-shadow: 0 6px 20px rgba(0, 255, 136, 0.5);
 }
 
 .btn-primary:disabled {
@@ -1000,7 +1000,7 @@ body::before {
   object-fit: contain;
   margin: 0 auto 1rem;
   display: block;
-  filter: drop-shadow(0 0 20px var(--color-teal));
+  filter: drop-shadow(0 0 20px var(--color-emerald));
 }
 
 .login-logo h1 {
