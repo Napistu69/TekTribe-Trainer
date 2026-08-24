@@ -37,7 +37,7 @@ const LIFE_STAGE_LABELS: Record<string, string> = {
 };
 
 const COMPANION_IMAGES: Record<string, string> = {
-  parasaur: '/assets/Creatures/Raptor_Adult.png',
+  parasaur: '/assets/Creatures/parasaur_character.png',
   dilo: '/assets/Creatures/dilo_character.png',
   trike: '/assets/Creatures/Raptor_Adult.png',
   ptera: '/assets/Creatures/Raptor_Adult.png',
