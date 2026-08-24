@@ -1,14 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuthStore } from '../stores/authStore';
+import { TutorialOverlay, useTutorial } from '../components/shared/TutorialOverlay';
 
-interface Biome {
-  zone_id: string;
-  name: string;
-  description: string;
-  resources: string[];
-  risk_level: number;
-  in_phase1: boolean;
-}
+const TUTORIAL_STEPS = [
+  { title: 'Exploration', text: 'Dispatch your companions on expeditions to explore biomes and gather resources.' },
+  { title: 'Biomes', text: 'Each biome has different resources and risk levels. Start with Verdant Hollow for safer expeditions.' },
+  { title: 'Countdown & Collect', text: 'Expeditions take time. When they return, click Collect to gather your rewards.' },
+];
 
 interface Expedition {
   uuid: string;
@@ -35,42 +33,24 @@ interface Companion {
   current_state: string;
 }
 
-const BIOMES: Biome[] = [
-  { zone_id: 'verdant_hollow', name: 'Verdant Hollow', description: 'A lush forest clearing with gentle creatures', resources: ['Basic food', 'Common materials', 'Dust'], risk_level: 0.125, in_phase1: true },
-  { zone_id: 'mirelands', name: 'Mirelands', description: 'Decay and renewal in the swamp', resources: ['Rare herbs', 'Mutagenic compounds'], risk_level: 0.3, in_phase1: false },
-  { zone_id: 'stonecrest', name: 'Stonecrest', description: 'Endurance and perspective in the mountains', resources: ['Minerals', 'Shard precursors'], risk_level: 0.5, in_phase1: false },
-  { zone_id: 'emberfall', name: 'Emberfall', description: 'Transformation and danger in the volcanic zone', resources: ['Rare minerals', 'Cuboid shards'], risk_level: 0.7, in_phase1: false },
-  { zone_id: 'tek_ruins', name: 'Tek-Ruins', description: 'Memory and the Oracle in ancient ruins', resources: ['Oracle fragments', 'Data crystals'], risk_level: 0.8, in_phase1: false },
-  { zone_id: 'threshold', name: 'The Threshold', description: 'The space between worlds', resources: ['Legacy fragments', 'Rescue signals'], risk_level: 0.9, in_phase1: false },
-];
-
-const DURATION_OPTIONS = [
-  { value: '30m', label: '30 minutes' },
-  { value: '2h', label: '2 hours' },
-  { value: '8h', label: '8 hours' },
-];
-
 export function ExploreView() {
-  const [biomes] = useState<Biome[]>(BIOMES);
   const [selectedBiome, setSelectedBiome] = useState<string | null>(null);
-  const [duration, setDuration] = useState<string>('2h');
+  const [duration, setDuration] = useState('2h');
   const [dispatchMsg, setDispatchMsg] = useState<string | null>(null);
   const [expeditions, setExpeditions] = useState<Expedition[]>([]);
   const [history, setHistory] = useState<Expedition[]>([]);
   const [companions, setCompanions] = useState<Companion[]>([]);
   const [loading, setLoading] = useState(false);
   const [now, setNow] = useState(Date.now());
+  const { showTutorial, completeTutorial } = useTutorial('tutorial-explore');
   const sessionToken = useAuthStore((s) => s.sessionToken);
   const mountedRef = useRef(true);
 
   useEffect(() => {
     mountedRef.current = true;
-    return () => {
-      mountedRef.current = false;
-    };
+    return () => { mountedRef.current = false; };
   }, []);
 
-  // Timer for countdown
   useEffect(() => {
     const timer = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(timer);
@@ -126,10 +106,8 @@ export function ExploreView() {
 
   const handleDispatch = async () => {
     if (!sessionToken || !selectedBiome || loading) return;
-
     setLoading(true);
     setDispatchMsg(null);
-
     try {
       const availableCompanions = companions.filter(c => c.current_state !== 'on_expedition');
       if (availableCompanions.length === 0) {
@@ -137,31 +115,21 @@ export function ExploreView() {
         setLoading(false);
         return;
       }
-
       const companionUuid = availableCompanions[0].uuid;
-
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/expeditions/dispatch`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${sessionToken}` },
         body: JSON.stringify({ companion_uuid: companionUuid, biome_zone: selectedBiome, duration_hours: duration }),
       });
-
       if (!mountedRef.current) return;
-
       if (response.ok) {
         setDispatchMsg('Expedition dispatched!');
         await fetchExpeditions();
         await fetchCompanions();
       } else {
-        try {
-          const err = await response.json();
-          setDispatchMsg(err.detail || 'Dispatch failed');
-        } catch {
-          setDispatchMsg('Dispatch failed');
-        }
+        try { const err = await response.json(); setDispatchMsg(err.detail || 'Dispatch failed'); } catch { setDispatchMsg('Dispatch failed'); }
       }
     } catch (err) {
-      console.error('Dispatch error:', err);
       if (mountedRef.current) setDispatchMsg('Network error');
     } finally {
       if (mountedRef.current) setLoading(false);
@@ -170,29 +138,20 @@ export function ExploreView() {
 
   const handleCollect = async (expeditionUuid: string) => {
     if (!sessionToken) return;
-
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/expeditions/${expeditionUuid}/collect`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${sessionToken}` },
       });
-
       if (!mountedRef.current) return;
-
       if (response.ok) {
         await fetchExpeditions();
         await fetchHistory();
         await fetchCompanions();
       } else {
-        try {
-          const err = await response.json();
-          setDispatchMsg(err.detail || 'Collect failed');
-        } catch {
-          setDispatchMsg('Collect failed');
-        }
+        try { const err = await response.json(); setDispatchMsg(err.detail || 'Collect failed'); } catch { setDispatchMsg('Collect failed'); }
       }
     } catch (err) {
-      console.error('Collect error:', err);
       if (mountedRef.current) setDispatchMsg('Network error');
     }
   };
@@ -208,50 +167,42 @@ export function ExploreView() {
 
   const isReady = (returnsAt: string) => new Date(returnsAt).getTime() <= now;
 
-  const selected = BIOMES.find(b => b.zone_id === selectedBiome);
+  const biomes = [
+    { zone_id: 'verdant_hollow', name: 'Verdant Hollow', description: 'A lush forest clearing with gentle creatures', resources: ['Basic food', 'Common materials', 'Dust'], risk_level: 0.125, in_phase1: true },
+    { zone_id: 'mirelands', name: 'Mirelands', description: 'Decay and renewal in the swamp', resources: ['Rare herbs', 'Mutagenic compounds'], risk_level: 0.3, in_phase1: false },
+    { zone_id: 'stonecrest', name: 'Stonecrest', description: 'Endurance and perspective in the mountains', resources: ['Minerals', 'Shard precursors'], risk_level: 0.5, in_phase1: false },
+    { zone_id: 'emberfall', name: 'Emberfall', description: 'Transformation and danger in the volcanic zone', resources: ['Rare minerals', 'Cuboid shards'], risk_level: 0.7, in_phase1: false },
+    { zone_id: 'tek_ruins', name: 'Tek-Ruins', description: 'Memory and the Oracle in ancient ruins', resources: ['Oracle fragments', 'Data crystals'], risk_level: 0.8, in_phase1: false },
+    { zone_id: 'threshold', name: 'The Threshold', description: 'The space between worlds', resources: ['Legacy fragments', 'Rescue signals'], risk_level: 0.9, in_phase1: false },
+  ];
+
+  const selected = biomes.find(b => b.zone_id === selectedBiome);
 
   return (
     <div className="explore-view">
+      {showTutorial && <TutorialOverlay steps={TUTORIAL_STEPS} storageKey="tutorial-explore" onComplete={completeTutorial} />}
       <h1>Explore</h1>
-
       {dispatchMsg && <div className="game-message">{dispatchMsg}</div>}
-
       <div className="biome-grid">
         {biomes.map(biome => (
-          <div
-            key={biome.zone_id}
-            className={`biome-card ${!biome.in_phase1 ? 'locked' : ''} ${selectedBiome === biome.zone_id ? 'selected' : ''}`}
-            onClick={() => biome.in_phase1 && setSelectedBiome(biome.zone_id)}
-          >
+          <div key={biome.zone_id} className={`biome-card ${!biome.in_phase1 ? 'locked' : ''} ${selectedBiome === biome.zone_id ? 'selected' : ''}`} onClick={() => biome.in_phase1 && setSelectedBiome(biome.zone_id)}>
             <div className="biome-info">
               <h3>{biome.name}</h3>
               <p>{biome.description}</p>
-              <div className="biome-resources">
-                {biome.resources.map(r => <span key={r} className="resource-tag">{r}</span>)}
-              </div>
-              <div className="risk-meter">
-                <span>Risk:</span>
-                <div className="meter small">
-                  <div className="meter-fill risk" style={{ width: `${biome.risk_level * 100}%` }} />
-                </div>
-              </div>
+              <div className="biome-resources">{biome.resources.map(r => <span key={r} className="resource-tag">{r}</span>)}</div>
+              <div className="risk-meter"><span>Risk:</span><div className="meter small"><div className="meter-fill risk" style={{ width: `${biome.risk_level * 100}%` }} /></div></div>
             </div>
             {!biome.in_phase1 && <div className="lock-overlay">🔒</div>}
           </div>
         ))}
       </div>
-
       {selected && (
         <div className="dispatch-panel">
           <h3>Dispatch to {selected.name}</h3>
           <div className="duration-select">
-            {DURATION_OPTIONS.map(d => (
-              <button
-                key={d.value}
-                className={`duration-btn ${duration === d.value ? 'active' : ''}`}
-                onClick={() => setDuration(d.value)}
-              >
-                {d.label}
+            {['30m', '2h', '8h'].map(d => (
+              <button key={d} className={`duration-btn ${duration === d ? 'active' : ''}`} onClick={() => setDuration(d)}>
+                {d === '30m' ? '30 minutes' : d === '2h' ? '2 hours' : '8 hours'}
               </button>
             ))}
           </div>
@@ -260,7 +211,6 @@ export function ExploreView() {
           </button>
         </div>
       )}
-
       {expeditions.length > 0 && (
         <div className="expeditions-panel">
           <h3>Active Expeditions</h3>
@@ -271,9 +221,7 @@ export function ExploreView() {
                 <span className="expedition-countdown">{getCountdown(exp.returns_at)}</span>
               </div>
               {isReady(exp.returns_at) ? (
-                <button className="btn-primary collect-btn" onClick={() => handleCollect(exp.uuid)}>
-                  Collect
-                </button>
+                <button className="btn-primary collect-btn" onClick={() => handleCollect(exp.uuid)}>Collect</button>
               ) : (
                 <span className="expedition-status">Exploring...</span>
               )}
@@ -281,7 +229,6 @@ export function ExploreView() {
           ))}
         </div>
       )}
-
       {history.length > 0 && (
         <div className="history-panel">
           <h3>Expedition History</h3>

@@ -1,13 +1,13 @@
 import { useState } from 'react';
+import { TutorialOverlay, useTutorial } from '../components/shared/TutorialOverlay';
 
-interface KnowledgeEntry {
-  id: string;
-  title: string;
-  content: string;
-  category: string;
-}
+const TUTORIAL_STEPS = [
+  { title: 'Akashic Research Oracle', text: 'The Overseer guards the knowledge of the old world. Click on any entry to read it.' },
+  { title: 'Knowledge Tidbits', text: 'Each entry reveals a piece of the TekTribe doctrine — spectral perception, natural law, and the history of the Overseer.' },
+  { title: 'Future Revelations', text: 'More knowledge entries will be revealed as the Oracle grows. Return often to discover new insights.' },
+];
 
-const SAMPLE_KNOWLEDGE: KnowledgeEntry[] = [
+const SAMPLE_KNOWLEDGE = [
   {
     id: '1',
     title: 'The Zero Point',
@@ -41,20 +41,15 @@ const SAMPLE_KNOWLEDGE: KnowledgeEntry[] = [
 ];
 
 export function OverseerView() {
-  const [selectedEntry, setSelectedEntry] = useState<KnowledgeEntry | null>(null);
-
-  const handleReadAloud = (entry: KnowledgeEntry) => {
-    setSelectedEntry(entry);
-  };
+  const [selectedEntry, setSelectedEntry] = useState<typeof SAMPLE_KNOWLEDGE[0] | null>(null);
+  const { showTutorial, completeTutorial } = useTutorial('tutorial-overseer');
 
   return (
     <div className="overseer-view">
+      {showTutorial && <TutorialOverlay steps={TUTORIAL_STEPS} storageKey="tutorial-overseer" onComplete={completeTutorial} />}
+      
       <div className="overseer-header">
-        <img
-          src="/assets/Overseer & Lore/overseer.png"
-          alt="Overseer"
-          className="overseer-portrait"
-        />
+        <img src="/assets/Overseer & Lore/overseer.png" alt="Overseer" className="overseer-portrait" />
         <h1>Akashic Research Oracle</h1>
         <p className="overseer-subtitle">Knowledge from the digital ether</p>
       </div>
@@ -73,20 +68,14 @@ export function OverseerView() {
           <div
             key={entry.id}
             className={`knowledge-card ${selectedEntry?.id === entry.id ? 'active' : ''}`}
-            onClick={() => handleReadAloud(entry)}
+            onClick={() => setSelectedEntry(entry)}
           >
             <div className="knowledge-header">
               <h3>{entry.title}</h3>
               <span className="knowledge-category">{entry.category}</span>
             </div>
             <p className="knowledge-preview">{entry.content.substring(0, 80)}...</p>
-            <button 
-              className="btn-secondary read-btn"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleReadAloud(entry);
-              }}
-            >
+            <button className="btn-secondary read-btn" onClick={(e) => { e.stopPropagation(); setSelectedEntry(entry); }}>
               {selectedEntry?.id === entry.id ? 'Reading' : 'Read'}
             </button>
           </div>

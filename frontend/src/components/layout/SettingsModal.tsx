@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
-import { logoutPassport } from '../../lib/passport';
 
 interface SettingsModalProps {
   onClose: () => void;
@@ -11,14 +10,33 @@ export function SettingsModal({ onClose }: SettingsModalProps) {
   const logout = useAuthStore((s) => s.logout);
 
   const handleLogout = async () => {
-    try {
-      await logoutPassport();
-    } catch (e) {
-      // Ignore errors
-    }
+    // Clear local auth state first
     logout();
     onClose();
+    
+    // Try to logout from Passport (don't wait for it)
+    try {
+      const { logoutPassport } = await import('../../lib/passport');
+      logoutPassport().catch(() => {});
+    } catch {
+      // Ignore errors
+    }
+    
+    // Force clear localStorage and navigate
+    localStorage.removeItem('tektribe-auth');
     navigate('/login');
+  };
+
+  const handleShowTutorials = () => {
+    localStorage.removeItem('tutorial-done');
+    localStorage.removeItem('tutorial-hatchery');
+    localStorage.removeItem('tutorial-nursery');
+    localStorage.removeItem('tutorial-camp');
+    localStorage.removeItem('tutorial-training');
+    localStorage.removeItem('tutorial-explore');
+    localStorage.removeItem('tutorial-overseer');
+    onClose();
+    navigate('/');
   };
 
   return (
@@ -52,6 +70,12 @@ export function SettingsModal({ onClose }: SettingsModalProps) {
             <option>English</option>
             <option>Coming soon</option>
           </select>
+        </div>
+
+        <div className="settings-section">
+          <button className="btn-secondary" onClick={handleShowTutorials}>
+            Show Tutorials
+          </button>
         </div>
 
         <div className="settings-section">
