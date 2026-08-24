@@ -28,7 +28,7 @@ export function LoginScreen() {
             alt="Overseer"
             className="overseer-logo"
           />
-          <h1>TekTribe</h1>
+          <h1>TekTribe Trainer</h1>
           <p className="tagline">Bond with the Past, Explore the Future</p>
         </div>
 
