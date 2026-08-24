@@ -7,6 +7,7 @@ import { HatcheryView } from './views/HatcheryView';
 import { CampView } from './views/CampView';
 import { TrainingView } from './views/TrainingView';
 import { ExploreView } from './views/ExploreView';
+import { OverseerView } from './views/OverseerView';
 import { MapView } from './views/MapView';
 import { LoginScreen } from './components/auth/LoginScreen';
 import { AuthGuard } from './components/auth/AuthGuard';
@@ -44,6 +45,7 @@ function App() {
           <Route path="camp" element={<CampView />} />
           <Route path="training" element={<TrainingView />} />
           <Route path="explore" element={<ExploreView />} />
+          <Route path="overseer" element={<OverseerView />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

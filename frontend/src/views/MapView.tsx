@@ -90,7 +90,7 @@ export function MapView() {
   return (
     <div className="map-view">
       <div className="map-header">
-        <h1>TekTribe</h1>
+        <h1>TekTribe Trainer</h1>
         <p className="map-subtitle">Select a station to begin</p>
       </div>
 

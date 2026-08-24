@@ -9,11 +9,12 @@ export function AppShell() {
   const [showSettings, setShowSettings] = useState(false);
 
   const tabs = [
-    { id: 'map', label: 'Map', icon: '🗺', path: '/' },
-    { id: 'hatchery', label: 'Hatchery', icon: '🥚', path: '/hatchery' },
-    { id: 'camp', label: 'Camp', icon: '🏕', path: '/camp' },
-    { id: 'training', label: 'Training', icon: '⚔', path: '/training' },
-    { id: 'explore', label: 'Explore', icon: '🌍', path: '/explore' },
+    { id: 'map', label: 'Map', image: '/assets/Habitat & Camp/habitat.png', path: '/' },
+    { id: 'hatchery', label: 'Hatchery', image: '/assets/Habitat & Camp/hatchery.png', path: '/hatchery' },
+    { id: 'camp', label: 'Camp', image: '/assets/Habitat & Camp/nursery.png', path: '/camp' },
+    { id: 'training', label: 'Training', image: '/assets/Habitat & Camp/habitat.png', path: '/training' },
+    { id: 'explore', label: 'Explore', image: '/assets/Habitat & Camp/expedition_gate.png', path: '/explore' },
+    { id: 'overseer', label: 'Overseer', image: '/assets/Overseer & Lore/overseer.png', path: '/overseer' },
   ];
 
   return (
@@ -46,7 +47,7 @@ export function AppShell() {
             className={`nav-tab ${location.pathname === tab.path ? 'active' : ''}`}
             onClick={() => navigate(tab.path)}
           >
-            <span className="nav-icon">{tab.icon}</span>
+            <img src={tab.image} alt={tab.label} className="nav-image" />
             <span className="nav-label">{tab.label}</span>
           </button>
         ))}
