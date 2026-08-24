@@ -7,6 +7,7 @@ import { HatcheryView } from './views/HatcheryView';
 import { CampView } from './views/CampView';
 import { TrainingView } from './views/TrainingView';
 import { ExploreView } from './views/ExploreView';
+import { MapView } from './views/MapView';
 import { LoginScreen } from './components/auth/LoginScreen';
 import { AuthGuard } from './components/auth/AuthGuard';
 import { CallbackPage } from './components/auth/CallbackPage';
@@ -38,7 +39,8 @@ function App() {
             </AuthGuard>
           }
         >
-          <Route index element={<HatcheryView />} />
+          <Route index element={<MapView />} />
+          <Route path="hatchery" element={<HatcheryView />} />
           <Route path="camp" element={<CampView />} />
           <Route path="training" element={<TrainingView />} />
           <Route path="explore" element={<ExploreView />} />

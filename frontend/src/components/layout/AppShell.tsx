@@ -9,10 +9,11 @@ export function AppShell() {
   const [showSettings, setShowSettings] = useState(false);
 
   const tabs = [
-    { id: 'hatchery', label: 'Hatchery', icon: '🥚', path: '/' },
+    { id: 'map', label: 'Map', icon: '🗺', path: '/' },
+    { id: 'hatchery', label: 'Hatchery', icon: '🥚', path: '/hatchery' },
     { id: 'camp', label: 'Camp', icon: '🏕', path: '/camp' },
     { id: 'training', label: 'Training', icon: '⚔', path: '/training' },
-    { id: 'explore', label: 'Explore', icon: '🗺', path: '/explore' },
+    { id: 'explore', label: 'Explore', icon: '🌍', path: '/explore' },
   ];
 
   return (
