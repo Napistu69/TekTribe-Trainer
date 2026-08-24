@@ -82,7 +82,7 @@ async def list_eggs(
     from sqlalchemy import select
     from app.models import Egg
     result = await db.execute(
-        select(Egg).where(Egg.user_id == user_id).order_by(Egg.pulled_at.desc())
+        select(Egg).where(Egg.user_id == user_id, Egg.hatched == False).order_by(Egg.pulled_at.desc())
     )
     eggs = result.scalars().all()
     
