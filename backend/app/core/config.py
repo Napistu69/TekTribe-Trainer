@@ -1,4 +1,5 @@
 """Application configuration using Pydantic Settings."""
+import os
 from pydantic_settings import BaseSettings
 
 
@@ -6,10 +7,10 @@ class Settings(BaseSettings):
     """Environment-based configuration."""
     
     # Database
-    database_url: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/tektribe"
+    database_url: str = os.getenv("DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/tektribe")
     
     # Redis
-    redis_url: str = "redis://localhost:6379/0"
+    redis_url: str = os.getenv("REDIS_URL", "redis://localhost:6379/0")
     
     # Security
     secret_key: str = "change-me-in-production"

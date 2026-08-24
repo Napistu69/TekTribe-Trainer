@@ -65,4 +65,15 @@ app.include_router(lockdown_router, prefix="/api")
 
 @app.get("/health")
 async def health_check():
-    return {"status": "ok", "version": "0.1.0"}
+    """Health check with Redis connectivity test."""
+    redis_status = "ok"
+    try:
+        from app.core.config import settings
+        import redis.asyncio as redis
+        r = redis.from_url(settings.redis_url, decode_responses=True)
+        await r.ping()
+        await r.close()
+    except Exception as e:
+        redis_status = f"error: {str(e)}"
+    
+    return {"status": "ok", "version": "0.1.0", "redis": redis_status}
