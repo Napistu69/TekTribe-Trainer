@@ -180,10 +180,10 @@ export function CampView() {
         </div>
 
         <div className="care-meters">
-          <CareMeter label="Hunger" value={companion.care_state.hunger} color="#ff6b6b" />
-          <CareMeter label="Energy" value={companion.care_state.energy} color="#ffd93d" />
-          <CareMeter label="Morale" value={companion.care_state.morale} color="#6bcb77" />
-          <CareMeter label="Cleanliness" value={companion.care_state.cleanliness} color="#4d96ff" />
+          <CareMeter label="Hunger" value={companion.care_state?.hunger ?? 0} color="#ff6b6b" />
+          <CareMeter label="Energy" value={companion.care_state?.energy ?? 0} color="#ffd93d" />
+          <CareMeter label="Morale" value={companion.care_state?.morale ?? 0} color="#6bcb77" />
+          <CareMeter label="Cleanliness" value={companion.care_state?.cleanliness ?? 0} color="#4d96ff" />
         </div>
 
         <div className="care-actions">

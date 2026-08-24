@@ -6,7 +6,7 @@ from sqlalchemy import (
     BigInteger, Boolean, DateTime, Float, ForeignKey, Integer, String, Text
 )
 from sqlalchemy.dialects.postgresql import JSONB, UUID
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base
 
@@ -70,3 +70,8 @@ class Companion(Base):
 
     # Blockchain (dormant until Phase 4)
     on_chain_record: Mapped[dict] = mapped_column(JSONB, nullable=True)
+
+    # Relationships
+    care_state: Mapped["CareState"] = relationship(
+        "CareState", back_populates="companion", uselist=False
+    )

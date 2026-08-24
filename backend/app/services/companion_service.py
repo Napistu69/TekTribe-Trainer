@@ -103,8 +103,11 @@ async def get_companion(db: AsyncSession, user_id: str, companion_uuid: str) -> 
 
 async def get_companions(db: AsyncSession, user_id: str) -> list[Companion]:
     """Get all companions for a user."""
+    from sqlalchemy.orm import selectinload
     result = await db.execute(
-        select(Companion).where(Companion.user_id == user_id)
+        select(Companion)
+        .where(Companion.user_id == user_id)
+        .options(selectinload(Companion.care_state))
     )
     return list(result.scalars().all())
 
@@ -145,6 +148,15 @@ def serialize_companion(companion: Companion) -> dict:
     CRITICAL: Excludes hidden_genetic_potential and latent_traits.
     These fields must NEVER be sent to the client.
     """
+    care_state_data = {}
+    if companion.care_state:
+        care_state_data = {
+            "hunger": companion.care_state.hunger,
+            "energy": companion.care_state.energy,
+            "morale": companion.care_state.morale,
+            "cleanliness": companion.care_state.cleanliness,
+        }
+    
     return {
         "uuid": str(companion.uuid),
         "user_id": companion.user_id,
@@ -172,4 +184,5 @@ def serialize_companion(companion: Companion) -> dict:
         "health_status": companion.health_status,
         "breeding_cooldown_until": companion.breeding_cooldown_until.isoformat() if companion.breeding_cooldown_until else None,
         "on_chain_record": companion.on_chain_record,
+        "care_state": care_state_data,
     }
