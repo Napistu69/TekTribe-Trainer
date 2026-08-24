@@ -22,7 +22,7 @@ export function AppShell() {
       <header className="app-header">
         <div className="header-left">
           <div className="overseer-avatar-small" />
-          <span className="app-title">TekTribe</span>
+          <span className="app-title">TekTribe Trainer</span>
         </div>
         <div className="header-right">
           <BalanceDisplay compact />

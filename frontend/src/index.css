@@ -379,6 +379,23 @@ body::before {
   overflow: hidden;
 }
 
+.oracle-title {
+  color: var(--color-emerald);
+  font-family: 'Jokerman', sans-serif;
+  margin-bottom: 0.75rem;
+  font-size: 1.2rem;
+}
+
+.oracle-category {
+  display: inline-block;
+  margin-top: 1rem;
+  font-size: 0.65rem;
+  padding: 0.15rem 0.4rem;
+  background: rgba(0, 255, 136, 0.1);
+  border-radius: 6px;
+  color: var(--color-emerald);
+}
+
 .oracle-glow {
   position: absolute;
   inset: 0;

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 
 interface KnowledgeEntry {
   id: string;
@@ -42,26 +42,9 @@ const SAMPLE_KNOWLEDGE: KnowledgeEntry[] = [
 
 export function OverseerView() {
   const [selectedEntry, setSelectedEntry] = useState<KnowledgeEntry | null>(null);
-  const [isReading, setIsReading] = useState(false);
-  const mountedRef = useRef(true);
-
-  useEffect(() => {
-    mountedRef.current = true;
-    return () => {
-      mountedRef.current = false;
-    };
-  }, []);
 
   const handleReadAloud = (entry: KnowledgeEntry) => {
-    if (isReading) return;
-    
     setSelectedEntry(entry);
-    setIsReading(true);
-    
-    // Simulate reading delay
-    setTimeout(() => {
-      if (mountedRef.current) setIsReading(false);
-    }, 3000);
   };
 
   return (
@@ -76,10 +59,12 @@ export function OverseerView() {
         <p className="overseer-subtitle">Knowledge from the digital ether</p>
       </div>
 
-      {isReading && selectedEntry && (
+      {selectedEntry && (
         <div className="oracle-reading">
           <div className="oracle-glow"></div>
+          <h4 className="oracle-title">{selectedEntry.title}</h4>
           <p className="oracle-text">{selectedEntry.content}</p>
+          <span className="oracle-category">{selectedEntry.category}</span>
         </div>
       )}
 
@@ -97,9 +82,12 @@ export function OverseerView() {
             <p className="knowledge-preview">{entry.content.substring(0, 80)}...</p>
             <button 
               className="btn-secondary read-btn"
-              disabled={isReading}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleReadAloud(entry);
+              }}
             >
-              {isReading && selectedEntry?.id === entry.id ? 'Reading...' : 'Read'}
+              {selectedEntry?.id === entry.id ? 'Reading' : 'Read'}
             </button>
           </div>
         ))}

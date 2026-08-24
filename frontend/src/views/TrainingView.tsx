@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuthStore } from '../stores/authStore';
 
 interface MiniGame {
@@ -49,14 +49,32 @@ export function TrainingView() {
   const handleTrain = async (gameId: string) => {
     if (!sessionToken || !gameId || training) return;
     
-    if (mountedRef.current) setTraining(true);
-    if (mountedRef.current) setMessage(null);
+    setTraining(true);
+    setMessage(null);
     
     try {
+      // Get first available companion
+      const companionsResp = await fetch(`${import.meta.env.VITE_API_URL}/api/companions`, {
+        headers: { Authorization: `Bearer ${sessionToken}` },
+      });
+      if (!companionsResp.ok) {
+        if (mountedRef.current) setMessage('Failed to fetch companions');
+        if (mountedRef.current) setTraining(false);
+        return;
+      }
+      const companions = await companionsResp.json();
+      if (!companions || companions.length === 0) {
+        if (mountedRef.current) setMessage('No companions available to train');
+        if (mountedRef.current) setTraining(false);
+        return;
+      }
+      
+      const companionUuid = companions[0].uuid;
+      
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/training/submit`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${sessionToken}` },
-        body: JSON.stringify({ minigame_id: gameId, score: Math.floor(Math.random() * 100) }),
+        body: JSON.stringify({ companion_uuid: companionUuid, game_id: gameId, score: Math.floor(Math.random() * 100), duration_seconds: 30 }),
       });
       
       if (!mountedRef.current) return;

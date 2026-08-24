@@ -78,10 +78,28 @@ export function ExploreView() {
     if (mountedRef.current) setDispatchMsg(null);
     
     try {
+      // Get first available companion
+      const companionsResp = await fetch(`${import.meta.env.VITE_API_URL}/api/companions`, {
+        headers: { Authorization: `Bearer ${sessionToken}` },
+      });
+      if (!companionsResp.ok) {
+        if (mountedRef.current) setDispatchMsg('Failed to fetch companions');
+        if (mountedRef.current) setLoading(false);
+        return;
+      }
+      const companions = await companionsResp.json();
+      if (!companions || companions.length === 0) {
+        if (mountedRef.current) setDispatchMsg('No companions available');
+        if (mountedRef.current) setLoading(false);
+        return;
+      }
+      
+      const companionUuid = companions[0].uuid;
+      
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/expeditions/dispatch`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${sessionToken}` },
-        body: JSON.stringify({ companion_uuid: 'default', biome_zone: selectedBiome, duration_hours: duration }),
+        body: JSON.stringify({ companion_uuid: companionUuid, biome_zone: selectedBiome, duration_hours: duration }),
       });
       
       if (!mountedRef.current) return;
