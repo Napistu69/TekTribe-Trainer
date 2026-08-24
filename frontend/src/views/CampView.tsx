@@ -85,8 +85,10 @@ export function CampView() {
       if (response.ok) {
         const data = await response.json();
         setCompanions(data);
-        if (data.length > 0 && !selectedCompanion) {
-          setSelectedCompanion(data[0].uuid);
+        if (data.length > 0) {
+          if (!selectedCompanion) {
+            setSelectedCompanion(data[0].uuid);
+          }
           setCompanion(data[0]);
         }
       }
@@ -128,6 +130,35 @@ export function CampView() {
       setLoading(false);
     }
   };
+
+  // Show loading overlay instead of blank screen
+  if (loading) {
+    return (
+      <div className="camp-view">
+        <h1>Camp</h1>
+        <div className="loading-overlay">
+          <p>Performing action...</p>
+        </div>
+        {/* Keep rendering current companion if available */}
+        {companion && (
+          <div className="companion-display">
+            <div className="companion-visual">
+              <img
+                src={COMPANION_IMAGES[companion.species] || COMPANION_IMAGES.raptor}
+                alt={companion.species}
+                className="companion-image"
+                style={{ transform: `scale(${COMPANION_SCALE[companion.species] || 1})`, opacity: 0.5 }}
+              />
+              <div className="companion-info">
+                <h2>{companion.name || companion.species}</h2>
+                <span className="life-stage">{LIFE_STAGE_LABELS[companion.life_stage]}</span>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   if (!companion) {
     return (
