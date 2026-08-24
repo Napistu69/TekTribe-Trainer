@@ -5,16 +5,32 @@
 }
 
 :root {
-  --color-bg-primary: #0a0a1a;
-  --color-bg-secondary: #12122a;
-  --color-bg-card: #1a1a3e;
-  --color-teal: #00d4ff;
-  --color-teal-dark: #0099bb;
-  --color-purple: #6d4aff;
-  --color-gold: #ffd700;
-  --color-text: #e0e0e0;
+  /* Tier 2 — Overseer Tek (primary interface) */
+  --color-cyan: #00d4ff;        /* neon cyan */
+  --color-teal: #0099bb;        /* ice-blue / teal dark */
+  --color-emerald: #00ff88;     /* Overseer iris — 532nm Zero Point */
+  --color-gold: #d4a84b;        /* patina copper / golden accent */
+  
+  /* Tier 1 — Natural (warm accents) */
+  --color-amber: #ff8c42;       /* deep amber — living matter */
+  --color-earth: #8b6914;       /* warm brown — soil/foundation */
+  --color-stone: #e8dcc8;       /* soft stone — neutral ground */
+  --color-patina: #4a9b8f;      /* oxidized copper — aged tek */
+  --color-green: #4a7c59;       /* earthy green — chlorophyll */
+  
+  /* Legacy mappings (for backward compatibility) */
+  --color-teal-dark: var(--color-teal);
+  --color-purple: var(--color-emerald);
+  
+  /* Semantic */
+  --color-text: var(--color-stone);
   --color-text-muted: #888;
   --color-border: #2a2a4e;
+  --color-bg-primary: #0a0a1a;
+  --color-bg-card: #1a1a3e;
+  --color-bg-card-hover: #2a2a5e;
+  --color-danger: #ff4444;
+  --color-success: var(--color-emerald);
 }
 
 @font-face {
@@ -49,7 +65,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .map-header h1 {
   font-size: 2rem;
-  background: linear-gradient(135deg, var(--color-teal), var(--color-purple));
+  background: linear-gradient(135deg, var(--color-cyan), var(--color-emerald));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -206,7 +222,7 @@ body::before {
 .app-title {
   font-size: 1.25rem;
   font-weight: 700;
-  background: linear-gradient(135deg, var(--color-teal), var(--color-purple));
+  background: linear-gradient(135deg, var(--color-cyan), var(--color-emerald));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -335,7 +351,7 @@ body::before {
 
 .hatchery-header h1 {
   font-size: 1.75rem;
-  background: linear-gradient(135deg, var(--color-teal), var(--color-purple));
+  background: linear-gradient(135deg, var(--color-cyan), var(--color-emerald));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -911,7 +927,7 @@ body::before {
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-teal), var(--color-purple));
+  background: linear-gradient(135deg, var(--color-cyan), var(--color-emerald));
   margin: 0 auto 1rem;
   display: flex;
   align-items: center;
@@ -930,7 +946,7 @@ body::before {
 
 .login-logo h1 {
   font-size: 2rem;
-  background: linear-gradient(135deg, var(--color-teal), var(--color-purple));
+  background: linear-gradient(135deg, var(--color-cyan), var(--color-emerald));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
