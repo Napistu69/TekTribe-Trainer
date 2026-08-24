@@ -1,8 +1,26 @@
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../../stores/authStore';
+import { logoutPassport } from '../../lib/passport';
+
 interface SettingsModalProps {
   onClose: () => void;
 }
 
 export function SettingsModal({ onClose }: SettingsModalProps) {
+  const navigate = useNavigate();
+  const logout = useAuthStore((s) => s.logout);
+
+  const handleLogout = async () => {
+    try {
+      await logoutPassport();
+    } catch (e) {
+      // Ignore errors
+    }
+    logout();
+    onClose();
+    navigate('/login');
+  };
+
   return (
     <div className="modal-overlay">
       <div className="modal-card">
@@ -37,7 +55,7 @@ export function SettingsModal({ onClose }: SettingsModalProps) {
         </div>
 
         <div className="settings-section">
-          <button className="btn-secondary" onClick={() => {}}>
+          <button className="btn-secondary" onClick={handleLogout}>
             Log Out
           </button>
         </div>
