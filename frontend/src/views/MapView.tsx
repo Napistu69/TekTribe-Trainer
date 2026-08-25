@@ -68,6 +68,15 @@ const STATIONS: Station[] = [
     locked: false,
   },
   {
+    id: 'trading_post',
+    name: 'Trading Post',
+    description: 'Spend Dust at the shop',
+    icon: '🛒',
+    image: '/assets/Currency & Resource/ELE_Dust.png',
+    route: '/economy',
+    locked: false,
+  },
+  {
     id: 'mining_pit',
     name: 'Mining Pit',
     description: 'Mine Dust with your pickaxe',

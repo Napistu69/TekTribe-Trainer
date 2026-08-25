@@ -15,6 +15,7 @@ export function AppShell() {
     { id: 'camp', label: 'Camp', image: '/assets/Habitat & Camp/camp_bg.jpg', path: '/camp' },
     { id: 'training', label: 'Training', image: '/assets/Habitat & Camp/habitat.png', path: '/training' },
     { id: 'explore', label: 'Explore', image: '/assets/Habitat & Camp/expedition_gate.png', path: '/explore' },
+    { id: 'economy', label: 'Economy', image: '/assets/Currency & Resource/ELE_Dust.png', path: '/economy' },
     { id: 'overseer', label: 'Overseer', image: '/assets/Overseer & Lore/overseer.png', path: '/overseer' },
   ];
 

@@ -8,6 +8,7 @@ import { CampView } from './views/CampView';
 import { NurseryView } from './views/NurseryView';
 import { TrainingView } from './views/TrainingView';
 import { ExploreView } from './views/ExploreView';
+import { EconomyView } from './views/EconomyView';
 import { OverseerView } from './views/OverseerView';
 import { MapView } from './views/MapView';
 import { LoginScreen } from './components/auth/LoginScreen';
@@ -47,6 +48,7 @@ function App() {
           <Route path="nursery" element={<NurseryView />} />
           <Route path="training" element={<TrainingView />} />
           <Route path="explore" element={<ExploreView />} />
+          <Route path="economy" element={<EconomyView />} />
           <Route path="overseer" element={<OverseerView />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
