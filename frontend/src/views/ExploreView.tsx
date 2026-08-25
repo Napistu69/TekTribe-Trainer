@@ -33,6 +33,25 @@ interface Companion {
   current_state: string;
 }
 
+interface Biome {
+  zone_id: string;
+  name: string;
+  description: string;
+  resources: string[];
+  risk_level: number;
+  in_phase1: boolean;
+  imagePrefix: string;
+}
+
+const BIOMES: Biome[] = [
+  { zone_id: 'verdant_hollow', name: 'Verdant Hollow', description: 'A lush forest clearing with gentle creatures', resources: ['Basic food', 'Common materials', 'Dust'], risk_level: 0.125, in_phase1: true, imagePrefix: 'Verdant_Hollow' },
+  { zone_id: 'mirelands', name: 'Mirelands', description: 'Decay and renewal in the swamp', resources: ['Rare herbs', 'Mutagenic compounds'], risk_level: 0.3, in_phase1: false, imagePrefix: 'Mirelands' },
+  { zone_id: 'stonecrest', name: 'Stonecrest', description: 'Endurance and perspective in the mountains', resources: ['Minerals', 'Shard precursors'], risk_level: 0.5, in_phase1: false, imagePrefix: 'Stonecrest' },
+  { zone_id: 'emberfall', name: 'Emberfall', description: 'Transformation and danger in the volcanic zone', resources: ['Rare minerals', 'Cuboid shards'], risk_level: 0.7, in_phase1: false, imagePrefix: 'Emberfall' },
+  { zone_id: 'tek_ruins', name: 'Tek-Ruins', description: 'Memory and the Oracle in ancient ruins', resources: ['Oracle fragments', 'Data crystals'], risk_level: 0.8, in_phase1: false, imagePrefix: 'Tek_Ruins' },
+  { zone_id: 'the_threshold', name: 'The Threshold', description: 'The space between worlds', resources: ['Legacy fragments', 'Rescue signals'], risk_level: 0.9, in_phase1: false, imagePrefix: 'The_Threshold' },
+];
+
 export function ExploreView() {
   const [selectedBiome, setSelectedBiome] = useState<string | null>(null);
   const [duration, setDuration] = useState('2h');
@@ -173,16 +192,7 @@ export function ExploreView() {
 
   const isReady = (returnsAt: string) => new Date(returnsAt).getTime() <= now;
 
-  const biomes = [
-    { zone_id: 'verdant_hollow', name: 'Verdant Hollow', description: 'A lush forest clearing with gentle creatures', resources: ['Basic food', 'Common materials', 'Dust'], risk_level: 0.125, in_phase1: true },
-    { zone_id: 'mirelands', name: 'Mirelands', description: 'Decay and renewal in the swamp', resources: ['Rare herbs', 'Mutagenic compounds'], risk_level: 0.3, in_phase1: false },
-    { zone_id: 'stonecrest', name: 'Stonecrest', description: 'Endurance and perspective in the mountains', resources: ['Minerals', 'Shard precursors'], risk_level: 0.5, in_phase1: false },
-    { zone_id: 'emberfall', name: 'Emberfall', description: 'Transformation and danger in the volcanic zone', resources: ['Rare minerals', 'Cuboid shards'], risk_level: 0.7, in_phase1: false },
-    { zone_id: 'tek_ruins', name: 'Tek-Ruins', description: 'Memory and the Oracle in ancient ruins', resources: ['Oracle fragments', 'Data crystals'], risk_level: 0.8, in_phase1: false },
-    { zone_id: 'threshold', name: 'The Threshold', description: 'The space between worlds', resources: ['Legacy fragments', 'Rescue signals'], risk_level: 0.9, in_phase1: false },
-  ];
-
-  const selected = biomes.find(b => b.zone_id === selectedBiome);
+  const selected = BIOMES.find(b => b.zone_id === selectedBiome);
 
   return (
     <div className="explore-view">
@@ -190,8 +200,27 @@ export function ExploreView() {
       <h1>Explore</h1>
       {dispatchMsg && <div className="game-message">{dispatchMsg}</div>}
       <div className="biome-grid">
-        {biomes.map(biome => (
-          <div key={biome.zone_id} className={`biome-card ${!biome.in_phase1 ? 'locked' : ''} ${selectedBiome === biome.zone_id ? 'selected' : ''}`} onClick={() => biome.in_phase1 && setSelectedBiome(biome.zone_id)}>
+        {BIOMES.map(biome => (
+          <div
+            key={biome.zone_id}
+            className={`biome-card ${!biome.in_phase1 ? 'locked' : ''} ${selectedBiome === biome.zone_id ? 'selected' : ''}`}
+            onClick={() => biome.in_phase1 && setSelectedBiome(biome.zone_id)}
+          >
+            <div className="biome-image-container">
+              <picture>
+                <source
+                  type="image/avif"
+                  srcSet={`/assets/Explore & Biomes/${biome.imagePrefix}_Square.avif`}
+                />
+                <img
+                  src={`/assets/Explore & Biomes/${biome.imagePrefix}_Square.png`}
+                  alt={biome.name}
+                  className="biome-card-image"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
+            </div>
             <div className="biome-info">
               <h3>{biome.name}</h3>
               <p>{biome.description}</p>
@@ -204,6 +233,21 @@ export function ExploreView() {
       </div>
       {selected && (
         <div className="dispatch-panel">
+          <div className="dispatch-hero">
+            <picture>
+              <source
+                type="image/avif"
+                srcSet={`/assets/Explore & Biomes/${selected.imagePrefix}_Landscape.avif`}
+              />
+              <img
+                src={`/assets/Explore & Biomes/${selected.imagePrefix}_Landscape.png`}
+                alt={selected.name}
+                className="dispatch-hero-image"
+                loading="eager"
+                decoding="async"
+              />
+            </picture>
+          </div>
           <h3>Dispatch to {selected.name}</h3>
           <div className="duration-select">
             {['2h', '6h', '12h', '24h'].map(d => (

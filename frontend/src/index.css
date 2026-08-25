@@ -1113,13 +1113,32 @@ body::before {
 }
 
 .biome-card {
-  position: relative;
   background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  padding: 1rem;
+  border: 2px solid var(--color-border);
+  border-radius: 16px;
+  overflow: hidden;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s;
+  text-align: center;
+}
+
+.biome-image-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: var(--color-bg-primary);
+}
+
+.biome-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.biome-card:hover .biome-card-image {
+  transform: scale(1.05);
 }
 
 .biome-card:hover:not(.locked) {
@@ -1194,6 +1213,21 @@ body::before {
   border: 1px solid var(--color-border);
   border-radius: 16px;
   padding: 1.5rem;
+}
+
+.dispatch-hero {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.dispatch-hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .dispatch-panel h3 {
