@@ -143,8 +143,8 @@ async def pull_starter_egg(db: AsyncSession, user_id: str) -> Egg:
     return await pull_egg(db, user_id, source="starter")
 
 
-async def convert_duplicate(db: AsyncSession, user_id: str, egg_uuid: str) -> Optional[int]:
-    """Convert a duplicate egg to shards. Returns shard amount."""
+async def release_egg(db: AsyncSession, user_id: str, egg_uuid: str) -> Optional[int]:
+    """Release a duplicate egg for Element Shards."""
     result = await db.execute(
         select(Egg).where(Egg.user_id == user_id, Egg.uuid == egg_uuid)
     )
@@ -158,12 +158,10 @@ async def convert_duplicate(db: AsyncSession, user_id: str, egg_uuid: str) -> Op
     
     shards = creature["duplicate_yield_shards"]
     
-    # Delete the egg and award shards
     await db.delete(egg)
     
-    # Award shards via currency service
     from app.services.currency_service import award_shards
-    await award_shards(user_id, shards, "duplicate_conversion")
+    await award_shards(user_id, shards, "release")
     
     await db.commit()
     return shards

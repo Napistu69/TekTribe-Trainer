@@ -107,6 +107,28 @@ export function HatcheryView() {
     }
   };
 
+  const handleRelease = async (eggUuid: string) => {
+    if (!sessionToken || loading) return;
+    setLoading(true);
+    setMessage(null);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/eggs/${eggUuid}/release`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${sessionToken}` },
+      });
+      if (!mountedRef.current) return;
+      if (response.ok) {
+        try { const result = await response.json(); if (mountedRef.current) setMessage(`Released! +${result.shards_gained} shards`); await fetchEggs(); if (mountedRef.current) setSelectedEgg(null); } catch { if (mountedRef.current) setMessage('Released!'); }
+      } else {
+        try { const err = await response.json(); if (mountedRef.current) setMessage(err.detail || 'Failed to release egg'); } catch { if (mountedRef.current) setMessage('Failed to release egg'); }
+      }
+    } catch (err) {
+      if (mountedRef.current) setMessage('Network error');
+    } finally {
+      if (mountedRef.current) setLoading(false);
+    }
+  };
+
   const selected = eggs.find(e => e.uuid === selectedEgg);
 
   return (
@@ -157,6 +179,9 @@ export function HatcheryView() {
           </div>
           <button className="btn-primary hatch-btn" onClick={() => handleHatch(selected.uuid)} disabled={loading}>
             {loading ? 'Hatching...' : 'Hatch Egg'}
+          </button>
+          <button className="btn-secondary release-btn" onClick={() => handleRelease(selected.uuid)} disabled={loading} style={{ marginTop: '0.5rem' }}>
+            Release for Shards
           </button>
         </div>
       )}

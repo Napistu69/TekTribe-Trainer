@@ -130,7 +130,21 @@ async def get_egg(
     )
 
 
-@router.post("/{egg_uuid}/incubate")
+@router.post("/{egg_uuid}/release")
+async def release_egg(
+    egg_uuid: str,
+    authorization: str = Header(None, alias="Authorization"),
+    db: AsyncSession = Depends(get_db),
+):
+    """Release a duplicate egg in exchange for Element Shards."""
+    user_id = await get_current_user_id(authorization)
+    
+    try:
+        shards = await egg_service.release_egg(db, user_id, parse_uuid(egg_uuid))
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
+    return {"status": "released", "shards_gained": shards}
 async def start_incubation(
     egg_uuid: str,
     authorization: str = Header(None, alias="Authorization"),

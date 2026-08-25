@@ -680,10 +680,26 @@ body::before {
   transition: width 0.3s;
 }
 
-.hatch-btn {
-  margin-top: 1rem;
-  padding: 1rem 2rem;
-  font-size: 1.1rem;
+.release-btn {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.release-btn:hover {
+  border-color: var(--color-gold);
+  color: var(--color-gold);
+}
+
+.release-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .hatch-btn:disabled {
