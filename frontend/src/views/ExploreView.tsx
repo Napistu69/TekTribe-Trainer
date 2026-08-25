@@ -127,9 +127,15 @@ export function ExploreView() {
         await fetchExpeditions();
         await fetchCompanions();
       } else {
-        try { const err = await response.json(); setDispatchMsg(err.detail || 'Dispatch failed'); } catch { setDispatchMsg('Dispatch failed'); }
+        try {
+          const err = await response.json();
+          setDispatchMsg(err.detail || 'Dispatch failed');
+        } catch {
+          setDispatchMsg('Dispatch failed');
+        }
       }
     } catch (err) {
+      console.error('Dispatch error:', err);
       if (mountedRef.current) setDispatchMsg('Network error');
     } finally {
       if (mountedRef.current) setLoading(false);
@@ -200,9 +206,9 @@ export function ExploreView() {
         <div className="dispatch-panel">
           <h3>Dispatch to {selected.name}</h3>
           <div className="duration-select">
-            {['30m', '2h', '8h'].map(d => (
+            {['2h', '6h', '12h', '24h'].map(d => (
               <button key={d} className={`duration-btn ${duration === d ? 'active' : ''}`} onClick={() => setDuration(d)}>
-                {d === '30m' ? '30 minutes' : d === '2h' ? '2 hours' : '8 hours'}
+                {d === '2h' ? '2 hours' : d === '6h' ? '6 hours' : d === '12h' ? '12 hours' : '24 hours'}
               </button>
             ))}
           </div>
