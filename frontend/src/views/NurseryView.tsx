@@ -8,12 +8,23 @@ const TUTORIAL_STEPS = [
   { title: 'Growth', text: 'As your companion grows, they will eventually become adults and move to the Camp!' },
 ];
 
+const COMPANION_IMAGES: Record<string, string> = {
+  parasaur: '/assets/Creatures/parasaur_character.png',
+  dilo: '/assets/Creatures/dilo_character.png',
+  trike: '/assets/Creatures/trike_character.png',
+  ptera: '/assets/Creatures/ptera_character.png',
+  raptor: '/assets/Creatures/Raptor_Adult.png',
+  rex: '/assets/Creatures/rex_character.png',
+};
+
 interface Companion {
   uuid: string;
   species: string;
   name: string;
   life_stage: string;
   bond_level: number;
+  base_stats: Record<string, number>;
+  mutated_stats: Record<string, number>;
   care_state: {
     hunger: number;
     energy: number;
@@ -118,10 +129,60 @@ export function NurseryView() {
       </div>
       <div className="companion-display">
         <div className="companion-visual">
-          <img src={`/assets/Creatures/${companion.species}_character.png`} alt={companion.species} className="companion-image" />
+          <img src={COMPANION_IMAGES[companion.species] || COMPANION_IMAGES.raptor} alt={companion.species} className="companion-image" />
           <div className="companion-info">
             <h2>{companion.name || companion.species}</h2>
             <span className="life-stage">{companion.life_stage}</span>
+            <div className="bond-bar">
+              <span>Bond: {companion.bond_level}/1000</span>
+              <div className="meter">
+                <div className="meter-fill" style={{ width: `${(companion.bond_level / 1000) * 100}%` }} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="stats-panel">
+          <h4>Stats</h4>
+          {Object.entries(companion.mutated_stats).length > 0 ? (
+            <div className="stats-grid">
+              {Object.entries(companion.mutated_stats).map(([stat, value]) => (
+                <div key={stat} className="stat-item">
+                  <span className="stat-name">{stat}</span>
+                  <span className="stat-value">{typeof value === 'number' ? value.toFixed(1) : value}</span>
+                </div>
+              ))}
+            </div>
+          ) : Object.entries(companion.base_stats).length > 0 ? (
+            <div className="stats-grid">
+              {Object.entries(companion.base_stats).map(([stat, value]) => (
+                <div key={stat} className="stat-item">
+                  <span className="stat-name">{stat}</span>
+                  <span className="stat-value">{typeof value === 'number' ? value.toFixed(1) : value}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="no-stats">No stats yet — train your companion!</p>
+          )}
+        </div>
+
+        <div className="care-meters">
+          <div className="care-meter">
+            <div className="care-meter-label"><span>Hunger</span><span>{Math.round((companion.care_state?.hunger ?? 0) * 100)}%</span></div>
+            <div className="meter"><div className="meter-fill" style={{ width: `${(companion.care_state?.hunger ?? 0) * 100}%`, background: '#ff6b6b' }} /></div>
+          </div>
+          <div className="care-meter">
+            <div className="care-meter-label"><span>Energy</span><span>{Math.round((companion.care_state?.energy ?? 0) * 100)}%</span></div>
+            <div className="meter"><div className="meter-fill" style={{ width: `${(companion.care_state?.energy ?? 0) * 100}%`, background: '#ffd93d' }} /></div>
+          </div>
+          <div className="care-meter">
+            <div className="care-meter-label"><span>Morale</span><span>{Math.round((companion.care_state?.morale ?? 0) * 100)}%</span></div>
+            <div className="meter"><div className="meter-fill" style={{ width: `${(companion.care_state?.morale ?? 0) * 100}%`, background: '#6bcb77' }} /></div>
+          </div>
+          <div className="care-meter">
+            <div className="care-meter-label"><span>Cleanliness</span><span>{Math.round((companion.care_state?.cleanliness ?? 0) * 100)}%</span></div>
+            <div className="meter"><div className="meter-fill" style={{ width: `${(companion.care_state?.cleanliness ?? 0) * 100}%`, background: '#4d96ff' }} /></div>
           </div>
         </div>
         <div className="care-actions">
