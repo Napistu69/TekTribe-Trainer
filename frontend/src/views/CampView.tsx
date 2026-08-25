@@ -22,7 +22,7 @@ interface Companion {
   species: string;
   name: string;
   life_stage: string;
-  bond_level: number;
+  imprint_level: number;
   base_stats: Record<string, number>;
   mutated_stats: Record<string, number>;
   care_state: {
@@ -136,10 +136,10 @@ export function CampView() {
         <div className="companion-info">
           <h2>{companion.name || companion.species}</h2>
           <span className="life-stage">{companion.life_stage}</span>
-          <div className="bond-bar">
-            <span>Bond: {companion.bond_level}/1000</span>
+          <div className="imprint-bar">
+            <span>Imprint: {companion.imprint_level}/100</span>
             <div className="meter">
-              <div className="meter-fill" style={{ width: `${(companion.bond_level / 1000) * 100}%` }} />
+              <div className="meter-fill" style={{ width: `${(companion.imprint_level / 100) * 100}%` }} />
             </div>
           </div>
         </div>

@@ -22,7 +22,7 @@ interface Expedition {
     companion_injured: boolean;
     oracle_fragment_found: boolean;
     encounter_story: string;
-    bond_change: number;
+    imprint_change: number;
     resources_gained: string[];
   };
 }

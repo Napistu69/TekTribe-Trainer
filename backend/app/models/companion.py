@@ -50,8 +50,8 @@ class Companion(Base):
     personality_traits: Mapped[list] = mapped_column(JSONB, default=[])
     behavioral_quirks: Mapped[list] = mapped_column(JSONB, default=[])
 
-    # Bond
-    bond_level: Mapped[int] = mapped_column(Integer, default=0)
+    # Imprint
+    imprint_level: Mapped[int] = mapped_column(Integer, default=0)
     care_streak: Mapped[int] = mapped_column(Integer, default=0)
 
     # Lineage

@@ -6,15 +6,15 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import AsyncSessionLocal
-from app.models import CareState, Companion, BondEvent
+from app.models import CareState, Companion, ImprintEvent
 
 # Care action definitions
 CARE_ACTIONS = {
-    "feed": {"hunger": 0.4, "bond": 2, "cooldown_hours": 2},
-    "clean": {"cleanliness": 0.5, "bond": 1, "cooldown_hours": 4},
-    "imprint": {"morale": 0.3, "bond": 3, "cooldown_hours": 3},
-    "rest": {"energy": 0.5, "bond": 1, "cooldown_hours": 2},
-    "observe": {"bond": 1, "cooldown_hours": 1},
+    "feed": {"hunger": 0.4, "imprint": 2, "cooldown_hours": 2},
+    "clean": {"cleanliness": 0.5, "imprint": 1, "cooldown_hours": 4},
+    "imprint": {"morale": 0.3, "imprint": 3, "cooldown_hours": 3},
+    "rest": {"energy": 0.5, "imprint": 1, "cooldown_hours": 2},
+    "observe": {"imprint": 1, "cooldown_hours": 1},
 }
 
 # Decay rates per hour
@@ -25,14 +25,14 @@ DECAY_RATES = {
     "cleanliness": -0.04,
 }
 
-# Bond gain diminishing returns curve
-def _diminishing_bond_gain(base_gain: int, current_bond: int) -> int:
-    """Apply diminishing returns to bond gains at higher levels."""
-    if current_bond < 100:
+# Imprint gain diminishing returns curve
+def _diminishing_imprint_gain(base_gain: int, current_imprint: int) -> int:
+    """Apply diminishing returns to imprint gains at higher levels."""
+    if current_imprint < 10:
         return base_gain
-    elif current_bond < 500:
+    elif current_imprint < 50:
         return max(1, int(base_gain * 0.75))
-    elif current_bond < 800:
+    elif current_imprint < 80:
         return max(1, int(base_gain * 0.5))
     else:
         return max(1, int(base_gain * 0.25))
@@ -116,22 +116,22 @@ async def perform_care_action(
     if "cleanliness" in action:
         care_state.cleanliness = min(1.0, care_state.cleanliness + action["cleanliness"])
     
-    # Apply bond gain with diminishing returns
-    base_bond = action["bond"]
-    bond_gain = _diminishing_bond_gain(base_bond, companion.bond_level)
-    companion.bond_level += bond_gain
+    # Apply imprint gain with diminishing returns
+    base_imprint = action["imprint"]
+    imprint_gain = _diminishing_imprint_gain(base_imprint, companion.imprint_level)
+    companion.imprint_level += imprint_gain
     
     # Set cooldown
     await _set_cooldown(db, companion_uuid, cooldown_key, action["cooldown_hours"])
     
-    # Log bond event
-    bond_event = BondEvent(
+    # Log imprint event
+    imprint_event = ImprintEvent(
         companion_uuid=companion_uuid,
         event_type=f"care_{action_type}",
-        bond_delta=bond_gain,
-        description=f"Performed {action_type}: +{bond_gain} bond",
+        imprint_delta=imprint_gain,
+        description=f"Performed {action_type}: +{imprint_gain} imprint",
     )
-    db.add(bond_event)
+    db.add(imprint_event)
     
     # Update care streak (first action of UTC day)
     await _update_care_streak(db, companion)
@@ -141,7 +141,7 @@ async def perform_care_action(
     return {
         "success": True,
         "action": action_type,
-        "bond_gained": bond_gain,
+        "imprint_gained": imprint_gain,
         "care_state": {
             "hunger": care_state.hunger,
             "energy": care_state.energy,

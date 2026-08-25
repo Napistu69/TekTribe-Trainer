@@ -77,7 +77,7 @@ class CompanionResponse(BaseModel):
     personality_type: str
     personality_traits: list
     behavioral_quirks: list
-    bond_level: int
+    imprint_level: int
     care_streak: int
     parent_a_uuid: Optional[str] = None
     parent_b_uuid: Optional[str] = None
@@ -102,7 +102,7 @@ class TrainingResultResponse(BaseModel):
     """Response body for POST /training/submit."""
     score: float
     stat_gains: dict
-    bond_gained: int
+    imprint_gained: int
     dust_earned: int
 
 

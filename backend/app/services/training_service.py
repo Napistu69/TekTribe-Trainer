@@ -6,7 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import AsyncSessionLocal
-from app.models import Companion, BondEvent
+from app.models import Companion, ImprintEvent
 
 # Mini-game definitions (mirrors frontend)
 MINI_GAMES = {
@@ -69,8 +69,8 @@ def calculate_stat_gains(game_id: str, score: float) -> dict:
     return {stat: round(base_gain * multiplier, 1) for stat in game["stats"]}
 
 
-def calculate_bond_gain(score: float) -> int:
-    """Calculate bond gain from score."""
+def calculate_imprint_gain(score: float) -> int:
+    """Calculate imprint gain from score."""
     if score >= 80:
         return 5
     elif score >= 50:
@@ -147,7 +147,7 @@ async def apply_training(
     
     # Calculate gains
     stat_gains = calculate_stat_gains(game_id, score)
-    bond_gain = calculate_bond_gain(score)
+    imprint_gain = calculate_imprint_gain(score)
     dust_reward = calculate_dust_reward(score)
     
     # Apply stat gains to mutated_stats
@@ -158,8 +158,8 @@ async def apply_training(
         current = companion.mutated_stats.get(stat, 0)
         companion.mutated_stats[stat] = current + gain
     
-    # Apply bond gain
-    companion.bond_level += bond_gain
+    # Apply imprint gain
+    companion.imprint_level += imprint_gain
     
     # Set cooldown
     import redis.asyncio as redis
@@ -170,15 +170,15 @@ async def apply_training(
     expires_at = datetime.now(timezone.utc) + timedelta(hours=COOLDOWN_HOURS)
     await r.setex(key, COOLDOWN_HOURS * 3600, expires_at.isoformat())
     
-    # Log bond event
-    if bond_gain > 0:
-        bond_event = BondEvent(
+    # Log imprint event
+    if imprint_gain > 0:
+        imprint_event = ImprintEvent(
             companion_uuid=companion_uuid,
             event_type=f"training_{game_id}",
-            bond_delta=bond_gain,
-            description=f"Training {game_id}: +{bond_gain} bond, score={score:.0f}",
+            imprint_delta=imprint_gain,
+            description=f"Training {game_id}: +{imprint_gain} imprint, score={score:.0f}",
         )
-        db.add(bond_event)
+        db.add(imprint_event)
     
     # Award Dust if applicable
     if dust_reward > 0:
@@ -190,7 +190,7 @@ async def apply_training(
     return {
         "score": score,
         "stat_gains": stat_gains,
-        "bond_gained": bond_gain,
+        "imprint_gained": imprint_gain,
         "dust_earned": dust_reward,
     }
 

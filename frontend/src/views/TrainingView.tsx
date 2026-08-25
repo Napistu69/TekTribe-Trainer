@@ -48,7 +48,7 @@ export function TrainingView() {
       });
       if (!mountedRef.current) return;
       if (response.ok) {
-        try { const result = await response.json(); if (mountedRef.current) setMessage(`Training complete! +${result.bond_gained} bond, +${result.dust_earned} dust`); } catch { if (mountedRef.current) setMessage('Training complete!'); }
+        try { const result = await response.json(); if (mountedRef.current) setMessage(`Training complete! +${result.imprint_gained} imprint, +${result.dust_earned} dust`); } catch { if (mountedRef.current) setMessage('Training complete!'); }
       } else {
         try { const err = await response.json(); if (mountedRef.current) setMessage(err.detail || 'Training failed'); } catch { if (mountedRef.current) setMessage('Training failed'); }
       }

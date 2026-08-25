@@ -18,5 +18,5 @@ class LockdownState(Base):
     )
     graduated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
     care_actions_completed: Mapped[int] = mapped_column(Integer, default=0)
-    min_bond_achieved: Mapped[int] = mapped_column(Integer, default=0)
+    min_imprint_achieved: Mapped[int] = mapped_column(Integer, default=0)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)

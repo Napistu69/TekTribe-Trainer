@@ -10,7 +10,7 @@ from app.core.database import AsyncSessionLocal
 from app.models import LockdownState, User, Companion
 
 # Configurable thresholds
-LOCKDOWN_MIN_BOND = settings.lockdown_min_bond  # 100
+LOCKDOWN_MIN_IMPRINT = settings.lockdown_min_imprint  # 100
 LOCKDOWN_MIN_CARE_ACTIONS = settings.lockdown_min_care_actions  # 50
 LOCKDOWN_MIN_DAYS = settings.lockdown_min_days  # 7
 LOCKDOWN_MAX_EGGS = 3
@@ -75,14 +75,14 @@ async def _check_graduation_criteria(session: AsyncSession, user_id: str) -> boo
     if days_elapsed < LOCKDOWN_MIN_DAYS:
         return False
     
-    # Check bond level
+    # Check imprint level
     result = await session.execute(
         select(Companion).where(Companion.user_id == user_id)
     )
     companions = result.scalars().all()
     
-    max_bond = max((c.bond_level for c in companions), default=0)
-    if max_bond < LOCKDOWN_MIN_BOND:
+    max_imprint = max((c.imprint_level for c in companions), default=0)
+    if max_imprint < LOCKDOWN_MIN_IMPRINT:
         return False
     
     # Check care actions
@@ -167,7 +167,7 @@ async def get_lockdown_status(user_id: str) -> dict:
                 "is_active": False,
                 "days_elapsed": 0,
                 "care_actions_remaining": 0,
-                "bond_level_required": LOCKDOWN_MIN_BOND,
+                "imprint_level_required": LOCKDOWN_MIN_IMPRINT,
                 "egg_pulls_used": 0,
                 "egg_pulls_max": LOCKDOWN_MAX_EGGS,
             }
@@ -187,19 +187,19 @@ async def get_lockdown_status(user_id: str) -> dict:
         )
         egg_pulls_used = len(result.scalars().all())
         
-        # Get max bond
+        # Get max imprint
         result = await session.execute(
             select(Companion).where(Companion.user_id == user_id)
         )
         companions = result.scalars().all()
-        max_bond = max((c.bond_level for c in companions), default=0)
+        max_imprint = max((c.imprint_level for c in companions), default=0)
         
         return {
             "is_active": state.is_active,
             "days_elapsed": days_elapsed,
             "care_actions_remaining": max(0, LOCKDOWN_MIN_CARE_ACTIONS - (user.care_action_count if user else 0)),
-            "bond_level_required": LOCKDOWN_MIN_BOND,
-            "current_bond": max_bond,
+            "imprint_level_required": LOCKDOWN_MIN_IMPRINT,
+            "current_imprint": max_imprint,
             "egg_pulls_used": egg_pulls_used,
             "egg_pulls_max": LOCKDOWN_MAX_EGGS,
         }

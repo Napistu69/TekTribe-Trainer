@@ -92,7 +92,7 @@ const STATIONS: Station[] = [
     icon: '👁️',
     image: '/assets/Habitat & Camp/overseer_shrine.png',
     locked: true,
-    unlockHint: 'Reach 500 bond with any companion',
+    unlockHint: 'Reach 50 imprint with any companion',
   },
 ];
 

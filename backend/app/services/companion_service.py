@@ -56,7 +56,7 @@ async def hatch_egg(db: AsyncSession, user_id: str, egg_uuid: str) -> Optional[C
         personality_type=personality_type,
         personality_traits=personality_traits,
         behavioral_quirks=behavioral_quirks,
-        bond_level=0,
+        imprint_level=0,
         care_streak=0,
         parent_a_uuid=None,
         parent_b_uuid=None,
@@ -87,6 +87,9 @@ async def hatch_egg(db: AsyncSession, user_id: str, egg_uuid: str) -> Optional[C
     
     await db.commit()
     await db.refresh(companion)
+    # Eagerly load care_state to avoid greenlet error in serialize_companion
+    if companion.care_state:
+        _ = companion.care_state.hunger
     return companion
 
 
@@ -113,7 +116,7 @@ async def get_companions(db: AsyncSession, user_id: str) -> list[Companion]:
 
 
 async def update_life_stage(db: AsyncSession, companion_uuid: str) -> Optional[str]:
-    """Check and update life stage based on maturation progress and bond level.
+    """Check and update life stage based on maturation progress and imprint level.
     
     Returns the new life stage if changed, None otherwise.
     """
@@ -127,11 +130,11 @@ async def update_life_stage(db: AsyncSession, companion_uuid: str) -> Optional[s
     old_stage = companion.life_stage
     
     # Stage progression rules
-    if companion.maturation_progress >= 1.0 and companion.bond_level >= 1000:
+    if companion.maturation_progress >= 1.0 and companion.imprint_level >= 100:
         companion.life_stage = "elder"
-    elif companion.maturation_progress >= 0.7 and companion.bond_level >= 500:
+    elif companion.maturation_progress >= 0.7 and companion.imprint_level >= 50:
         companion.life_stage = "adult"
-    elif companion.maturation_progress >= 0.3 and companion.bond_level >= 100:
+    elif companion.maturation_progress >= 0.3 and companion.imprint_level >= 10:
         companion.life_stage = "juvenile"
     elif companion.maturation_progress >= 0.1:
         companion.life_stage = "hatchling"
@@ -175,7 +178,7 @@ def serialize_companion(companion: Companion) -> dict:
         "personality_type": companion.personality_type,
         "personality_traits": companion.personality_traits,
         "behavioral_quirks": companion.behavioral_quirks,
-        "bond_level": companion.bond_level,
+        "imprint_level": companion.imprint_level,
         "care_streak": companion.care_streak,
         "parent_a_uuid": str(companion.parent_a_uuid) if companion.parent_a_uuid else None,
         "parent_b_uuid": str(companion.parent_b_uuid) if companion.parent_b_uuid else None,

@@ -6,7 +6,7 @@ interface TrainingState {
   lastResult: {
     score: number;
     statGains: Record<string, number>;
-    bondGained: number;
+    imprintGained: number;
     dustEarned: number;
   } | null;
   isPlaying: boolean;
@@ -16,7 +16,7 @@ interface TrainingState {
   completeGame: (result: {
     score: number;
     statGains: Record<string, number>;
-    bondGained: number;
+    imprintGained: number;
     dustEarned: number;
   }) => void;
   resetGame: () => void;

@@ -1,6 +1,6 @@
 """SQLAlchemy models for TekTribe Trainer."""
 from app.models.base import Base
-from app.models.bond_event import BondEvent
+from app.models.imprint_event import ImprintEvent
 from app.models.care_state import CareState
 from app.models.companion import Companion
 from app.models.currency import CurrencyLedger
@@ -11,7 +11,7 @@ from app.models.user import User
 
 __all__ = [
     "Base",
-    "BondEvent",
+    "ImprintEvent",
     "CareState",
     "Companion",
     "CurrencyLedger",

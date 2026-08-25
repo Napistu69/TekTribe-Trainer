@@ -66,7 +66,7 @@ async def create_user(
         user_id=user.id,
         started_at=datetime.now(timezone.utc),
         care_actions_completed=0,
-        min_bond_achieved=0,
+        min_imprint_achieved=0,
         is_active=True,
     )
     db.add(lockdown)

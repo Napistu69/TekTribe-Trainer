@@ -31,8 +31,8 @@ export function ResultsScreen({ onPlayAgain, onExit }: ResultsScreenProps) {
 
         <div className="gains-list">
           <div className="gain-item">
-            <span className="gain-label">Bond</span>
-            <span className="gain-value">+{lastResult.bondGained}</span>
+            <span className="gain-label">Imprint</span>
+            <span className="gain-value">+{lastResult.imprintGained}</span>
           </div>
           {Object.entries(lastResult.statGains).map(([stat, value]) => (
             <div className="gain-item" key={stat}>

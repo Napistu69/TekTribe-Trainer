@@ -41,7 +41,7 @@ async def login(
                 "is_active": True,
                 "graduated_at": None,
                 "care_actions_completed": 0,
-                "min_bond_achieved": 0,
+                "min_imprint_achieved": 0,
             },
         )
     except HTTPException:

@@ -1,4 +1,4 @@
-"""BondEvent model — append-only log of bond changes."""
+"""ImprintEvent model — append-only log of imprint changes."""
 from datetime import datetime, timezone
 from uuid import uuid4
 
@@ -9,8 +9,8 @@ from sqlalchemy.orm import Mapped, mapped_column
 from app.models.base import Base
 
 
-class BondEvent(Base):
-    __tablename__ = "bond_events"
+class ImprintEvent(Base):
+    __tablename__ = "imprint_events"
 
     id: Mapped[str] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid4
@@ -22,5 +22,5 @@ class BondEvent(Base):
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
     event_type: Mapped[str] = mapped_column(String(30), nullable=False)
-    bond_delta: Mapped[int] = mapped_column(Integer, default=0)
+    imprint_delta: Mapped[int] = mapped_column(Integer, default=0)
     description: Mapped[str] = mapped_column(Text, default="")

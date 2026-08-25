@@ -17,10 +17,10 @@ class Settings(BaseSettings):
     session_ttl_hours: int = 24
     
     # Game settings
-    lockdown_min_bond: int = 100
+    lockdown_min_imprint: int = 100
     lockdown_min_care_actions: int = 50
     lockdown_min_days: int = 7
-    bond_max: int = 1000
+    imprint_max: int = 100
     
     class Config:
         env_file = ".env"

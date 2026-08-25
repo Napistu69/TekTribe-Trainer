@@ -137,9 +137,9 @@ async def resolve_expedition(db: AsyncSession, expedition_uuid: str) -> dict:
         from app.services.currency_service import award_dust
         await award_dust(expedition.user_id, outcome["dust_gained"], f"expedition_{expedition.biome_zone}")
     
-    # Apply bond change
-    if outcome["bond_change"] != 0:
-        companion.bond_level += outcome["bond_change"]
+    # Apply imprint change
+    if outcome["imprint_change"] != 0:
+        companion.imprint_level += outcome["imprint_change"]
     
     await db.commit()
     
@@ -189,12 +189,12 @@ def calculate_outcome(companion: Companion, biome: dict, expedition: Expedition)
     oracle_chance = BIOMES.get("oracle_fragment_chance_tek_ruins") if biome["zone_id"] == "tek_ruins" else BIOMES["oracle_fragment_chance"]
     oracle_fragment_found = secrets.randbelow(100) / 100 < oracle_chance
     
-    # Bond change
-    bond_change = 0
+    # Imprint change
+    imprint_change = 0
     if success:
-        bond_change = 5 + int(duration_mult)  # 5-11 based on duration
+        imprint_change = 5 + int(duration_mult)  # 5-11 based on duration
     else:
-        bond_change = -2 - int(duration_mult / 2)  # -2 to -5
+        imprint_change = -2 - int(duration_mult / 2)  # -2 to -5
     
     # Generate encounter story
     encounter_story = generate_encounter_story(biome, success, injured, oracle_fragment_found)
@@ -205,7 +205,7 @@ def calculate_outcome(companion: Companion, biome: dict, expedition: Expedition)
         "companion_injured": injured,
         "oracle_fragment_found": oracle_fragment_found,
         "encounter_story": encounter_story,
-        "bond_change": bond_change,
+        "imprint_change": imprint_change,
         "resources_gained": biome["resources"][:2] if success else [],
     }
 

@@ -19,9 +19,9 @@ export function ExpeditionResult({ result, onClose }: ExpeditionResultProps) {
             <span className="reward-value">+{result.dust_gained}</span>
           </div>
           <div className="reward">
-            <span className="reward-label">Bond</span>
-            <span className={`reward-value ${result.bond_change >= 0 ? 'positive' : 'negative'}`}>
-              {result.bond_change >= 0 ? '+' : ''}{result.bond_change}
+            <span className="reward-label">Imprint</span>
+            <span className={`reward-value ${result.imprint_change >= 0 ? 'positive' : 'negative'}`}>
+              {result.imprint_change >= 0 ? '+' : ''}{result.imprint_change}
             </span>
           </div>
           {result.oracle_fragment_found && (
