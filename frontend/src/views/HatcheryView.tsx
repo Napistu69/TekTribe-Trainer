@@ -19,6 +19,16 @@ const RARITY_IMAGES: Record<string, string> = {
   mythic: '/assets/Hatch System/Egg_Mythic.png',
 };
 
+const RARITY_COLORS: Record<string, string> = {
+  common: '#808080',      // grey
+  uncommon: '#00ff00',    // Natural green
+  rare: '#00d4ff',        // Tier 2 cyan
+  epic: '#00ff88',        // Tier 2 emerald (Zero Point)
+  ascendant: '#4a9b8f',   // Tier 2 patina copper
+  legendary: '#d4a84b',   // Tier 2 gold
+  mythic: '#ff4444',      // Natural red (positive terminal)
+};
+
 export function HatcheryView() {
   const [eggs, setEggs] = useState<any[]>([]);
   const [selectedEgg, setSelectedEgg] = useState<string | null>(null);
@@ -114,9 +124,19 @@ export function HatcheryView() {
           <div className="empty-shelf"><p>No eggs yet. Pull your first egg to begin!</p></div>
         ) : (
           eggs.map((egg) => (
-            <div key={egg.uuid} className={`egg-card ${selectedEgg === egg.uuid ? 'selected' : ''}`} onClick={() => setSelectedEgg(egg.uuid)}>
-              <img src={RARITY_IMAGES[egg.rarity] || RARITY_IMAGES.common} alt={egg.rarity} className="egg-image" />
-              <span className="egg-rarity">{egg.rarity}</span>
+            <div
+              key={egg.uuid}
+              className={`egg-card ${selectedEgg === egg.uuid ? 'selected' : ''}`}
+              onClick={() => setSelectedEgg(egg.uuid)}
+              style={{ borderColor: selectedEgg === egg.uuid ? RARITY_COLORS[egg.rarity] : undefined }}
+            >
+              <img
+                src={RARITY_IMAGES[egg.rarity] || RARITY_IMAGES.common}
+                alt={egg.rarity}
+                className="egg-visual"
+                style={{ filter: `drop-shadow(0 0 10px ${RARITY_COLORS[egg.rarity]})` }}
+              />
+              <span className="egg-rarity" style={{ color: RARITY_COLORS[egg.rarity] }}>{egg.rarity}</span>
             </div>
           ))
         )}
@@ -125,8 +145,15 @@ export function HatcheryView() {
         <div id="incubator" className="incubator-panel">
           <h3>Incubator</h3>
           <div className="incubator-egg">
-            <img src={RARITY_IMAGES[selected.rarity] || RARITY_IMAGES.common} alt="Egg" className="egg-image large" />
-            <p className="incubator-rarity">{selected.rarity.toUpperCase()}</p>
+            <img
+              src={RARITY_IMAGES[selected.rarity] || RARITY_IMAGES.common}
+              alt="Egg"
+              className="egg-visual large"
+              style={{ filter: `drop-shadow(0 0 20px ${RARITY_COLORS[selected.rarity]})` }}
+            />
+            <p className="incubator-rarity" style={{ color: RARITY_COLORS[selected.rarity] }}>
+              {selected.rarity.toUpperCase()}
+            </p>
           </div>
           <button className="btn-primary hatch-btn" onClick={() => handleHatch(selected.uuid)} disabled={loading}>
             {loading ? 'Hatching...' : 'Hatch Egg'}
