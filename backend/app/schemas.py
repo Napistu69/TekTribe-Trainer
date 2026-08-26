@@ -65,6 +65,8 @@ class CompanionResponse(BaseModel):
     user_id: str
     species: str
     name: Optional[str] = None
+    rarity: str
+    is_locked: bool
     origin_type: str
     origin_metadata: dict
     creation_timestamp: str
