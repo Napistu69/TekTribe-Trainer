@@ -188,7 +188,7 @@ export function CampView() {
           </div>
         </div>
         <div className="care-actions">
-          {['feed', 'clean', 'imprint', 'rest'].map(a => (
+          {['feed', 'clean', 'imprint', 'rest', 'observe'].map(a => (
             <button key={a} className="care-action-btn" onClick={() => handleCareAction(a)} disabled={loading}>
               <span className="care-label">{a}</span>
             </button>
