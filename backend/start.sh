@@ -2,22 +2,15 @@
 # Startup script for Render
 
 echo "Running database migrations..."
-# Ensure critical columns exist using Python
-python3 -c "
-import asyncio
-import asyncpg
-import os
 
-async def fix():
-    conn = await asyncpg.connect(os.environ['DATABASE_URL'])
-    await conn.execute(\"ALTER TABLE IF EXISTS companions ADD COLUMN IF NOT EXISTS rarity VARCHAR(20) NOT NULL DEFAULT 'common'\")
-    await conn.execute(\"ALTER TABLE IF EXISTS companions ADD COLUMN IF NOT EXISTS is_locked BOOLEAN NOT NULL DEFAULT FALSE\")
-    await conn.close()
+# Use Python to ensure columns exist before alembic runs
+if command -v python3 &> /dev/null; then
+    python3 /app/backend/scripts/fix_columns.py 2>/dev/null || echo "Warning: Column fix script failed"
+elif command -v python &> /dev/null; then
+    python /app/backend/scripts/fix_columns.py 2>/dev/null || echo "Warning: Column fix script failed"
+fi
 
-asyncio.run(fix())
-" 2>/dev/null || true
-
-alembic upgrade head || echo "Migration warning: continuing..."
+alembic upgrade head || echo "Warning: Alembic upgrade failed"
 
 echo "Starting uvicorn..."
 uvicorn app.main:app --host 0.0.0.0 --port $PORT

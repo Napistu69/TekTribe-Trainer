@@ -29,7 +29,7 @@ export function LoginScreen() {
             className="overseer-logo"
           />
           <h1>TekTribe Trainer</h1>
-          <p className="tagline">Imprint with the Past, Explore the Future</p>
+          <p className="tagline">Join the Tribe, Raise a Companion.</p>
         </div>
 
         {error && <div className="error-message">{error}</div>}
