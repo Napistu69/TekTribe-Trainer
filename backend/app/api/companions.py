@@ -92,3 +92,73 @@ async def rename_companion(
     await db.commit()
     
     return {"status": "renamed", "name": name}
+
+
+@router.post("/{companion_uuid}/release")
+async def release_companion(
+    companion_uuid: str,
+    authorization: str = Header(None, alias="Authorization"),
+    db: AsyncSession = Depends(get_db),
+):
+    """Release a companion in exchange for Element Shards."""
+    user_id = await get_current_user_id(authorization)
+    
+    from uuid import UUID
+    try:
+        uuid = UUID(companion_uuid)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid UUID format")
+    
+    companion = await companion_service.get_companion(db, user_id, companion_uuid)
+    if not companion:
+        raise HTTPException(status_code=404, detail="Companion not found")
+    
+    if companion.is_locked:
+        raise HTTPException(status_code=400, detail="Companion is locked")
+    
+    # Calculate shards based on rarity
+    shard_amounts = {
+        "common": 10,
+        "uncommon": 20,
+        "rare": 40,
+        "epic": 75,
+        "ascendant": 150,
+        "legendary": 300,
+        "mythic": 500,
+    }
+    shards = shard_amounts.get(companion.rarity, 10)
+    
+    # Award shards
+    from app.services.currency_service import award_shards
+    await award_shards(user_id, shards, "companion_release")
+    
+    # Delete the companion
+    await db.delete(companion)
+    await db.commit()
+    
+    return {"status": "released", "shards_gained": shards}
+
+
+@router.patch("/{companion_uuid}/lock")
+async def toggle_lock_companion(
+    companion_uuid: str,
+    authorization: str = Header(None, alias="Authorization"),
+    db: AsyncSession = Depends(get_db),
+):
+    """Toggle lock status on a companion."""
+    user_id = await get_current_user_id(authorization)
+    
+    from uuid import UUID
+    try:
+        uuid = UUID(companion_uuid)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid UUID format")
+    
+    companion = await companion_service.get_companion(db, user_id, companion_uuid)
+    if not companion:
+        raise HTTPException(status_code=404, detail="Companion not found")
+    
+    companion.is_locked = not companion.is_locked
+    await db.commit()
+    
+    return {"status": "updated", "is_locked": companion.is_locked}

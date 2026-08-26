@@ -66,6 +66,7 @@ class Companion(Base):
     # Status
     current_state: Mapped[str] = mapped_column(String(20), default="resting")
     health_status: Mapped[float] = mapped_column(Float, default=1.0)
+    is_locked: Mapped[bool] = mapped_column(Boolean, default=False)
     breeding_cooldown_until: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
 
     # Blockchain (dormant until Phase 4)

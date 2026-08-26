@@ -22,7 +22,9 @@ interface Companion {
   species: string;
   name: string;
   life_stage: string;
+  rarity: string;
   imprint_level: number;
+  is_locked: boolean;
   base_stats: Record<string, number>;
   mutated_stats: Record<string, number>;
   care_state: {
@@ -31,6 +33,20 @@ interface Companion {
     morale: number;
     cleanliness: number;
   };
+}
+
+const SHARD_AMOUNTS: Record<string, number> = {
+  common: 10,
+  uncommon: 20,
+  rare: 40,
+  epic: 75,
+  ascendant: 150,
+  legendary: 300,
+  mythic: 500,
+};
+
+function getShardAmount(rarity: string): number {
+  return SHARD_AMOUNTS[rarity] || 10;
 }
 
 export function CampView() {
@@ -48,8 +64,6 @@ export function CampView() {
     return () => { mountedRef.current = false; };
   }, []);
 
-  const isAdultOrElder = (c: Companion) => c.life_stage === 'adult' || c.life_stage === 'elder';
-
   const fetchCompanions = async () => {
     if (!sessionToken) return;
     try {
@@ -59,8 +73,7 @@ export function CampView() {
       if (!response.ok) return;
       const data = await response.json();
       if (!mountedRef.current) return;
-      
-      const filtered = data.filter(isAdultOrElder);
+      const filtered = data.filter((c: Companion) => c.life_stage === 'adult' || c.life_stage === 'elder');
       setCompanions(filtered);
       if (filtered.length > 0 && !selectedCompanion) {
         setSelectedCompanion(filtered[0].uuid);
@@ -91,7 +104,12 @@ export function CampView() {
       });
       if (!mountedRef.current) return;
       if (response.ok) {
-        setMessage(`${action} successful!`);
+        try {
+          const data = await response.json();
+          setMessage(`${action} successful! +${data.dust_gained || 0} dust`);
+        } catch {
+          setMessage(`${action} successful!`);
+        }
         await fetchCompanions();
       } else {
         try { const err = await response.json(); setMessage(err.detail || 'Care action failed'); } catch { setMessage('Care action failed'); }
@@ -100,6 +118,53 @@ export function CampView() {
       if (mountedRef.current) setMessage('Network error');
     } finally {
       if (mountedRef.current) setLoading(false);
+    }
+  };
+
+  const handleRelease = async (companionUuid: string) => {
+    if (!sessionToken) return;
+    if (!confirm('Are you sure you want to release this companion? This cannot be undone.')) return;
+    setLoading(true);
+    setMessage(null);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/companions/${companionUuid}/release`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${sessionToken}` },
+      });
+      if (!mountedRef.current) return;
+      if (response.ok) {
+        try {
+          const result = await response.json();
+          setMessage(`Released! +${result.shards_gained} shards`);
+        } catch {
+          setMessage('Released!');
+        }
+        await fetchCompanions();
+        setSelectedCompanion(null);
+        setCompanion(null);
+      } else {
+        try { const err = await response.json(); setMessage(err.detail || 'Release failed'); } catch { setMessage('Release failed'); }
+      }
+    } catch (err) {
+      if (mountedRef.current) setMessage('Network error');
+    } finally {
+      if (mountedRef.current) setLoading(false);
+    }
+  };
+
+  const handleToggleLock = async (companionUuid: string) => {
+    if (!sessionToken) return;
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/companions/${companionUuid}/lock`, {
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${sessionToken}` },
+      });
+      if (!mountedRef.current) return;
+      if (response.ok) {
+        await fetchCompanions();
+      }
+    } catch (err) {
+      console.error('Lock toggle error:', err);
     }
   };
 
@@ -124,6 +189,7 @@ export function CampView() {
           <img src={COMPANION_IMAGES[companion.species] || COMPANION_IMAGES.raptor} alt={companion.species} className="camp-dino-image" />
         </div>
       </div>
+
       <div className="camp-info-panel">
         {message && <div className="game-message">{message}</div>}
         <div className="companion-selector">
@@ -133,6 +199,7 @@ export function CampView() {
             </button>
           ))}
         </div>
+
         <div className="companion-info">
           <h2>{companion.name || companion.species}</h2>
           <span className="life-stage">{companion.life_stage}</span>
@@ -142,6 +209,22 @@ export function CampView() {
               <div className="meter-fill" style={{ width: `${(companion.imprint_level / 100) * 100}%` }} />
             </div>
           </div>
+          <div className="rarity-tag">{companion.rarity}</div>
+        </div>
+
+        <div className="companion-actions">
+          <button
+            className={`btn-icon ${companion.is_locked ? 'locked' : ''}`}
+            onClick={() => handleToggleLock(companion.uuid)}
+            title={companion.is_locked ? 'Unlock' : 'Lock'}
+          >
+            {companion.is_locked ? '🔒' : '🔓'}
+          </button>
+          {!companion.is_locked && (
+            <button className="btn-secondary release-btn" onClick={() => handleRelease(companion.uuid)}>
+              Release ({getShardAmount(companion.rarity)} shards)
+            </button>
+          )}
         </div>
 
         <div className="stats-panel">
@@ -187,8 +270,9 @@ export function CampView() {
             <div className="meter"><div className="meter-fill" style={{ width: `${(companion.care_state?.cleanliness ?? 0) * 100}%`, background: '#4d96ff' }} /></div>
           </div>
         </div>
+
         <div className="care-actions">
-          {['feed', 'clean', 'imprint', 'rest', 'observe'].map(a => (
+          {['feed', 'clean', 'imprint', 'rest'].map(a => (
             <button key={a} className="care-action-btn" onClick={() => handleCareAction(a)} disabled={loading}>
               <span className="care-label">{a}</span>
             </button>
