@@ -6,7 +6,7 @@ from app.core.database import get_db
 from app.api.expeditions import get_current_user_id
 from app.models import Companion
 
-router = APIRouter(prefix="/api/admin", tags=["admin"])
+router = APIRouter(prefix="/admin", tags=["admin"])
 
 
 @router.post("/unstuck-companions")
