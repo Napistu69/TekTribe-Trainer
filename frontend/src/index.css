@@ -1431,6 +1431,49 @@ body::before {
   color: #ff6b6b;
 }
 
+.force-complete-btn {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.force-complete-btn:hover {
+  border-color: var(--color-gold);
+  color: var(--color-gold);
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.panel-header h3 {
+  margin: 0;
+}
+
+.cancel-all-btn {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancel-all-btn:hover {
+  border-color: #ff6b6b;
+  color: #ff6b6b;
+}
+
 .history-panel {
   margin-top: 1.5rem;
   background: var(--color-bg-card);

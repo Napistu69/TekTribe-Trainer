@@ -91,7 +91,12 @@ export function NurseryView() {
       });
       if (!mountedRef.current) return;
       if (response.ok) {
-        setMessage(`${action} successful!`);
+        try {
+          const data = await response.json();
+          setMessage(`${action} successful! +${data.dust_gained || 0} dust`);
+        } catch {
+          setMessage(`${action} successful!`);
+        }
         await fetchCompanions();
       } else {
         try { const err = await response.json(); setMessage(err.detail || 'Care action failed'); } catch { setMessage('Care action failed'); }

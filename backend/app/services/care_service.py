@@ -10,11 +10,11 @@ from app.models import CareState, Companion, ImprintEvent
 
 # Care action definitions
 CARE_ACTIONS = {
-    "feed": {"hunger": 0.4, "imprint": 2, "cooldown_hours": 2},
-    "clean": {"cleanliness": 0.5, "imprint": 1, "cooldown_hours": 4},
-    "imprint": {"morale": 0.3, "imprint": 3, "cooldown_hours": 3},
-    "rest": {"energy": 0.5, "imprint": 1, "cooldown_hours": 2},
-    "observe": {"imprint": 1, "cooldown_hours": 1},
+    "feed": {"hunger": 0.4, "imprint": 2, "dust": 5, "cooldown_hours": 2},
+    "clean": {"cleanliness": 0.5, "imprint": 1, "dust": 3, "cooldown_hours": 4},
+    "imprint": {"morale": 0.3, "imprint": 3, "dust": 7, "cooldown_hours": 3},
+    "rest": {"energy": 0.5, "imprint": 1, "dust": 3, "cooldown_hours": 2},
+    "observe": {"imprint": 1, "dust": 2, "cooldown_hours": 1},
 }
 
 # Decay rates per hour
@@ -116,6 +116,12 @@ async def perform_care_action(
     if "cleanliness" in action:
         care_state.cleanliness = min(1.0, care_state.cleanliness + action["cleanliness"])
     
+    # Award dust for care actions
+    dust_gained = action.get("dust", 0)
+    if dust_gained > 0:
+        from app.services.currency_service import award_dust
+        await award_dust(user_id, dust_gained, f"care_{action_type}")
+    
     # Apply imprint gain with diminishing returns
     base_imprint = action["imprint"]
     imprint_gain = _diminishing_imprint_gain(base_imprint, companion.imprint_level)
@@ -142,6 +148,7 @@ async def perform_care_action(
         "success": True,
         "action": action_type,
         "imprint_gained": imprint_gain,
+        "dust_gained": dust_gained,
         "care_state": {
             "hunger": care_state.hunger,
             "energy": care_state.energy,

@@ -204,6 +204,47 @@ export function ExploreView() {
     }
   };
 
+  const handleCancelAll = async () => {
+    if (!sessionToken) return;
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/expeditions/cancel-all`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${sessionToken}` },
+      });
+      if (!mountedRef.current) return;
+      if (response.ok) {
+        setDispatchMsg('All expeditions cancelled — companions returned!');
+        await fetchExpeditions();
+        await fetchCompanions();
+      } else {
+        try { const err = await response.json(); setDispatchMsg(err.detail || 'Cancel all failed'); } catch { setDispatchMsg('Cancel all failed'); }
+      }
+    } catch (err) {
+      if (mountedRef.current) setDispatchMsg('Network error');
+    }
+  };
+
+  const handleForceComplete = async (expeditionUuid: string) => {
+    if (!sessionToken) return;
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/expeditions/${expeditionUuid}/force-complete`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${sessionToken}` },
+      });
+      if (!mountedRef.current) return;
+      if (response.ok) {
+        setDispatchMsg('Expedition completed! Resources collected.');
+        await fetchExpeditions();
+        await fetchHistory();
+        await fetchCompanions();
+      } else {
+        try { const err = await response.json(); setDispatchMsg(err.detail || 'Force complete failed'); } catch { setDispatchMsg('Force complete failed'); }
+      }
+    } catch (err) {
+      if (mountedRef.current) setDispatchMsg('Network error');
+    }
+  };
+
   const handleCancel = async (expeditionUuid: string) => {
     if (!sessionToken) return;
     try {
@@ -292,7 +333,14 @@ export function ExploreView() {
 
           {biomeExpeditions.length > 0 && (
             <div className="expeditions-panel">
-              <h3>Active Expeditions</h3>
+              <div className="panel-header">
+                <h3>Active Expeditions</h3>
+                {biomeExpeditions.length > 1 && (
+                  <button className="btn-secondary cancel-all-btn" onClick={handleCancelAll}>
+                    Cancel All
+                  </button>
+                )}
+              </div>
               {biomeExpeditions.map(exp => (
                 <div key={exp.uuid} className="expedition-row">
                   <div className="expedition-info">
@@ -302,10 +350,14 @@ export function ExploreView() {
                   {isReady(exp.returns_at) ? (
                     <div className="expedition-actions">
                       <button className="btn-primary collect-btn" onClick={() => handleCollect(exp.uuid)}>Collect</button>
+                      <button className="btn-secondary force-complete-btn" onClick={() => handleForceComplete(exp.uuid)}>Force Complete</button>
                       <button className="btn-secondary cancel-btn" onClick={() => handleCancel(exp.uuid)}>Cancel</button>
                     </div>
                   ) : (
-                    <button className="btn-secondary cancel-btn" onClick={() => handleCancel(exp.uuid)}>Cancel</button>
+                    <div className="expedition-actions">
+                      <button className="btn-secondary force-complete-btn" onClick={() => handleForceComplete(exp.uuid)}>Force Complete</button>
+                      <button className="btn-secondary cancel-btn" onClick={() => handleCancel(exp.uuid)}>Cancel</button>
+                    </div>
                   )}
                 </div>
               ))}
