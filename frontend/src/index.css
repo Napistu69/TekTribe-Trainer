@@ -1025,8 +1025,6 @@ body::before {
   margin-top: 0.5rem;
   padding: 0.25rem 0.5rem;
   font-size: 0.75rem;
-  color: var(--color-gold);
-  background: rgba(212, 168, 75, 0.1);
   border-radius: 6px;
   text-transform: capitalize;
 }

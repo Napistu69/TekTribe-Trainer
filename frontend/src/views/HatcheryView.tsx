@@ -23,7 +23,7 @@ const RARITY_COLORS: Record<string, string> = {
   common: '#808080',      // grey
   uncommon: '#00ff00',    // Natural green
   rare: '#00d4ff',        // Tier 2 cyan
-  epic: '#00ff88',        // Tier 2 emerald (Zero Point)
+  epic: '#ff00ff',        // Magenta (matches egg glow)
   ascendant: '#4a9b8f',   // Tier 2 patina copper
   legendary: '#d4a84b',   // Tier 2 gold
   mythic: '#ff4444',      // Natural red (positive terminal)

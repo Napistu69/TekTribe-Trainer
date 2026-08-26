@@ -17,6 +17,16 @@ const COMPANION_IMAGES: Record<string, string> = {
   rex: '/assets/Creatures/rex_character.png',
 };
 
+const RARITY_COLORS: Record<string, string> = {
+  common: '#808080',
+  uncommon: '#00ff00',
+  rare: '#00d4ff',
+  epic: '#ff00ff',
+  ascendant: '#4a9b8f',
+  legendary: '#d4a84b',
+  mythic: '#ff4444',
+};
+
 interface Companion {
   uuid: string;
   species: string;
@@ -209,7 +219,7 @@ export function CampView() {
               <div className="meter-fill" style={{ width: `${(companion.imprint_level / 100) * 100}%` }} />
             </div>
           </div>
-          <div className="rarity-tag">{companion.rarity}</div>
+          <div className="rarity-tag" style={{ color: RARITY_COLORS[companion.rarity] }}>{companion.rarity}</div>
         </div>
 
         <div className="companion-actions">
