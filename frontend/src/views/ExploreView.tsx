@@ -227,19 +227,13 @@ export function ExploreView() {
             onClick={() => biome.in_phase1 && setSelectedBiome(biome.zone_id)}
           >
             <div className="biome-image-container">
-              <picture>
-                <source
-                  type="image/avif"
-                  srcSet={`/assets/Explore & Biomes/${biome.imagePrefix}_Square.avif`}
-                />
-                <img
-                  src={`/assets/Explore & Biomes/${biome.imagePrefix}_Square.png`}
-                  alt={biome.name}
-                  className="biome-card-image"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </picture>
+              <img
+                src={`/assets/Explore & Biomes/${biome.imagePrefix}_Square.avif`}
+                alt={biome.name}
+                className="biome-card-image"
+                loading="lazy"
+                decoding="async"
+              />
             </div>
             <div className="biome-info">
               <h3>{biome.name}</h3>
@@ -254,19 +248,13 @@ export function ExploreView() {
       {selected && (
         <div className="dispatch-panel">
           <div className="dispatch-hero">
-            <picture>
-              <source
-                type="image/avif"
-                srcSet={`/assets/Explore & Biomes/${selected.imagePrefix}_Landscape.avif`}
-              />
-              <img
-                src={`/assets/Explore & Biomes/${selected.imagePrefix}_Landscape.png`}
-                alt={selected.name}
-                className="dispatch-hero-image"
-                loading="eager"
-                decoding="async"
-              />
-            </picture>
+            <img
+              src={`/assets/Explore & Biomes/${selected.imagePrefix}_Landscape.avif`}
+              alt={selected.name}
+              className="dispatch-hero-image"
+              loading="eager"
+              decoding="async"
+            />
           </div>
           <h3>Dispatch to {selected.name}</h3>
           <div className="duration-select">
