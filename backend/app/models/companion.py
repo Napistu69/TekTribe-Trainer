@@ -1,14 +1,24 @@
-"""Companion model — the core creature entity."""
-from datetime import datetime, timezone
+"""Companion entity — represents a player's hatched creature."""
+from datetime import datetime
 from uuid import uuid4
 
-from sqlalchemy import (
-    BigInteger, Boolean, DateTime, Float, ForeignKey, Integer, String, Text
-)
-from sqlalchemy.dialects.postgresql import JSONB, UUID
+from sqlalchemy import JSONB, DateTime, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import Base
+from app.core.database import Base
+
+# Species-to-rarity mapping (from roster_v0_2.json)
+SPECIES_RARITY = {
+    "parasaur": "common",
+    "dilo": "common",
+    "trike": "uncommon",
+    "ptera": "uncommon",
+    "raptor": "rare",
+    "rex": "epic",
+}
+
+# Default rarity for unknown species
+DEFAULT_RARITY = "common"
 
 
 class Companion(Base):
@@ -21,7 +31,6 @@ class Companion(Base):
         String(36), ForeignKey("users.id"), nullable=False, index=True
     )
     species: Mapped[str] = mapped_column(String(50), nullable=False)
-    rarity: Mapped[str] = mapped_column(String(20), nullable=False, default="common")
     name: Mapped[str] = mapped_column(String(32), nullable=True)
 
     # Origin
@@ -47,11 +56,11 @@ class Companion(Base):
     seasonal_pattern: Mapped[str] = mapped_column(String(50), nullable=True)
 
     # Personality
-    personality_type: Mapped[str] = mapped_column(String(50), default="neutral")
-    personality_traits: Mapped[list] = mapped_column(JSONB, default=[])
-    behavioral_quirks: Mapped[list] = mapped_column(JSONB, default=[])
+    personality_type: Mapped[str] = mapped_column(String(50), nullable=True)
+    personality_traits: Mapped[dict] = mapped_column(JSONB, default={})
+    behavioral_quirks: Mapped[dict] = mapped_column(JSONB, default={})
 
-    # Imprint
+    # Imprint (renamed from bond)
     imprint_level: Mapped[int] = mapped_column(Integer, default=0)
     care_streak: Mapped[int] = mapped_column(Integer, default=0)
 
@@ -67,7 +76,6 @@ class Companion(Base):
     # Status
     current_state: Mapped[str] = mapped_column(String(20), default="resting")
     health_status: Mapped[float] = mapped_column(Float, default=1.0)
-    is_locked: Mapped[bool] = mapped_column(Boolean, default=False)
     breeding_cooldown_until: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
 
     # Blockchain (dormant until Phase 4)
@@ -77,3 +85,20 @@ class Companion(Base):
     care_state: Mapped["CareState"] = relationship(
         "CareState", back_populates="companion", uselist=False
     )
+
+    @property
+    def rarity(self) -> str:
+        """Get rarity based on species mapping."""
+        return SPECIES_RARITY.get(self.species, DEFAULT_RARITY)
+
+    @property
+    def is_locked(self) -> bool:
+        """Get lock status from origin_metadata."""
+        return self.origin_metadata.get("_locked", False)
+
+    @is_locked.setter
+    def is_locked(self, value: bool):
+        """Set lock status in origin_metadata."""
+        if not self.origin_metadata:
+            self.origin_metadata = {}
+        self.origin_metadata["_locked"] = value

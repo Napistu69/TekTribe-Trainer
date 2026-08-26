@@ -1,4 +1,4 @@
-"""Add rarity and is_locked columns
+"""Rename bond-related columns to imprint (idempotent)
 
 Revision ID: a1b2c3d4e5f6
 Revises: 02af346352f7
@@ -16,11 +16,26 @@ depends_on = None
 
 
 def upgrade():
-    # Add rarity column
-    op.execute("ALTER TABLE companions ADD COLUMN IF NOT EXISTS rarity VARCHAR(20) NOT NULL DEFAULT 'common'")
+    # Rename bond_level → imprint_level
+    conn = op.get_bind()
+    result = conn.execute(sa.text("SELECT column_name FROM information_schema.columns WHERE table_name = 'companions' AND column_name = 'bond_level'"))
+    if result.fetchone():
+        op.execute("ALTER TABLE companions RENAME COLUMN bond_level TO imprint_level")
     
-    # Add is_locked column
-    op.execute("ALTER TABLE companions ADD COLUMN IF NOT EXISTS is_locked BOOLEAN NOT NULL DEFAULT FALSE")
+    # Rename min_bond_achieved → min_imprint_achieved
+    result = conn.execute(sa.text("SELECT column_name FROM information_schema.columns WHERE table_name = 'lockdown_states' AND column_name = 'min_bond_achieved'"))
+    if result.fetchone():
+        op.execute("ALTER TABLE lockdown_states RENAME COLUMN min_bond_achieved TO min_imprint_achieved")
+    
+    # Rename bond_events → imprint_events
+    result = conn.execute(sa.text("SELECT table_name FROM information_schema.tables WHERE table_name = 'bond_events'"))
+    if result.fetchone():
+        op.execute("ALTER TABLE bond_events RENAME TO imprint_events")
+    
+    # Rename bond_delta → imprint_delta
+    result = conn.execute(sa.text("SELECT column_name FROM information_schema.columns WHERE table_name = 'imprint_events' AND column_name = 'bond_delta'"))
+    if result.fetchone():
+        op.execute("ALTER TABLE imprint_events RENAME COLUMN bond_delta TO imprint_delta")
 
 
 def downgrade():
