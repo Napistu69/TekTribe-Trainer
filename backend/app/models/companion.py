@@ -1,15 +1,16 @@
-"""Companion entity — represents a player's hatched creature.
+"""Companion model — the core creature entity.
 
 NOTE: rarity and is_locked are COMPUTED PROPERTIES, not database columns.
 rarity is derived from species, and is_locked is stored in origin_metadata.
 """
-from datetime import datetime
+from datetime import datetime, timezone
 from uuid import uuid4
 
-from sqlalchemy import JSONB, DateTime, Float, ForeignKey, Integer, String
+from sqlalchemy import BigInteger, DateTime, Float, ForeignKey, Integer, String, Text
+from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.core.database import Base
+from app.models.base import Base
 
 # Species-to-rarity mapping (from roster_v0_2.json)
 SPECIES_RARITY = {
@@ -52,9 +53,9 @@ class Companion(Base):
     seasonal_pattern: Mapped[str] = mapped_column(String(50), nullable=True)
 
     # Personality
-    personality_type: Mapped[str] = mapped_column(String(50), nullable=True)
-    personality_traits: Mapped[dict] = mapped_column(JSONB, default={})
-    behavioral_quirks: Mapped[dict] = mapped_column(JSONB, default={})
+    personality_type: Mapped[str] = mapped_column(String(50), default="neutral")
+    personality_traits: Mapped[list] = mapped_column(JSONB, default=[])
+    behavioral_quirks: Mapped[list] = mapped_column(JSONB, default=[])
 
     # Imprint
     imprint_level: Mapped[int] = mapped_column(Integer, default=0)
