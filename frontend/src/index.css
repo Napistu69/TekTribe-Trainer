@@ -590,6 +590,11 @@ body::before {
   cursor: pointer;
   transition: all 0.3s;
   text-align: center;
+  height: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .egg-card:hover {
