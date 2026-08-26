@@ -1206,6 +1206,7 @@ body::before {
   font-size: 2rem;
   background: rgba(0, 0, 0, 0.5);
   border-radius: 12px;
+  pointer-events: none;
 }
 
 .dispatch-panel {
