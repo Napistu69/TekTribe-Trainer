@@ -1,6 +1,5 @@
 {
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "https://tektribe-trainer-backend.onrender.com/api/$1" },
     { "source": "/(.*)", "destination": "/" }
   ]
 }
