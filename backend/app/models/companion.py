@@ -21,6 +21,7 @@ class Companion(Base):
         String(36), ForeignKey("users.id"), nullable=False, index=True
     )
     species: Mapped[str] = mapped_column(String(50), nullable=False)
+    rarity: Mapped[str] = mapped_column(String(20), nullable=False, default="common")
     name: Mapped[str] = mapped_column(String(32), nullable=True)
 
     # Origin
