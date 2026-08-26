@@ -72,9 +72,7 @@ export function EconomyView({ companionUuid }: EconomyViewProps) {
         body: JSON.stringify({ item_id: itemId, companion_uuid: companionUuid || null }),
       });
       if (response.ok) {
-        const purchaseResult = await response.json();
         setMessage(`Purchased ${items.find(i => i.item_id === itemId)?.name}!`);
-        console.log('Purchase result:', purchaseResult);
         const balanceRes = await fetch(`${import.meta.env.VITE_API_URL}/api/economy/balance`, {
           headers: { Authorization: `Bearer ${sessionToken}` },
         });
