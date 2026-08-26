@@ -174,6 +174,11 @@ export function NurseryView() {
       });
       if (!mountedRef.current) return;
       if (response.ok) {
+        const result = await response.json();
+        // Update local companion state
+        if (companion && companion.uuid === companionUuid) {
+          setCompanion({ ...companion, is_locked: result.is_locked });
+        }
         await fetchCompanions();
       }
     } catch (err) {

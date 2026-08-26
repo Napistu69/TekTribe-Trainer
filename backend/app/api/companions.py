@@ -132,6 +132,16 @@ async def release_companion(
     from app.services.currency_service import award_shards
     await award_shards(user_id, shards, "companion_release")
     
+    # Delete the companion's care_state first (foreign key constraint)
+    from app.models import CareState
+    from sqlalchemy import select as sa_select
+    care_result = await db.execute(
+        sa_select(CareState).where(CareState.companion_uuid == companion.uuid)
+    )
+    care_state = care_result.scalar_one_or_none()
+    if care_state:
+        await db.delete(care_state)
+    
     # Delete the companion
     await db.delete(companion)
     await db.commit()
@@ -159,6 +169,7 @@ async def toggle_lock_companion(
         raise HTTPException(status_code=404, detail="Companion not found")
     
     companion.is_locked = not companion.is_locked
+    await db.flush()  # Force SQLAlchemy to detect the change
     await db.commit()
     
     return {"status": "updated", "is_locked": companion.is_locked}
