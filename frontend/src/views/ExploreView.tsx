@@ -31,6 +31,7 @@ interface Companion {
   uuid: string;
   species: string;
   current_state: string;
+  adult_image?: string;
 }
 
 interface Biome {
@@ -52,8 +53,18 @@ const BIOMES: Biome[] = [
   { zone_id: 'void_center', name: 'Void Center', description: 'The space between worlds', resources: ['Legacy fragments', 'Rescue signals'], risk_level: 0.9, in_phase1: false, imagePrefix: 'Void_Center' },
 ];
 
+const COMPANION_IMAGES: Record<string, string> = {
+  parasaur: '/assets/Creatures/Parasaur_Adult.png',
+  dilo: '/assets/Creatures/Dilo_Adult.png',
+  trike: '/assets/Creatures/Trike_Adult.png',
+  ptera: '/assets/Creatures/Ptera_Adult.png',
+  raptor: '/assets/Creatures/Raptor_Adult.png',
+  rex: '/assets/Creatures/Rex_Adult.png',
+};
+
 export function ExploreView() {
   const [selectedBiome, setSelectedBiome] = useState<string | null>(null);
+  const [view, setView] = useState<'grid' | 'detail'>('grid');
   const [duration, setDuration] = useState('2h');
   const [dispatchMsg, setDispatchMsg] = useState<string | null>(null);
   const [expeditions, setExpeditions] = useState<Expedition[]>([]);
@@ -123,6 +134,17 @@ export function ExploreView() {
     fetchCompanions();
   }, [sessionToken]);
 
+  const handleBiomeClick = (zoneId: string) => {
+    setSelectedBiome(zoneId);
+    setView('detail');
+  };
+
+  const handleBack = () => {
+    setView('grid');
+    setSelectedBiome(null);
+    setDispatchMsg(null);
+  };
+
   const handleDispatch = async () => {
     if (!sessionToken || !selectedBiome || loading) return;
     setLoading(true);
@@ -173,6 +195,7 @@ export function ExploreView() {
         await fetchExpeditions();
         await fetchHistory();
         await fetchCompanions();
+        setDispatchMsg('Resources collected!');
       } else {
         try { const err = await response.json(); setDispatchMsg(err.detail || 'Collect failed'); } catch { setDispatchMsg('Collect failed'); }
       }
@@ -213,18 +236,109 @@ export function ExploreView() {
   const isReady = (returnsAt: string) => new Date(returnsAt).getTime() <= now;
 
   const selected = BIOMES.find(b => b.zone_id === selectedBiome);
+  const availableCompanions = companions.filter(c => c.current_state !== 'on_expedition');
+  const dispatchedCompanions = companions.filter(c => c.current_state === 'on_expedition');
+  const companion = availableCompanions[0] || dispatchedCompanions[0];
+  const companionImage = companion ? COMPANION_IMAGES[companion.species] : null;
+
+  if (view === 'detail' && selected) {
+    const biomeExpeditions = expeditions.filter(e => e.biome_zone === selected.zone_id);
+    const biomeHistory = history.filter(e => e.biome_zone === selected.zone_id);
+
+    return (
+      <div className="biome-detail-view">
+        {showTutorial && <TutorialOverlay steps={TUTORIAL_STEPS} storageKey="tutorial-explore" onComplete={completeTutorial} />}
+        <div className="biome-detail-hero">
+          <img
+            src={`/assets/Explore & Biomes/${selected.imagePrefix}_Landscape.avif`}
+            alt={selected.name}
+            className="biome-detail-background"
+            loading="eager"
+            decoding="async"
+          />
+          {companionImage && (
+            <img src={companionImage} alt={companion?.species} className="biome-detail-companion" />
+          )}
+          <button className="back-btn" onClick={handleBack}>← Back</button>
+          <div className="biome-detail-title">
+            <h1>{selected.name}</h1>
+            <p>{selected.description}</p>
+          </div>
+        </div>
+
+        {dispatchMsg && <div className="game-message">{dispatchMsg}</div>}
+
+        <div className="biome-detail-content">
+          {selected.in_phase1 ? (
+            <div className="dispatch-panel">
+              <h3>Dispatch Expedition</h3>
+              <div className="duration-select">
+                {['2h', '6h', '12h', '24h'].map(d => (
+                  <button key={d} className={`duration-btn ${duration === d ? 'active' : ''}`} onClick={() => setDuration(d)}>
+                    {d === '2h' ? '2 hours' : d === '6h' ? '6 hours' : d === '12h' ? '12 hours' : '24 hours'}
+                  </button>
+                ))}
+              </div>
+              <button className="btn-primary dispatch-btn" onClick={handleDispatch} disabled={loading || availableCompanions.length === 0}>
+                {loading ? 'Dispatching...' : availableCompanions.length === 0 ? 'No Companions Available' : `Dispatch to ${selected.name}`}
+              </button>
+            </div>
+          ) : (
+            <div className="locked-panel">
+              <h3>🔒 Locked</h3>
+              <p>This biome is not yet accessible. Coming in a future phase.</p>
+            </div>
+          )}
+
+          {biomeExpeditions.length > 0 && (
+            <div className="expeditions-panel">
+              <h3>Active Expeditions</h3>
+              {biomeExpeditions.map(exp => (
+                <div key={exp.uuid} className="expedition-row">
+                  <div className="expedition-info">
+                    <span className="expedition-biome">{exp.biome_zone}</span>
+                    <span className="expedition-countdown">{getCountdown(exp.returns_at)}</span>
+                  </div>
+                  {isReady(exp.returns_at) ? (
+                    <div className="expedition-actions">
+                      <button className="btn-primary collect-btn" onClick={() => handleCollect(exp.uuid)}>Collect</button>
+                      <button className="btn-secondary cancel-btn" onClick={() => handleCancel(exp.uuid)}>Cancel</button>
+                    </div>
+                  ) : (
+                    <button className="btn-secondary cancel-btn" onClick={() => handleCancel(exp.uuid)}>Cancel</button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {biomeHistory.length > 0 && (
+            <div className="history-panel">
+              <h3>Expedition History</h3>
+              {biomeHistory.slice(0, 5).map(exp => (
+                <div key={exp.uuid} className="history-row">
+                  <span>{exp.biome_zone}</span>
+                  <span>{exp.result?.success ? 'Success' : 'Failed'}</span>
+                  <span>+{exp.result?.dust_gained || 0} dust</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="explore-view">
       {showTutorial && <TutorialOverlay steps={TUTORIAL_STEPS} storageKey="tutorial-explore" onComplete={completeTutorial} />}
       <h1>Explore</h1>
-      {dispatchMsg && <div className="game-message">{dispatchMsg}</div>}
       <div className="biome-grid">
         {BIOMES.map(biome => (
           <div
             key={biome.zone_id}
             className={`biome-card ${!biome.in_phase1 ? 'locked' : ''} ${selectedBiome === biome.zone_id ? 'selected' : ''}`}
-            onClick={() => biome.in_phase1 && setSelectedBiome(biome.zone_id)}
+            onClick={() => biome.in_phase1 && handleBiomeClick(biome.zone_id)}
           >
             <div className="biome-image-container">
               <img
@@ -245,63 +359,6 @@ export function ExploreView() {
           </div>
         ))}
       </div>
-      {selected && (
-        <div className="dispatch-panel">
-          <div className="dispatch-hero">
-            <img
-              src={`/assets/Explore & Biomes/${selected.imagePrefix}_Landscape.avif`}
-              alt={selected.name}
-              className="dispatch-hero-image"
-              loading="eager"
-              decoding="async"
-            />
-          </div>
-          <h3>Dispatch to {selected.name}</h3>
-          <div className="duration-select">
-            {['2h', '6h', '12h', '24h'].map(d => (
-              <button key={d} className={`duration-btn ${duration === d ? 'active' : ''}`} onClick={() => setDuration(d)}>
-                {d === '2h' ? '2 hours' : d === '6h' ? '6 hours' : d === '12h' ? '12 hours' : '24 hours'}
-              </button>
-            ))}
-          </div>
-          <button className="btn-primary dispatch-btn" onClick={handleDispatch} disabled={loading}>
-            {loading ? 'Dispatching...' : 'Dispatch Expedition'}
-          </button>
-        </div>
-      )}
-      {expeditions.length > 0 && (
-        <div className="expeditions-panel">
-          <h3>Active Expeditions</h3>
-          {expeditions.map(exp => (
-            <div key={exp.uuid} className="expedition-row">
-              <div className="expedition-info">
-                <span className="expedition-biome">{exp.biome_zone}</span>
-                <span className="expedition-countdown">{getCountdown(exp.returns_at)}</span>
-              </div>
-              {isReady(exp.returns_at) ? (
-                <div className="expedition-actions">
-                  <button className="btn-primary collect-btn" onClick={() => handleCollect(exp.uuid)}>Collect</button>
-                  <button className="btn-secondary cancel-btn" onClick={() => handleCancel(exp.uuid)}>Cancel</button>
-                </div>
-              ) : (
-                <button className="btn-secondary cancel-btn" onClick={() => handleCancel(exp.uuid)}>Cancel</button>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-      {history.length > 0 && (
-        <div className="history-panel">
-          <h3>Expedition History</h3>
-          {history.slice(0, 5).map(exp => (
-            <div key={exp.uuid} className="history-row">
-              <span>{exp.biome_zone}</span>
-              <span>{exp.result?.success ? 'Success' : 'Failed'}</span>
-              <span>+{exp.result?.dust_gained || 0} dust</span>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 }

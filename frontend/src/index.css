@@ -1216,6 +1216,106 @@ body::before {
   padding: 1.5rem;
 }
 
+/* Biome Detail View */
+.biome-detail-view {
+  padding: 1rem;
+}
+
+.biome-detail-hero {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.biome-detail-background {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.biome-detail-companion {
+  position: absolute;
+  bottom: 0;
+  right: 10%;
+  height: 70%;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.5));
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.back-btn {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  padding: 0.5rem 1rem;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: all 0.2s;
+  z-index: 10;
+}
+
+.back-btn:hover {
+  background: rgba(0, 0, 0, 0.8);
+  border-color: var(--color-teal);
+}
+
+.biome-detail-title {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  color: var(--color-text);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  z-index: 10;
+}
+
+.biome-detail-title h1 {
+  font-size: 2rem;
+  margin-bottom: 0.25rem;
+  color: var(--color-teal);
+}
+
+.biome-detail-title p {
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+.biome-detail-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.locked-panel {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.locked-panel h3 {
+  color: var(--color-gold);
+  margin-bottom: 0.5rem;
+}
+
+.locked-panel p {
+  color: var(--color-text-muted);
+}
+
 .dispatch-hero {
   position: relative;
   width: 100%;
