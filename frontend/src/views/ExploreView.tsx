@@ -181,6 +181,26 @@ export function ExploreView() {
     }
   };
 
+  const handleCancel = async (expeditionUuid: string) => {
+    if (!sessionToken) return;
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/expeditions/${expeditionUuid}/cancel`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${sessionToken}` },
+      });
+      if (!mountedRef.current) return;
+      if (response.ok) {
+        setDispatchMsg('Expedition cancelled — companion returned!');
+        await fetchExpeditions();
+        await fetchCompanions();
+      } else {
+        try { const err = await response.json(); setDispatchMsg(err.detail || 'Cancel failed'); } catch { setDispatchMsg('Cancel failed'); }
+      }
+    } catch (err) {
+      if (mountedRef.current) setDispatchMsg('Network error');
+    }
+  };
+
   const getCountdown = (returnsAt: string) => {
     const diff = new Date(returnsAt).getTime() - now;
     if (diff <= 0) return 'Ready!';
@@ -271,9 +291,12 @@ export function ExploreView() {
                 <span className="expedition-countdown">{getCountdown(exp.returns_at)}</span>
               </div>
               {isReady(exp.returns_at) ? (
-                <button className="btn-primary collect-btn" onClick={() => handleCollect(exp.uuid)}>Collect</button>
+                <div className="expedition-actions">
+                  <button className="btn-primary collect-btn" onClick={() => handleCollect(exp.uuid)}>Collect</button>
+                  <button className="btn-secondary cancel-btn" onClick={() => handleCancel(exp.uuid)}>Cancel</button>
+                </div>
               ) : (
-                <span className="expedition-status">Exploring...</span>
+                <button className="btn-secondary cancel-btn" onClick={() => handleCancel(exp.uuid)}>Cancel</button>
               )}
             </div>
           ))}
