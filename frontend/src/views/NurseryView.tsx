@@ -153,7 +153,7 @@ export function NurseryView() {
             <div className="stats-grid">
               {Object.entries(companion.mutated_stats).map(([stat, value]) => (
                 <div key={stat} className="stat-item">
-                  <span className="stat-name">{stat}</span>
+                  <span className="stat-name">{stat.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</span>
                   <span className="stat-value">{typeof value === 'number' ? value.toFixed(1) : value}</span>
                 </div>
               ))}
@@ -162,7 +162,7 @@ export function NurseryView() {
             <div className="stats-grid">
               {Object.entries(companion.base_stats).map(([stat, value]) => (
                 <div key={stat} className="stat-item">
-                  <span className="stat-name">{stat}</span>
+                  <span className="stat-name">{stat.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</span>
                   <span className="stat-value">{typeof value === 'number' ? value.toFixed(1) : value}</span>
                 </div>
               ))}

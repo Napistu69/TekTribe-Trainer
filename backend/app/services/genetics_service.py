@@ -18,18 +18,18 @@ async def generate_hidden_potential() -> float:
 def generate_base_stats(species: str) -> dict:
     """Generate base stats for a creature based on species.
     
-    Returns game-adjacent stats: health, stamina, strength, speed, intelligence, imprint_affinity.
+    Returns game-adjacent stats: health, stamina, strength, speed, intelligence, affinity.
     """
     # Species-specific base stat templates
     templates = {
-        "parasaur": {"health": 100, "stamina": 80, "strength": 60, "speed": 70, "intelligence": 75, "imprint_affinity": 90},
-        "dilo": {"health": 70, "stamina": 90, "strength": 50, "speed": 85, "intelligence": 80, "imprint_affinity": 70},
-        "trike": {"health": 150, "stamina": 70, "strength": 110, "speed": 50, "intelligence": 60, "imprint_affinity": 80},
-        "ptera": {"health": 60, "stamina": 120, "strength": 40, "speed": 130, "intelligence": 85, "imprint_affinity": 65},
-        "raptor": {"health": 90, "stamina": 100, "strength": 100, "speed": 120, "intelligence": 95, "imprint_affinity": 60},
-        "rex": {"health": 200, "stamina": 90, "strength": 150, "speed": 80, "intelligence": 90, "imprint_affinity": 85},
+        "parasaur": {"health": 100, "stamina": 80, "strength": 60, "speed": 70, "intelligence": 75, "affinity": 90},
+        "dilo": {"health": 70, "stamina": 90, "strength": 50, "speed": 85, "intelligence": 80, "affinity": 70},
+        "trike": {"health": 150, "stamina": 70, "strength": 110, "speed": 50, "intelligence": 60, "affinity": 80},
+        "ptera": {"health": 60, "stamina": 120, "strength": 40, "speed": 130, "intelligence": 85, "affinity": 65},
+        "raptor": {"health": 90, "stamina": 100, "strength": 100, "speed": 120, "intelligence": 95, "affinity": 60},
+        "rex": {"health": 200, "stamina": 90, "strength": 150, "speed": 80, "intelligence": 90, "affinity": 85},
     }
-    return templates.get(species, {"health": 100, "stamina": 100, "strength": 100, "speed": 100, "intelligence": 100, "imprint_affinity": 50})
+    return templates.get(species, {"health": 100, "stamina": 100, "strength": 100, "speed": 100, "intelligence": 100, "affinity": 50})
 
 
 def generate_personality(species: str) -> tuple[str, list[str], list[str]]:
