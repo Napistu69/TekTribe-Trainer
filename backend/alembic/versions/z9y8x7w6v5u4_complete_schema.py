@@ -22,6 +22,18 @@ def upgrade():
     
     # Add is_locked column if missing  
     op.execute("ALTER TABLE IF EXISTS companions ADD COLUMN IF NOT EXISTS is_locked BOOLEAN NOT NULL DEFAULT FALSE")
+    
+    # Update existing companions with correct rarity based on species
+    op.execute("""
+        UPDATE companions SET rarity = 'common' WHERE species IN ('parasaur', 'dilo') AND rarity = 'common';
+        UPDATE companions SET rarity = 'uncommon' WHERE species IN ('trike', 'ptera');
+        UPDATE companions SET rarity = 'rare' WHERE species = 'raptor';
+        UPDATE companions SET rarity = 'epic' WHERE species = 'rex';
+    """)
+    
+    # Reset stuck companions
+    op.execute("UPDATE companions SET current_state = 'resting' WHERE current_state = 'on_expedition'")
+    op.execute("UPDATE expeditions SET status = 'cancelled' WHERE status = 'dispatched'")
 
 
 def downgrade():
