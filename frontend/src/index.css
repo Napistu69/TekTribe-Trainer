@@ -1113,6 +1113,7 @@ body::before {
 }
 
 .biome-card {
+  position: relative;
   background: var(--color-bg-card);
   border: 2px solid var(--color-border);
   border-radius: 16px;
@@ -1152,7 +1153,6 @@ body::before {
 }
 
 .biome-card.locked {
-  opacity: 0.5;
   cursor: not-allowed;
 }
 
