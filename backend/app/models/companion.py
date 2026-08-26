@@ -82,6 +82,11 @@ class Companion(Base):
         """Computed rarity based on species. NOT a database column."""
         return SPECIES_RARITY.get(self.species, DEFAULT_RARITY)
 
+    @rarity.setter
+    def rarity(self, value):
+        """Allow setting rarity (stored in origin_metadata for compatibility)."""
+        pass  # rarity is computed from species, setter is a no-op
+
     @property
     def is_locked(self) -> bool:
         """Lock status stored in origin_metadata. NOT a database column."""

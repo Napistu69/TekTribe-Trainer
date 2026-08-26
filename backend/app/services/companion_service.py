@@ -42,7 +42,6 @@ async def hatch_egg(db: AsyncSession, user_id: str, egg_uuid: str) -> Optional[C
     companion = Companion(
         user_id=user_id,
         species=species,
-        rarity=egg.rarity,
         name=None,  # Player names it later
         origin_type=egg.source,
         origin_metadata={"egg_uuid": str(egg.uuid), "source": egg.source},
