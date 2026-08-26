@@ -14,7 +14,7 @@ const BIOMES: Biome[] = [
   { zone_id: 'stonecrest', name: 'Stonecrest', description: 'Mountain peaks offering rare minerals.', risk_level: 0.4, in_phase1: false },
   { zone_id: 'emberfall', name: 'Emberfall', description: 'Volcanic terrain with rare minerals.', risk_level: 0.55, in_phase1: false },
   { zone_id: 'tek_ruins', name: 'Tek-Ruins', description: 'Ancient ruins filled with Oracle fragments.', risk_level: 0.5, in_phase1: false },
-  { zone_id: 'the_threshold', name: 'The Threshold', description: 'A liminal space between worlds.', risk_level: 0.65, in_phase1: false },
+  { zone_id: 'void_center', name: 'Void Center', description: 'A liminal space between worlds.', risk_level: 0.65, in_phase1: false },
 ];
 
 interface ExpeditionMapProps {
