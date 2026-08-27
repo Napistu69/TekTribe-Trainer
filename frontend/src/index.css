@@ -534,13 +534,26 @@ body::before {
 
 /* Game Message */
 .game-message {
-  margin: 1rem;
-  padding: 1rem;
-  background: rgba(0, 212, 255, 0.1);
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 1rem 2rem;
+  background: var(--color-bg-card);
   border: 1px solid var(--color-teal);
-  border-radius: 8px;
-  text-align: center;
-  animation: fadeIn 0.3s ease;
+  border-radius: 12px;
+  color: var(--color-text);
+  font-weight: 600;
+  z-index: 1000;
+  animation: fadeInOut 3s ease-in-out;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+  10% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  80% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
 }
 
 @keyframes fadeIn {
@@ -1018,6 +1031,13 @@ body::before {
 
 .care-icon {
   font-size: 1.5rem;
+}
+
+.care-label {
+  font-size: 0.8rem;
+  color: var(--color-emerald);
+  font-weight: 600;
+  text-transform: capitalize;
 }
 
 .rarity-tag {

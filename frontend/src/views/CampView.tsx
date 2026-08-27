@@ -149,9 +149,22 @@ export function CampView() {
         } catch {
           setMessage('Released!');
         }
-        await fetchCompanions();
-        setSelectedCompanion(null);
-        setCompanion(null);
+        // Fetch remaining companions and select the first one
+        const updatedResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/companions`, {
+          headers: { Authorization: `Bearer ${sessionToken}` },
+        });
+        if (updatedResponse.ok && mountedRef.current) {
+          const data = await updatedResponse.json();
+          const filtered = data.filter((c: Companion) => c.life_stage === 'adult' || c.life_stage === 'elder');
+          setCompanions(filtered);
+          if (filtered.length > 0) {
+            setSelectedCompanion(filtered[0].uuid);
+            setCompanion(filtered[0]);
+          } else {
+            setSelectedCompanion(null);
+            setCompanion(null);
+          }
+        }
       } else {
         try { const err = await response.json(); setMessage(err.detail || 'Release failed'); } catch { setMessage('Release failed'); }
       }
@@ -287,9 +300,15 @@ export function CampView() {
         </div>
 
         <div className="care-actions">
-          {['feed', 'clean', 'imprint', 'rest'].map(a => (
-            <button key={a} className="care-action-btn" onClick={() => handleCareAction(a)} disabled={loading}>
-              <span className="care-label">{a}</span>
+          {[
+            { id: 'feed', icon: '🌿', label: 'Feed' },
+            { id: 'clean', icon: '🫧', label: 'Clean' },
+            { id: 'imprint', icon: '💚', label: 'Imprint' },
+            { id: 'rest', icon: '💤', label: 'Rest' },
+          ].map(a => (
+            <button key={a.id} className="care-action-btn" onClick={() => handleCareAction(a.id)} disabled={loading}>
+              <span className="care-icon">{a.icon}</span>
+              <span className="care-label">{a.label}</span>
             </button>
           ))}
         </div>

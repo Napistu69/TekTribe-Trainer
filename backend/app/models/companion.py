@@ -100,3 +100,6 @@ class Companion(Base):
         if not self.origin_metadata:
             self.origin_metadata = {}
         self.origin_metadata["_locked"] = value
+        # Mark the field as modified so SQLAlchemy detects the change
+        from sqlalchemy.orm import attributes
+        attributes.flag_modified(self, "origin_metadata")
