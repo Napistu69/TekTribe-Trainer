@@ -1,4 +1,4 @@
-"""Fix expeditions table schema - make columns nullable then drop them."""
+"""Fix expeditions table schema - make columns nullable to avoid INSERT errors."""
 import asyncio
 import os
 import sys
@@ -10,6 +10,16 @@ async def fix_schema():
         print('ERROR: DATABASE_URL not set!')
         return False
     
+    # Mask password for logging
+    masked = db_url
+    if '@' in db_url:
+        parts = db_url.split('@')
+        creds = parts[0].split('://')
+        if len(creds) > 1 and ':' in creds[1]:
+            user = creds[1].split(':')[0]
+            masked = f"{creds[0]}://{user}:****@{parts[1]}"
+    print(f'DATABASE_URL: {masked}')
+    
     print('Connecting to database...')
     
     try:
@@ -18,7 +28,14 @@ async def fix_schema():
         print('asyncpg not installed!')
         return False
     
-    conn = await asyncpg.connect(db_url)
+    # Convert URL format for asyncpg (remove +asyncpg suffix)
+    connect_url = db_url
+    if connect_url.startswith('postgresql+asyncpg://'):
+        connect_url = connect_url.replace('postgresql+asyncpg://', 'postgresql://', 1)
+    elif connect_url.startswith('postgres://'):
+        connect_url = connect_url.replace('postgres://', 'postgresql://', 1)
+    
+    conn = await asyncpg.connect(connect_url)
     
     # Get current columns
     existing = await conn.fetch("""
@@ -30,64 +47,28 @@ async def fix_schema():
     columns = {row['column_name']: row for row in existing}
     print(f'Current columns: {list(columns.keys())}')
     
-    # Step 1: Make companion_uuid nullable (fixes INSERT error)
+    # Make companion_uuid nullable
     if 'companion_uuid' in columns:
         if columns['companion_uuid']['is_nullable'] == 'NO':
-            try:
-                await conn.execute("ALTER TABLE expeditions ALTER COLUMN companion_uuid DROP NOT NULL")
-                print('Made companion_uuid nullable')
-            except Exception as e:
-                print(f'Error making companion_uuid nullable: {e}')
+            await conn.execute("ALTER TABLE expeditions ALTER COLUMN companion_uuid DROP NOT NULL")
+            print('Made companion_uuid nullable')
         else:
             print('companion_uuid already nullable')
+    else:
+        print('companion_uuid column does not exist')
     
-    # Step 2: Make loadout nullable
+    # Make loadout nullable
     if 'loadout' in columns:
         if columns['loadout']['is_nullable'] == 'NO':
-            try:
-                await conn.execute("ALTER TABLE expeditions ALTER COLUMN loadout DROP NOT NULL")
-                print('Made loadout nullable')
-            except Exception as e:
-                print(f'Error making loadout nullable: {e}')
+            await conn.execute("ALTER TABLE expeditions ALTER COLUMN loadout DROP NOT NULL")
+            print('Made loadout nullable')
         else:
             print('loadout already nullable')
+    else:
+        print('loadout column does not exist')
     
-    # Step 3: Drop FK constraint
-    try:
-        await conn.execute("""
-            DO $$
-            BEGIN
-                IF EXISTS (
-                    SELECT 1 FROM information_schema.table_constraints 
-                    WHERE constraint_name = 'expeditions_companion_uuid_fkey' 
-                    AND table_name = 'expeditions'
-                ) THEN
-                    ALTER TABLE expeditions DROP CONSTRAINT expeditions_companion_uuid_fkey;
-                END IF;
-            END $$;
-        """)
-        print('Dropped FK constraint (if existed)')
-    except Exception as e:
-        print(f'Error dropping FK: {e}')
-    
-    # Step 4: Drop companion_uuid column
-    if 'companion_uuid' in columns:
-        try:
-            await conn.execute("ALTER TABLE expeditions DROP COLUMN companion_uuid")
-            print('Dropped companion_uuid column')
-        except Exception as e:
-            print(f'Error dropping companion_uuid: {e}')
-    
-    # Step 5: Drop loadout column
-    if 'loadout' in columns:
-        try:
-            await conn.execute("ALTER TABLE expeditions DROP COLUMN loadout")
-            print('Dropped loadout column')
-        except Exception as e:
-            print(f'Error dropping loadout: {e}')
-    
-    print('Expeditions table schema updated!')
     await conn.close()
+    print('Schema fix complete!')
     return True
 
 
