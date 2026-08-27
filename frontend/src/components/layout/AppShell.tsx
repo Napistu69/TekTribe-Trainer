@@ -49,7 +49,7 @@ export function AppShell() {
             className={`nav-tab ${location.pathname === tab.path ? 'active' : ''}`}
             onClick={() => navigate(tab.path)}
           >
-            <img src={tab.image} alt={tab.label} className="nav-image" />
+            <img src={tab.image} alt="" className="nav-image" />
             <span className="nav-label">{tab.label}</span>
           </button>
         ))}

@@ -276,7 +276,7 @@ export function CampView() {
         </div>
 
         <div className="stats-panel">
-          <h4>Stats</h4>
+          <h3>Stats</h3>
           {Object.entries(companion.mutated_stats).length > 0 ? (
             <div className="stats-grid">
               {Object.entries(companion.mutated_stats).map(([stat, value]) => (

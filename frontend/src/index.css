@@ -24,7 +24,7 @@
   
   /* Semantic */
   --color-text: var(--color-stone);
-  --color-text-muted: #888;
+  --color-text-muted: #b0b0b0; /* lighter muted for better contrast */
   --color-border: #2a4e3a;           /* Forest green border */
   --color-bg-primary: #006C00;        /* Forest Coloring — ARK deep green */
   --color-bg-card: #1a3e2a;          /* ARK Dark Green - card background */
@@ -108,7 +108,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  color: var(--color-teal);
+  color: var(--color-cyan);
   font-family: 'Jokerman', sans-serif;
 }
 
@@ -124,6 +124,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .map-header h1 {
   font-size: 2rem;
+  color: var(--color-cyan);
   background: linear-gradient(135deg, var(--color-cyan), var(--color-emerald));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -318,6 +319,7 @@ body::before {
   cursor: pointer;
   text-align: center;
   transition: all 0.2s;
+  color: var(--color-text);
 }
 
 .nav-tab.active {
@@ -485,11 +487,11 @@ body::before {
 .nav-label {
   display: block;
   font-size: 0.7rem;
-  color: var(--color-text-muted);
+  color: var(--color-text);
 }
 
 .nav-tab.active .nav-label {
-  color: var(--color-teal);
+  color: var(--color-cyan);
 }
 
 /* Buttons */
@@ -844,7 +846,7 @@ body::before {
 }
 
 .stats-panel h4 {
-  color: var(--color-teal);
+  color: var(--color-cyan);
   margin-bottom: 0.75rem;
   font-size: 0.9rem;
 }
@@ -865,7 +867,7 @@ body::before {
 }
 
 .stat-name {
-  color: var(--color-text-muted);
+  color: var(--color-text);
   text-transform: capitalize;
 }
 
@@ -896,7 +898,7 @@ body::before {
   justify-content: space-between;
   font-size: 0.75rem;
   margin-bottom: 0.25rem;
-  color: var(--color-text-muted);
+  color: var(--color-text);
 }
 
 .bond-bar {
@@ -928,8 +930,9 @@ body::before {
 }
 
 .companion-tab.active {
-  border-color: var(--color-teal);
-  background: rgba(0, 212, 255, 0.1);
+  border-color: var(--color-cyan);
+  background: rgba(0, 212, 255, 0.15);
+  color: var(--color-cyan);
 }
 
 .companion-display {
