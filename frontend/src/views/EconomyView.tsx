@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { useEconomyStore } from '../stores/economyStore';
 
@@ -10,6 +10,15 @@ interface ShopItem {
   effect: any;
   category: string;
 }
+
+const ITEM_ICONS: Record<string, string> = {
+  basic_food: '🥩',
+  medicine: '💊',
+  incubation_boost: '⚡',
+  care_kit: '🧰',
+  berries: '🍒',
+  crops: '🥕',
+};
 
 interface EconomyViewProps {
   companionUuid?: string;
@@ -23,6 +32,12 @@ export function EconomyView({ companionUuid }: EconomyViewProps) {
   const sessionToken = useAuthStore((s) => s.sessionToken);
   const dust = useEconomyStore((s) => s.dust);
   const setBalance = useEconomyStore((s) => s.setBalance);
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => { mountedRef.current = false; };
+  }, []);
 
   useEffect(() => {
     if (!sessionToken) return;
@@ -31,7 +46,7 @@ export function EconomyView({ companionUuid }: EconomyViewProps) {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/economy/shop`);
         if (response.ok) {
           const data = await response.json();
-          setItems(data);
+          if (mountedRef.current) setItems(data);
         }
       } catch (err) {
         console.error('Failed to fetch shop items:', err);
@@ -49,7 +64,7 @@ export function EconomyView({ companionUuid }: EconomyViewProps) {
         });
         if (response.ok) {
           const data = await response.json();
-          setBalance(data);
+          if (mountedRef.current) setBalance(data);
         }
       } catch (err) {
         console.error('Failed to fetch balance:', err);
@@ -72,13 +87,14 @@ export function EconomyView({ companionUuid }: EconomyViewProps) {
         body: JSON.stringify({ item_id: itemId, companion_uuid: companionUuid || null }),
       });
       if (response.ok) {
-        setMessage(`Purchased ${items.find(i => i.item_id === itemId)?.name}!`);
+        const item = items.find(i => i.item_id === itemId);
+        setMessage(`Purchased ${item?.name}!`);
         const balanceRes = await fetch(`${import.meta.env.VITE_API_URL}/api/economy/balance`, {
           headers: { Authorization: `Bearer ${sessionToken}` },
         });
         if (balanceRes.ok) {
           const balanceData = await balanceRes.json();
-          setBalance(balanceData);
+          if (mountedRef.current) setBalance(balanceData);
         }
       } else {
         const err = await response.json();
@@ -87,33 +103,42 @@ export function EconomyView({ companionUuid }: EconomyViewProps) {
     } catch (err) {
       setMessage('Network error');
     } finally {
-      setPurchasing(null);
+      if (mountedRef.current) setPurchasing(null);
     }
   };
 
   return (
     <div className="economy-view">
-      <h1>Trading Post</h1>
+      <div className="economy-header">
+        <h1>Trading Post</h1>
+        <div className="economy-balance">
+          <span className="balance-icon">✦</span>
+          <span className="balance-amount">{dust.toLocaleString()}</span>
+        </div>
+      </div>
       
       <div className="economy-tabs">
-        <button className={`tab ${tab === 'shop' ? 'active' : ''}`} onClick={() => setTab('shop')}>Shop</button>
-        <button className={`tab ${tab === 'history' ? 'active' : ''}`} onClick={() => setTab('history')}>History</button>
+        <button className={`economy-tab ${tab === 'shop' ? 'active' : ''}`} onClick={() => setTab('shop')}>Shop</button>
+        <button className={`economy-tab ${tab === 'history' ? 'active' : ''}`} onClick={() => setTab('history')}>History</button>
       </div>
 
       {message && <div className="game-message">{message}</div>}
 
       {tab === 'shop' && (
-        <div className="shop-items">
+        <div className="shop-grid">
           {items.map((item) => (
-            <div key={item.item_id} className="shop-item">
-              <div className="item-info">
+            <div key={item.item_id} className="shop-card">
+              <div className="shop-card-icon">
+                <span className="item-emoji">{ITEM_ICONS[item.item_id] || '📦'}</span>
+              </div>
+              <div className="shop-card-info">
                 <span className="item-name">{item.name}</span>
                 <span className="item-description">{item.description}</span>
               </div>
-              <div className="item-purchase">
+              <div className="shop-card-purchase">
                 <span className="item-cost">✦ {item.cost}</span>
                 <button
-                  className="btn-small"
+                  className="btn-buy"
                   onClick={() => handlePurchase(item.item_id)}
                   disabled={dust < item.cost || purchasing === item.item_id}
                 >
@@ -164,11 +189,8 @@ function TransactionHistory() {
     <div className="transaction-list">
       {transactions.map((tx, i) => (
         <div key={i} className="transaction-row">
-          <span className={`tx-type ${tx.type}`}>{tx.type}</span>
+          <span className={`tx-type ${tx.type}`}>{tx.type === 'award' ? '+' : '-'}{tx.amount}</span>
           <span className="tx-currency">{tx.currency}</span>
-          <span className={`tx-amount ${tx.type === 'award' ? 'positive' : 'negative'}`}>
-            {tx.type === 'award' ? '+' : '-'}{tx.amount}
-          </span>
           <span className="tx-source">{tx.source || tx.sink}</span>
         </div>
       ))}
