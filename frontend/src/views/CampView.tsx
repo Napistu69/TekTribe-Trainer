@@ -240,7 +240,7 @@ export function CampView() {
       <div className="companion-selector">
         {companions.map(c => (
           <button key={c.uuid} className={`companion-tab ${selectedCompanion === c.uuid ? 'active' : ''}`} onClick={() => setSelectedCompanion(c.uuid)}>
-            {c.species}
+            {c.species.charAt(0).toUpperCase() + c.species.slice(1)}
           </button>
         ))}
       </div>
@@ -248,8 +248,8 @@ export function CampView() {
         <div className="companion-visual">
           <img src={COMPANION_IMAGES[companion.species] || COMPANION_IMAGES.raptor} alt={companion.species} className="companion-image" />
           <div className="companion-info">
-            <h2>{companion.name || companion.species}</h2>
-            <span className="life-stage">{companion.life_stage}</span>
+            <h2>{companion.name || companion.species.charAt(0).toUpperCase() + companion.species.slice(1)}</h2>
+            <span className="life-stage">{companion.life_stage.charAt(0).toUpperCase() + companion.life_stage.slice(1)}</span>
             <div className="imprint-bar">
               <span>Imprint: {companion.imprint_level}/100</span>
               <div className="meter">

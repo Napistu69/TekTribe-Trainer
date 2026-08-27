@@ -104,7 +104,7 @@ export function HatcheryView() {
       });
       if (!mountedRef.current) return;
       if (response.ok) {
-        try { const egg = await response.json(); if (mountedRef.current) setMessage(`A ${egg.rarity} egg has arrived!`); await fetchEggs(); } catch { if (mountedRef.current) setMessage('Egg pulled!'); }
+        try { const egg = await response.json(); if (mountedRef.current) setMessage(`A ${egg.rarity.charAt(0).toUpperCase() + egg.rarity.slice(1)} egg has arrived!`); await fetchEggs(); } catch { if (mountedRef.current) setMessage('Egg pulled!'); }
       } else {
         try { const err = await response.json(); if (mountedRef.current) setMessage(err.detail || 'Failed to pull egg'); } catch { if (mountedRef.current) setMessage('Failed to pull egg'); }
       }
@@ -130,7 +130,7 @@ export function HatcheryView() {
           const companion = await response.json(); 
           if (mountedRef.current) { 
             setHatchNotification({ species: companion.species, rarity: companion.rarity });
-            setMessage(`A ${companion.species} has hatched!`); 
+            setMessage(`A ${companion.species.charAt(0).toUpperCase() + companion.species.slice(1)} has hatched!`); 
             await fetchEggs(); 
             setSelectedEgg(null); 
           } 
@@ -170,8 +170,8 @@ export function HatcheryView() {
             className="hatch-companion-image"
           />
           <div className="hatch-info">
-            <span className="hatch-species">{hatchNotification.species}</span>
-            <span className="hatch-rarity" style={{ color: RARITY_COLORS[hatchNotification.rarity] }}>{hatchNotification.rarity}</span>
+            <span className="hatch-species">{hatchNotification.species.charAt(0).toUpperCase() + hatchNotification.species.slice(1)}</span>
+            <span className="hatch-rarity" style={{ color: RARITY_COLORS[hatchNotification.rarity] }}>{hatchNotification.rarity.charAt(0).toUpperCase() + hatchNotification.rarity.slice(1)}</span>
           </div>
         </div>
       )}
@@ -192,7 +192,7 @@ export function HatcheryView() {
                 className="egg-visual"
                 style={{ filter: `drop-shadow(0 0 10px ${RARITY_COLORS[egg.rarity]})` }}
               />
-              <span className="egg-rarity" style={{ color: RARITY_COLORS[egg.rarity] }}>{egg.rarity}</span>
+              <span className="egg-rarity" style={{ color: RARITY_COLORS[egg.rarity] }}>{egg.rarity.charAt(0).toUpperCase() + egg.rarity.slice(1)}</span>
             </div>
           ))
         )}
@@ -208,7 +208,7 @@ export function HatcheryView() {
               style={{ filter: `drop-shadow(0 0 20px ${RARITY_COLORS[selected.rarity]})` }}
             />
             <p className="incubator-rarity" style={{ color: RARITY_COLORS[selected.rarity] }}>
-              {selected.rarity.toUpperCase()}
+              {selected.rarity.charAt(0).toUpperCase() + selected.rarity.slice(1)}
             </p>
           </div>
           <button className="btn-primary hatch-btn" onClick={() => handleHatch(selected.uuid)} disabled={loading}>

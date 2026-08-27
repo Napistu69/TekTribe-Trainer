@@ -5,7 +5,6 @@ interface Station {
   id: string;
   name: string;
   description: string;
-  icon: string;
   image: string;
   route?: string;
   locked: boolean;
@@ -17,7 +16,6 @@ const STATIONS: Station[] = [
     id: 'hatchery',
     name: 'Hatchery',
     description: 'Incubate eggs and hatch new companions',
-    icon: '🥚',
     image: '/assets/Habitat & Camp/hatchery.png',
     route: '/hatchery',
     locked: false,
@@ -26,7 +24,6 @@ const STATIONS: Station[] = [
     id: 'nursery',
     name: 'Nursery',
     description: 'Care for hatchlings and juveniles',
-    icon: '🐣',
     image: '/assets/Habitat & Camp/nursery.png',
     route: '/nursery',
     locked: false,
@@ -35,7 +32,6 @@ const STATIONS: Station[] = [
     id: 'camp',
     name: 'Camp',
     description: 'Home for adult companions',
-    icon: '🏕',
     image: '/assets/Habitat & Camp/camp_bg.jpg',
     route: '/camp',
     locked: false,
@@ -44,7 +40,6 @@ const STATIONS: Station[] = [
     id: 'forge',
     name: 'Forge',
     description: 'Refine Dust into Shards and Cuboids',
-    icon: '🔥',
     image: '/assets/Habitat & Camp/forge.png',
     locked: true,
     unlockHint: 'Complete 5 hatches to unlock',
@@ -53,7 +48,6 @@ const STATIONS: Station[] = [
     id: 'training_grounds',
     name: 'Training Grounds',
     description: 'Train your companion in mini-games',
-    icon: '⚔️',
     image: '/assets/Habitat & Camp/habitat.png',
     route: '/training',
     locked: false,
@@ -62,7 +56,6 @@ const STATIONS: Station[] = [
     id: 'expedition_gate',
     name: 'Expedition Gate',
     description: 'Dispatch companions to explore biomes',
-    icon: '🌍',
     image: '/assets/Habitat & Camp/expedition_gate.png',
     route: '/explore',
     locked: false,
@@ -71,7 +64,6 @@ const STATIONS: Station[] = [
     id: 'trading_post',
     name: 'Trading Post',
     description: 'Spend Dust at the shop',
-    icon: '🛒',
     image: '/assets/Currency & Resource/ELE_Dust.png',
     route: '/economy',
     locked: false,
@@ -80,7 +72,6 @@ const STATIONS: Station[] = [
     id: 'mining_pit',
     name: 'Mining Pit',
     description: 'Mine Dust with your pickaxe',
-    icon: '⛏️',
     image: '/assets/Habitat & Camp/mining_pit.png',
     locked: true,
     unlockHint: 'Hatch your first companion to unlock',
@@ -89,7 +80,6 @@ const STATIONS: Station[] = [
     id: 'overseer_shrine',
     name: 'Overseer Shrine',
     description: 'Commune with the Oracle',
-    icon: '👁️',
     image: '/assets/Habitat & Camp/overseer_shrine.png',
     locked: true,
     unlockHint: 'Reach 50 imprint with any companion',
@@ -130,7 +120,6 @@ export function MapView() {
               {station.locked && <div className="station-lock-overlay">🔒</div>}
             </div>
             <div className="station-info">
-              <span className="station-icon">{station.icon}</span>
               <h3>{station.name}</h3>
               <p>{station.description}</p>
               {station.locked && station.unlockHint && (
