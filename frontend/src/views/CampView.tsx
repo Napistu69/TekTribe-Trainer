@@ -117,10 +117,24 @@ export function CampView() {
         try {
           const data = await response.json();
           setMessage(`${action} successful! +${data.dust_gained || 0} dust`);
+          // Update companion's care_state immediately
+          if (companion && data.care_state) {
+            setCompanion({ ...companion, care_state: data.care_state });
+          }
         } catch {
           setMessage(`${action} successful!`);
         }
         await fetchCompanions();
+      } else if (response.status === 429) {
+        // Cooldown error
+        try {
+          const err = await response.json();
+          const cooldownSeconds = err.detail?.cooldown_remaining_seconds || 0;
+          const minutes = Math.ceil(cooldownSeconds / 60);
+          setMessage(`${action} is on cooldown! Wait ${minutes} minute${minutes > 1 ? 's' : ''}.`);
+        } catch {
+          setMessage(`${action} is on cooldown!`);
+        }
       } else {
         try { const err = await response.json(); setMessage(err.detail || 'Care action failed'); } catch { setMessage('Care action failed'); }
       }
