@@ -23,6 +23,17 @@ SPECIES_RARITY = {
 }
 DEFAULT_RARITY = "common"
 
+# Species diet mapping
+SPECIES_DIET = {
+    "parasaur": "herbivore",
+    "dilo": "carnivore",
+    "trike": "herbivore",
+    "ptera": "carnivore",
+    "raptor": "carnivore",
+    "rex": "carnivore",
+}
+DEFAULT_DIET = "omnivore"
+
 
 class Companion(Base):
     __tablename__ = "companions"
@@ -86,6 +97,11 @@ class Companion(Base):
     def rarity(self, value):
         """Allow setting rarity (stored in origin_metadata for compatibility)."""
         pass  # rarity is computed from species, setter is a no-op
+
+    @property
+    def diet(self) -> str:
+        """Computed diet based on species. NOT a database column."""
+        return SPECIES_DIET.get(self.species, DEFAULT_DIET)
 
     @property
     def is_locked(self) -> bool:

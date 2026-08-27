@@ -18,6 +18,7 @@ class CareState(Base):
     energy: Mapped[float] = mapped_column(Float, default=1.0)
     morale: Mapped[float] = mapped_column(Float, default=1.0)
     cleanliness: Mapped[float] = mapped_column(Float, default=1.0)
+    imprint_quality: Mapped[float] = mapped_column(Float, default=1.0)
     last_updated: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),

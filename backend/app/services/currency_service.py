@@ -89,6 +89,29 @@ async def spend_dust(user_id: str, amount: int, sink: str) -> tuple[bool, int]:
         return True, ledger.dust_balance
 
 
+async def spend_shards(user_id: str, amount: int, sink: str) -> tuple[bool, int]:
+    """Spend Shards. Returns (success, new_balance)."""
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(
+            select(CurrencyLedger).where(CurrencyLedger.user_id == user_id)
+        )
+        ledger = result.scalar_one_or_none()
+        if not ledger or ledger.shard_balance < amount:
+            return False, ledger.shard_balance if ledger else 0
+        
+        ledger.shard_balance -= amount
+        ledger.updated_at = datetime.now(timezone.utc)
+        ledger.transaction_log.append({
+            "type": "spend",
+            "currency": "shard",
+            "amount": amount,
+            "sink": sink,
+            "timestamp": str(datetime.now(timezone.utc)),
+        })
+        await session.commit()
+        return True, ledger.shard_balance
+
+
 async def get_transaction_history(user_id: str, limit: int = 50) -> list[dict]:
     """Get recent transaction history for a user."""
     async with AsyncSessionLocal() as session:
