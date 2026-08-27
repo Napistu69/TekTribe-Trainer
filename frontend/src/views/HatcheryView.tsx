@@ -24,7 +24,7 @@ const COMPANION_IMAGES: Record<string, string> = {
   dilo: '/assets/Creatures/dilo_character.png',
   trike: '/assets/Creatures/trike_character.png',
   ptera: '/assets/Creatures/ptera_character.png',
-  raptor: '/assets/Creatures/Raptor_Adult.png',
+  raptor: '/assets/Creatures/raptor_character.png',
   rex: '/assets/Creatures/rex_character.png',
 };
 
