@@ -50,7 +50,6 @@ async def dispatch_expedition(
         returns_at=expedition.returns_at,
         status=expedition.status,
         risk_level=expedition.risk_level,
-        max_companions=expedition.max_companions,
     )
 
 
@@ -72,7 +71,6 @@ async def get_active_expeditions(
             "returns_at": e.returns_at.isoformat(),
             "status": e.status,
             "risk_level": e.risk_level,
-            "max_companions": e.max_companions,
         }
         for e in expeditions
     ]

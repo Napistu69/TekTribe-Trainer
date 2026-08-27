@@ -16,7 +16,6 @@ interface Expedition {
   returns_at: string;
   status: string;
   risk_level: number;
-  max_companions: number;
   result?: {
     companion_results: Array<{
       companion_uuid: string;

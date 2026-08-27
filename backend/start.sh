@@ -1,12 +1,10 @@
 #!/bin/bash
 # Startup script for Render
 
-set -e
-
 echo "=== Starting TekTribe Trainer ==="
 echo "Current directory: $(pwd)"
 
-# Step 1: Fix expeditions table schema using asyncpg (most reliable)
+# Step 1: Fix expeditions table schema using asyncpg
 echo "=== Fixing expeditions table schema ==="
 python3 << 'PYEOF'
 import asyncio
@@ -50,10 +48,10 @@ async def fix():
 asyncio.run(fix())
 PYEOF
 
-# Step 2: Run alembic migrations
+# Step 2: Run alembic migrations (don't fail if this errors)
 echo "=== Running alembic migrations ==="
 alembic upgrade head 2>&1 || echo "Alembic warning (continuing)"
 
-# Step 3: Start uvicorn
+# Step 3: Start uvicorn (replace shell process)
 echo "=== Starting uvicorn ==="
 exec uvicorn app.main:app --host 0.0.0.0 --port $PORT
