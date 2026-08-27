@@ -74,6 +74,16 @@ export function NurseryView() {
     return () => { mountedRef.current = false; };
   }, []);
 
+  // Auto-clear message after 3 seconds
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => {
+        if (mountedRef.current) setMessage(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
+
   const isJuvenileOrHatchling = (c: Companion) => c.life_stage === 'hatchling' || c.life_stage === 'juvenile';
 
   const fetchCompanions = async () => {
@@ -124,6 +134,16 @@ export function NurseryView() {
           setMessage(`${action} successful!`);
         }
         await fetchCompanions();
+      } else if (response.status === 429) {
+        // Cooldown error
+        try {
+          const err = await response.json();
+          const cooldownSeconds = err.detail?.cooldown_remaining_seconds || 0;
+          const minutes = Math.ceil(cooldownSeconds / 60);
+          setMessage(`${action} is on cooldown! Wait ${minutes} minute${minutes > 1 ? 's' : ''}.`);
+        } catch {
+          setMessage(`${action} is on cooldown!`);
+        }
       } else {
         try { const err = await response.json(); setMessage(err.detail || 'Care action failed'); } catch { setMessage('Care action failed'); }
       }

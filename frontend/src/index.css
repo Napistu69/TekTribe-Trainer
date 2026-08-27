@@ -545,15 +545,7 @@ body::before {
   color: var(--color-text);
   font-weight: 600;
   z-index: 1000;
-  animation: fadeInOut 3s ease-in-out;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-}
-
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
-  10% { opacity: 1; transform: translateX(-50%) translateY(0); }
-  80% { opacity: 1; transform: translateX(-50%) translateY(0); }
-  100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
 }
 
 @keyframes fadeIn {
