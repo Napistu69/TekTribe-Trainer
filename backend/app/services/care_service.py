@@ -148,6 +148,7 @@ async def perform_care_action(
         "success": True,
         "action": action_type,
         "imprint_gained": imprint_gain,
+        "imprint_level": companion.imprint_level,
         "dust_gained": dust_gained,
         "care_state": {
             "hunger": care_state.hunger,

@@ -130,9 +130,9 @@ export function NurseryView() {
         try {
           const data = await response.json();
           setMessage(`${action} successful! +${data.dust_gained || 0} dust`);
-          // Update companion's care_state immediately
+          // Update companion's care_state and imprint_level immediately
           if (companion && data.care_state) {
-            setCompanion({ ...companion, care_state: data.care_state });
+            setCompanion({ ...companion, care_state: data.care_state, imprint_level: data.imprint_level ?? companion.imprint_level });
           }
         } catch {
           setMessage(`${action} successful!`);

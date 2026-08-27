@@ -127,16 +127,16 @@ export function CampView() {
         try {
           const data = await response.json();
           setMessage(`${action} successful! +${data.dust_gained || 0} dust`);
-          // Update companion's care_state immediately
+          // Update companion's care_state and imprint_level immediately
           if (companion && data.care_state) {
-            setCompanion({ ...companion, care_state: data.care_state });
+            setCompanion({ ...companion, care_state: data.care_state, imprint_level: data.imprint_level ?? companion.imprint_level });
           }
         } catch {
           setMessage(`${action} successful!`);
         }
         // Don't call fetchCompanions() - it would overwrite the local state with stale data
+        // await fetchCompanions();
       } else if (response.status === 429) {
-        // Cooldown error
         try {
           const err = await response.json();
           const cooldownSeconds = err.detail?.cooldown_remaining_seconds || 0;
