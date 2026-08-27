@@ -88,6 +88,7 @@ class CompanionResponse(BaseModel):
     health_status: float
     breeding_cooldown_until: Optional[str] = None
     on_chain_record: Optional[dict] = None
+    care_state: dict = {}
 
 
 # === Training Schemas ===

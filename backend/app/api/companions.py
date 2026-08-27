@@ -88,6 +88,9 @@ async def rename_companion(
     if not re.match(r'^[\w\s\-]+$', name):
         raise HTTPException(status_code=400, detail="Name contains invalid characters")
     
+    # Force capitalization (first letter of each word)
+    name = name.title()
+    
     companion.name = name
     await db.commit()
     

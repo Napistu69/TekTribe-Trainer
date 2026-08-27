@@ -137,7 +137,8 @@ export function NurseryView() {
         } catch {
           setMessage(`${action} successful!`);
         }
-        await fetchCompanions();
+        // Don't call fetchCompanions() - it would overwrite the local state with stale data
+        // await fetchCompanions();
       } else if (response.status === 429) {
         // Cooldown error
         try {
@@ -324,7 +325,7 @@ export function NurseryView() {
         <div className="care-actions">
           {[
             { id: 'feed', icon: '🌿', label: 'Feed' },
-            { id: 'clean', icon: '🫧', label: 'Clean' },
+            { id: 'clean', icon: '🧽', label: 'Clean' },
             { id: 'imprint', icon: '💚', label: 'Imprint' },
             { id: 'rest', icon: '💤', label: 'Rest' },
           ].map(a => (

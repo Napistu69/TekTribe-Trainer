@@ -74,6 +74,16 @@ export function CampView() {
     return () => { mountedRef.current = false; };
   }, []);
 
+  // Auto-clear message after 3 seconds
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => {
+        if (mountedRef.current) setMessage(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
+
   const fetchCompanions = async () => {
     if (!sessionToken) return;
     try {
@@ -124,7 +134,7 @@ export function CampView() {
         } catch {
           setMessage(`${action} successful!`);
         }
-        await fetchCompanions();
+        // Don't call fetchCompanions() - it would overwrite the local state with stale data
       } else if (response.status === 429) {
         // Cooldown error
         try {
@@ -216,7 +226,7 @@ export function CampView() {
         {showTutorial && <TutorialOverlay steps={TUTORIAL_STEPS} storageKey="tutorial-camp" onComplete={completeTutorial} />}
         <h1>Camp</h1>
         <div className="empty-camp">
-          <p>No adult companions yet. Raise a companion to adulthood to unlock the camp!</p>
+          <p>No adult or elder companions yet. Raise a companion to adulthood to unlock the Camp!</p>
         </div>
       </div>
     );
@@ -225,38 +235,34 @@ export function CampView() {
   return (
     <div className="camp-view">
       {showTutorial && <TutorialOverlay steps={TUTORIAL_STEPS} storageKey="tutorial-camp" onComplete={completeTutorial} />}
-      <div className="camp-background">
-        <img src="/assets/Habitat & Camp/camp_bg.jpg" alt="Camp" className="camp-bg-image" />
-        <div className="camp-dino-stage">
-          <img src={COMPANION_IMAGES[companion.species] || COMPANION_IMAGES.raptor} alt={companion.species} className="camp-dino-image" />
-        </div>
+      <h1>Camp</h1>
+      {message && <div className="game-message">{message}</div>}
+      <div className="companion-selector">
+        {companions.map(c => (
+          <button key={c.uuid} className={`companion-tab ${selectedCompanion === c.uuid ? 'active' : ''}`} onClick={() => setSelectedCompanion(c.uuid)}>
+            {c.species}
+          </button>
+        ))}
       </div>
-
-      <div className="camp-info-panel">
-        {message && <div className="game-message">{message}</div>}
-        <div className="companion-selector">
-          {companions.map(c => (
-            <button key={c.uuid} className={`companion-tab ${selectedCompanion === c.uuid ? 'active' : ''}`} onClick={() => setSelectedCompanion(c.uuid)}>
-              {c.species}
-            </button>
-          ))}
-        </div>
-
-        <div className="companion-info">
-          <h2>{companion.name || companion.species}</h2>
-          <span className="life-stage">{companion.life_stage}</span>
-          <div className="imprint-bar">
-            <span>Imprint: {companion.imprint_level}/100</span>
-            <div className="meter">
-              <div className="meter-fill" style={{ width: `${(companion.imprint_level / 100) * 100}%` }} />
+      <div className="companion-display">
+        <div className="companion-visual">
+          <img src={COMPANION_IMAGES[companion.species] || COMPANION_IMAGES.raptor} alt={companion.species} className="companion-image" />
+          <div className="companion-info">
+            <h2>{companion.name || companion.species}</h2>
+            <span className="life-stage">{companion.life_stage}</span>
+            <div className="imprint-bar">
+              <span>Imprint: {companion.imprint_level}/100</span>
+              <div className="meter">
+                <div className="meter-fill" style={{ width: `${(companion.imprint_level / 100) * 100}%` }} />
+              </div>
             </div>
+            <div className="rarity-tag" style={{ color: RARITY_COLORS[companion.rarity] }}>{companion.rarity}</div>
           </div>
-          <div className="rarity-tag" style={{ color: RARITY_COLORS[companion.rarity] }}>{companion.rarity}</div>
         </div>
 
         <div className="companion-actions">
-          <button
-            className={`btn-icon ${companion.is_locked ? 'locked' : ''}`}
+          <button 
+            className={`btn-icon ${companion.is_locked ? 'locked' : ''}`} 
             onClick={() => handleToggleLock(companion.uuid)}
             title={companion.is_locked ? 'Unlock' : 'Lock'}
           >
@@ -312,11 +318,10 @@ export function CampView() {
             <div className="meter"><div className="meter-fill" style={{ width: `${(companion.care_state?.cleanliness ?? 0) * 100}%`, background: '#4d96ff' }} /></div>
           </div>
         </div>
-
         <div className="care-actions">
           {[
             { id: 'feed', icon: '🌿', label: 'Feed' },
-            { id: 'clean', icon: '🫧', label: 'Clean' },
+            { id: 'clean', icon: '🧽', label: 'Clean' },
             { id: 'imprint', icon: '💚', label: 'Imprint' },
             { id: 'rest', icon: '💤', label: 'Rest' },
           ].map(a => (

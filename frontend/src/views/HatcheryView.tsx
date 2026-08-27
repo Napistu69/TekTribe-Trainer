@@ -19,6 +19,15 @@ const RARITY_IMAGES: Record<string, string> = {
   mythic: '/assets/Hatch System/Egg_Mythic.png',
 };
 
+const COMPANION_IMAGES: Record<string, string> = {
+  parasaur: '/assets/Creatures/parasaur_character.png',
+  dilo: '/assets/Creatures/dilo_character.png',
+  trike: '/assets/Creatures/trike_character.png',
+  ptera: '/assets/Creatures/ptera_character.png',
+  raptor: '/assets/Creatures/Raptor_Adult.png',
+  rex: '/assets/Creatures/rex_character.png',
+};
+
 const RARITY_COLORS: Record<string, string> = {
   common: '#808080',      // grey
   uncommon: '#00ff00',    // Natural green
@@ -34,6 +43,7 @@ export function HatcheryView() {
   const [selectedEgg, setSelectedEgg] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [hatchNotification, setHatchNotification] = useState<{species: string, rarity: string} | null>(null);
   const { showTutorial, completeTutorial } = useTutorial('tutorial-hatchery');
   const sessionToken = useAuthStore((s) => s.sessionToken);
   const mountedRef = useRef(true);
@@ -42,6 +52,26 @@ export function HatcheryView() {
     mountedRef.current = true;
     return () => { mountedRef.current = false; };
   }, []);
+
+  // Auto-clear message after 3 seconds
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => {
+        if (mountedRef.current) setMessage(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
+
+  // Auto-clear hatch notification after 5 seconds
+  useEffect(() => {
+    if (hatchNotification) {
+      const timer = setTimeout(() => {
+        if (mountedRef.current) setHatchNotification(null);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [hatchNotification]);
 
   const fetchEggs = async () => {
     if (!sessionToken) return;
@@ -96,7 +126,20 @@ export function HatcheryView() {
       });
       if (!mountedRef.current) return;
       if (response.ok) {
-        try { const companion = await response.json(); if (mountedRef.current) setMessage(`A ${companion.species} has hatched!`); await fetchEggs(); if (mountedRef.current) setSelectedEgg(null); } catch { if (mountedRef.current) { setMessage('Companion hatched!'); setSelectedEgg(null); } }
+        try { 
+          const companion = await response.json(); 
+          if (mountedRef.current) { 
+            setHatchNotification({ species: companion.species, rarity: companion.rarity });
+            setMessage(`A ${companion.species} has hatched!`); 
+            await fetchEggs(); 
+            setSelectedEgg(null); 
+          } 
+        } catch { 
+          if (mountedRef.current) { 
+            setMessage('Companion hatched!'); 
+            setSelectedEgg(null); 
+          } 
+        }
       } else {
         try { const err = await response.json(); if (mountedRef.current) setMessage(err.detail || 'Failed to hatch egg'); } catch { if (mountedRef.current) setMessage('Failed to hatch egg'); }
       }
@@ -119,6 +162,19 @@ export function HatcheryView() {
         </button>
       </div>
       {message && <div className="game-message">{message}</div>}
+      {hatchNotification && (
+        <div className="hatch-notification">
+          <img 
+            src={COMPANION_IMAGES[hatchNotification.species] || COMPANION_IMAGES.raptor} 
+            alt={hatchNotification.species} 
+            className="hatch-companion-image"
+          />
+          <div className="hatch-info">
+            <span className="hatch-species">{hatchNotification.species}</span>
+            <span className="hatch-rarity" style={{ color: RARITY_COLORS[hatchNotification.rarity] }}>{hatchNotification.rarity}</span>
+          </div>
+        </div>
+      )}
       <div className="egg-shelf">
         {eggs.length === 0 ? (
           <div className="empty-shelf"><p>No eggs yet. Pull your first egg to begin!</p></div>
