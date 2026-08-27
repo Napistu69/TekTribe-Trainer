@@ -59,12 +59,12 @@ const BIOMES: Biome[] = [
 ];
 
 const COMPANION_IMAGES: Record<string, string> = {
-  parasaur: '/assets/Creatures/Parasaur_Adult.png',
-  dilo: '/assets/Creatures/Dilo_Adult.png',
-  trike: '/assets/Creatures/Trike_Adult.png',
-  ptera: '/assets/Creatures/Ptera_Adult.png',
+  parasaur: '/assets/Creatures/parasaur_character.png',
+  dilo: '/assets/Creatures/dilo_character.png',
+  trike: '/assets/Creatures/trike_character.png',
+  ptera: '/assets/Creatures/ptera_character.png',
   raptor: '/assets/Creatures/Raptor_Adult.png',
-  rex: '/assets/Creatures/Rex_Adult.png',
+  rex: '/assets/Creatures/rex_character.png',
 };
 
 export function ExploreView() {
