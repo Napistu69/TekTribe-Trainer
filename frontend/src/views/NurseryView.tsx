@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { TutorialOverlay, useTutorial } from '../components/shared/TutorialOverlay';
+import { useNavigate } from 'react-router-dom';
 
 const TUTORIAL_STEPS = [
   { title: 'Welcome to the Nursery', text: 'This is where hatchlings and juveniles are cared for. Feed, clean, imprint, and rest your young companions.' },
-  { title: 'Care Actions', text: 'Each care action has a cooldown. Use them wisely to keep your companion healthy and happy.' },
+  { title: 'Care Actions', text: 'Use items from your inventory to care for companions. Imprint and Rest are always free.' },
   { title: 'Growth', text: 'As your companion grows, they will eventually become adults and move to the Camp!' },
 ];
 
@@ -27,12 +28,20 @@ const RARITY_COLORS: Record<string, string> = {
   mythic: '#ff4444',
 };
 
+const DIET_LABELS: Record<string, string> = {
+  carnivore: 'Carnivore',
+  herbivore: 'Herbivore',
+  omnivore: 'Omnivore',
+  aquatic: 'Aquatic',
+};
+
 interface Companion {
   uuid: string;
   species: string;
   name: string;
   life_stage: string;
   rarity: string;
+  diet: string;
   imprint_level: number;
   is_locked: boolean;
   base_stats: Record<string, number>;
@@ -43,6 +52,13 @@ interface Companion {
     morale: number;
     cleanliness: number;
   };
+}
+
+interface InventoryItem {
+  item_id: string;
+  name: string;
+  description: string;
+  quantity: number;
 }
 
 const SHARD_AMOUNTS: Record<string, number> = {
@@ -65,16 +81,18 @@ export function NurseryView() {
   const [companions, setCompanions] = useState<Companion[]>([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
+  const [showFeedMenu, setShowFeedMenu] = useState(false);
   const { showTutorial, completeTutorial } = useTutorial('tutorial-nursery');
   const sessionToken = useAuthStore((s) => s.sessionToken);
   const mountedRef = useRef(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     mountedRef.current = true;
     return () => { mountedRef.current = false; };
   }, []);
 
-  // Auto-clear message after 3 seconds
   useEffect(() => {
     if (message) {
       const timer = setTimeout(() => {
@@ -95,7 +113,6 @@ export function NurseryView() {
       if (!response.ok) return;
       const data = await response.json();
       if (!mountedRef.current) return;
-      
       const filtered = data.filter(isJuvenileOrHatchling);
       setCompanions(filtered);
       if (filtered.length > 0 && !selectedCompanion) {
@@ -107,7 +124,21 @@ export function NurseryView() {
     }
   };
 
-  useEffect(() => { fetchCompanions(); }, [sessionToken]);
+  const fetchInventory = async () => {
+    if (!sessionToken) return;
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/inventory`, {
+        headers: { Authorization: `Bearer ${sessionToken}` },
+      });
+      if (!response.ok) return;
+      const data = await response.json();
+      if (mountedRef.current) setInventory(data.items || []);
+    } catch (err) {
+      console.error('Failed to fetch inventory:', err);
+    }
+  };
+
+  useEffect(() => { fetchCompanions(); fetchInventory(); }, [sessionToken]);
 
   useEffect(() => {
     if (selectedCompanion) {
@@ -116,41 +147,79 @@ export function NurseryView() {
     }
   }, [selectedCompanion, companions]);
 
-  const handleCareAction = async (action: string) => {
+  const getCompatibleFeeds = (): InventoryItem[] => {
+    if (!companion) return [];
+    const diet = companion.diet || 'omnivore';
+    const feedIds: Record<string, string[]> = {
+      carnivore: ['meat', 'jerky'],
+      herbivore: ['berries', 'crops'],
+      omnivore: ['meat', 'jerky', 'berries', 'crops'],
+      aquatic: [],
+    };
+    const ids = feedIds[diet] || [];
+    return inventory.filter(item => ids.includes(item.item_id) && item.quantity > 0);
+  };
+
+  const getSponges = (): InventoryItem[] => {
+    return inventory.filter(item => item.item_id === 'sponge' && item.quantity > 0);
+  };
+
+  const handleUseItem = async (itemId: string) => {
+    if (!sessionToken || !selectedCompanion || loading) return;
+    setLoading(true);
+    setMessage(null);
+    setShowFeedMenu(false);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/inventory/use`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ companion_uuid: selectedCompanion, item_id: itemId }),
+      });
+      if (!mountedRef.current) return;
+      if (response.ok) {
+        const data = await response.json();
+        setMessage(`+${data.dust_gained || 0} dust`);
+        if (companion && data.care_state) {
+          setCompanion({ ...companion, care_state: data.care_state, imprint_level: data.imprint_level ?? companion.imprint_level });
+        }
+        await fetchInventory();
+      } else {
+        const err = await response.json();
+        setMessage(err.detail || 'Action failed');
+      }
+    } catch (err) {
+      if (mountedRef.current) setMessage('Network error');
+    } finally {
+      if (mountedRef.current) setLoading(false);
+    }
+  };
+
+  const handleFreeAction = async (action: string) => {
     if (!sessionToken || !selectedCompanion || loading) return;
     setLoading(true);
     setMessage(null);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/care/${selectedCompanion}/${action}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/inventory/free-action`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${sessionToken}` },
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ companion_uuid: selectedCompanion, action }),
       });
       if (!mountedRef.current) return;
       if (response.ok) {
-        try {
-          const data = await response.json();
-          setMessage(`${action} successful! +${data.dust_gained || 0} dust`);
-          // Update companion's care_state and imprint_level immediately
-          if (companion && data.care_state) {
-            setCompanion({ ...companion, care_state: data.care_state, imprint_level: data.imprint_level ?? companion.imprint_level });
-          }
-        } catch {
-          setMessage(`${action} successful!`);
-        }
-        // Don't call fetchCompanions() - it would overwrite the local state with stale data
-        // await fetchCompanions();
-      } else if (response.status === 429) {
-        // Cooldown error
-        try {
-          const err = await response.json();
-          const cooldownSeconds = err.detail?.cooldown_remaining_seconds || 0;
-          const minutes = Math.ceil(cooldownSeconds / 60);
-          setMessage(`${action} is on cooldown! Wait ${minutes} minute${minutes > 1 ? 's' : ''}.`);
-        } catch {
-          setMessage(`${action} is on cooldown!`);
+        const data = await response.json();
+        setMessage(`+${data.dust_gained || 0} dust`);
+        if (companion && data.care_state) {
+          setCompanion({ ...companion, care_state: data.care_state, imprint_level: data.imprint_level ?? companion.imprint_level });
         }
       } else {
-        try { const err = await response.json(); setMessage(err.detail || 'Care action failed'); } catch { setMessage('Care action failed'); }
+        const err = await response.json();
+        setMessage(err.detail || 'Action failed');
       }
     } catch (err) {
       if (mountedRef.current) setMessage('Network error');
@@ -177,13 +246,12 @@ export function NurseryView() {
         } catch {
           setMessage('Released!');
         }
-        // Fetch remaining companions and select the first one
         const updatedResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/companions`, {
           headers: { Authorization: `Bearer ${sessionToken}` },
         });
         if (updatedResponse.ok && mountedRef.current) {
           const data = await updatedResponse.json();
-          const filtered = data.filter((c: Companion) => c.life_stage === 'hatchling' || c.life_stage === 'juvenile');
+          const filtered = data.filter(isJuvenileOrHatchling);
           setCompanions(filtered);
           if (filtered.length > 0) {
             setSelectedCompanion(filtered[0].uuid);
@@ -213,7 +281,6 @@ export function NurseryView() {
       if (!mountedRef.current) return;
       if (response.ok) {
         const result = await response.json();
-        // Update local companion state
         if (companion && companion.uuid === companionUuid) {
           setCompanion({ ...companion, is_locked: result.is_locked });
         }
@@ -236,6 +303,9 @@ export function NurseryView() {
     );
   }
 
+  const compatibleFeeds = getCompatibleFeeds();
+  const sponges = getSponges();
+
   return (
     <div className="nursery-view">
       {showTutorial && <TutorialOverlay steps={TUTORIAL_STEPS} storageKey="tutorial-nursery" onComplete={completeTutorial} />}
@@ -254,6 +324,7 @@ export function NurseryView() {
           <div className="companion-info">
             <h2>{companion.name || companion.species.charAt(0).toUpperCase() + companion.species.slice(1)}</h2>
             <span className="life-stage">{companion.life_stage.charAt(0).toUpperCase() + companion.life_stage.slice(1)}</span>
+            <span className="diet-tag">{DIET_LABELS[companion.diet] || 'Unknown'}</span>
             <div className="imprint-bar">
               <span>Imprint: {companion.imprint_level}/100</span>
               <div className="meter">
@@ -323,17 +394,40 @@ export function NurseryView() {
           </div>
         </div>
         <div className="care-actions">
-          {[
-            { id: 'feed', icon: '🌿', label: 'Feed' },
-            { id: 'clean', icon: '🧽', label: 'Clean' },
-            { id: 'imprint', icon: '💚', label: 'Imprint' },
-            { id: 'rest', icon: '💤', label: 'Rest' },
-          ].map(a => (
-            <button key={a.id} className="care-action-btn" onClick={() => handleCareAction(a.id)} disabled={loading}>
-              <span className="care-icon">{a.icon}</span>
-              <span className="care-label">{a.label}</span>
+          <div className="care-action-group">
+            <button className="care-action-btn" onClick={() => setShowFeedMenu(!showFeedMenu)} disabled={loading}>
+              <span className="care-icon">🥩</span>
+              <span className="care-label">Feed</span>
             </button>
-          ))}
+            {showFeedMenu && (
+              <div className="feed-menu">
+                {compatibleFeeds.length > 0 ? (
+                  compatibleFeeds.map(item => (
+                    <button key={item.item_id} className="feed-option" onClick={() => handleUseItem(item.item_id)}>
+                      {item.name} ×{item.quantity}
+                    </button>
+                  ))
+                ) : (
+                  <div className="feed-empty">
+                    <p>No feed in inventory</p>
+                    <button className="btn-buy-link" onClick={() => navigate('/economy')}>Buy from Shop</button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+          <button className="care-action-btn" onClick={() => handleUseItem('sponge')} disabled={loading || sponges.length === 0}>
+            <span className="care-icon">🧽</span>
+            <span className="care-label">Clean {sponges.length > 0 && `(${sponges[0].quantity})`}</span>
+          </button>
+          <button className="care-action-btn" onClick={() => handleFreeAction('imprint')} disabled={loading}>
+            <span className="care-icon">💚</span>
+            <span className="care-label">Imprint</span>
+          </button>
+          <button className="care-action-btn" onClick={() => handleFreeAction('rest')} disabled={loading}>
+            <span className="care-icon">💤</span>
+            <span className="care-label">Rest</span>
+          </button>
         </div>
       </div>
     </div>

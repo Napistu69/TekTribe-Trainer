@@ -11,26 +11,44 @@ interface ShopItem {
   category: string;
 }
 
+interface EggOffering {
+  rarity: string;
+  cost: number;
+  currency: string;
+  daily_stock: number;
+  upgrade_chance: number;
+}
+
 const ITEM_ICONS: Record<string, string> = {
-  basic_food: '🥩',
-  medicine: '💊',
-  incubation_boost: '⚡',
-  care_kit: '🧰',
+  meat: '🥩',
+  jerky: '🥓',
   berries: '🍒',
   crops: '🥕',
+  sponge: '🧽',
+  imprint_boost: '💫',
+  care_kit: '🧰',
+};
+
+const RARITY_COLORS: Record<string, string> = {
+  common: '#808080',
+  uncommon: '#00ff00',
+  rare: '#00d4ff',
+  epic: '#ff00ff',
 };
 
 interface EconomyViewProps {
   companionUuid?: string;
 }
 
-export function EconomyView({ companionUuid }: EconomyViewProps) {
+export function EconomyView(_companionUuid?: EconomyViewProps) {
   const [items, setItems] = useState<ShopItem[]>([]);
+  const [eggOfferings, setEggOfferings] = useState<EggOffering[]>([]);
   const [purchasing, setPurchasing] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const [tab, setTab] = useState<'shop' | 'history'>('shop');
+  const [tab, setTab] = useState<'shop' | 'eggs' | 'history'>('shop');
   const sessionToken = useAuthStore((s) => s.sessionToken);
   const dust = useEconomyStore((s) => s.dust);
+  const shard = useEconomyStore((s) => s.shard);
   const setBalance = useEconomyStore((s) => s.setBalance);
   const mountedRef = useRef(true);
 
@@ -52,7 +70,19 @@ export function EconomyView({ companionUuid }: EconomyViewProps) {
         console.error('Failed to fetch shop items:', err);
       }
     };
+    const fetchEggOfferings = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/shop/eggs`);
+        if (response.ok) {
+          const data = await response.json();
+          if (mountedRef.current) setEggOfferings(data.offerings || []);
+        }
+      } catch (err) {
+        console.error('Failed to fetch egg offerings:', err);
+      }
+    };
     fetchShopItems();
+    fetchEggOfferings();
   }, [sessionToken]);
 
   useEffect(() => {
@@ -78,17 +108,52 @@ export function EconomyView({ companionUuid }: EconomyViewProps) {
     setPurchasing(itemId);
     setMessage(null);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/economy/shop/purchase`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/inventory/purchase`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${sessionToken}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ item_id: itemId, companion_uuid: companionUuid || null }),
+        body: JSON.stringify({ item_id: itemId, quantity: 1 }),
       });
       if (response.ok) {
         const item = items.find(i => i.item_id === itemId);
         setMessage(`Purchased ${item?.name}!`);
+        const balanceRes = await fetch(`${import.meta.env.VITE_API_URL}/api/economy/balance`, {
+          headers: { Authorization: `Bearer ${sessionToken}` },
+        });
+        if (balanceRes.ok) {
+          const balanceData = await balanceRes.json();
+          if (mountedRef.current) setBalance(balanceData);
+        }
+      } else {
+        const err = await response.json();
+        setMessage(err.detail || 'Purchase failed');
+      }
+    } catch (err) {
+      setMessage('Network error');
+    } finally {
+      if (mountedRef.current) setPurchasing(null);
+    }
+  };
+
+  const handleEggPurchase = async (rarity: string) => {
+    if (!sessionToken) return;
+    setPurchasing(rarity);
+    setMessage(null);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/shop/eggs/purchase`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ rarity }),
+      });
+      if (response.ok) {
+        const result = await response.json();
+        const upgradeText = result.upgraded ? ` (Upgraded to ${result.rarity}!)` : '';
+        setMessage(`Purchased ${result.rarity} egg${upgradeText}`);
         const balanceRes = await fetch(`${import.meta.env.VITE_API_URL}/api/economy/balance`, {
           headers: { Authorization: `Bearer ${sessionToken}` },
         });
@@ -114,11 +179,15 @@ export function EconomyView({ companionUuid }: EconomyViewProps) {
         <div className="economy-balance">
           <img className="balance-icon" src="/assets/Currency & Resource/ELE_Dust_20.png" alt="" />
           <span className="balance-amount">{dust.toLocaleString()}</span>
+          <span className="balance-separator">|</span>
+          <img className="balance-icon" src="/assets/Currency & Resource/ELE_Shard_20.png" alt="" />
+          <span className="balance-amount">{shard.toLocaleString()}</span>
         </div>
       </div>
       
       <div className="economy-tabs">
         <button className={`economy-tab ${tab === 'shop' ? 'active' : ''}`} onClick={() => setTab('shop')}>Shop</button>
+        <button className={`economy-tab ${tab === 'eggs' ? 'active' : ''}`} onClick={() => setTab('eggs')}>Eggs</button>
         <button className={`economy-tab ${tab === 'history' ? 'active' : ''}`} onClick={() => setTab('history')}>History</button>
       </div>
 
@@ -143,6 +212,35 @@ export function EconomyView({ companionUuid }: EconomyViewProps) {
                   disabled={dust < item.cost || purchasing === item.item_id}
                 >
                   {purchasing === item.item_id ? '...' : 'Buy'}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {tab === 'eggs' && (
+        <div className="egg-shop-grid">
+          {eggOfferings.map((egg) => (
+            <div key={egg.rarity} className="egg-card">
+              <div className="egg-card-icon">
+                <span className="egg-emoji">🥚</span>
+              </div>
+              <div className="egg-card-info">
+                <span className="egg-rarity" style={{ color: RARITY_COLORS[egg.rarity] }}>{egg.rarity}</span>
+                <span className="egg-description">
+                  Random {egg.rarity} companion
+                  {egg.upgrade_chance > 0 && ` (${Math.round(egg.upgrade_chance * 100)}% chance for next tier)`}
+                </span>
+              </div>
+              <div className="egg-card-purchase">
+                <span className="egg-cost">◆ {egg.cost}</span>
+                <button
+                  className="btn-buy"
+                  onClick={() => handleEggPurchase(egg.rarity)}
+                  disabled={shard < egg.cost || purchasing === egg.rarity}
+                >
+                  {purchasing === egg.rarity ? '...' : 'Buy'}
                 </button>
               </div>
             </div>

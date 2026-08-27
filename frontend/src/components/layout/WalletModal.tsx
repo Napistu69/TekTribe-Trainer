@@ -8,6 +8,23 @@ interface WalletModalProps {
 
 type WalletTab = 'currencies' | 'inventory' | 'history';
 
+interface InventoryItem {
+  item_id: string;
+  name: string;
+  description: string;
+  quantity: number;
+}
+
+const ITEM_ICONS: Record<string, string> = {
+  meat: '🥩',
+  jerky: '🥓',
+  berries: '🍒',
+  crops: '🥕',
+  sponge: '🧽',
+  imprint_boost: '💫',
+  care_kit: '🧰',
+};
+
 export function WalletModal({ onClose }: WalletModalProps) {
   const [activeTab, setActiveTab] = useState<WalletTab>('currencies');
   const dust = useEconomyStore((s) => s.dust);
@@ -18,6 +35,7 @@ export function WalletModal({ onClose }: WalletModalProps) {
   const setBalance = useEconomyStore((s) => s.setBalance);
   const setTransactions = useEconomyStore((s) => s.setTransactions);
   const sessionToken = useAuthStore((s) => s.sessionToken);
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
 
   useEffect(() => {
     if (!sessionToken) return;
@@ -54,6 +72,24 @@ export function WalletModal({ onClose }: WalletModalProps) {
     };
     fetchHistory();
   }, [sessionToken, setTransactions]);
+
+  useEffect(() => {
+    if (!sessionToken) return;
+    const fetchInventory = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/inventory`, {
+          headers: { Authorization: `Bearer ${sessionToken}` },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setInventory(data.items || []);
+        }
+      } catch (err) {
+        console.error('Failed to fetch inventory:', err);
+      }
+    };
+    fetchInventory();
+  }, [sessionToken]);
 
   return (
     <div className="wallet-overlay" onClick={onClose}>
@@ -112,21 +148,17 @@ export function WalletModal({ onClose }: WalletModalProps) {
 
           {activeTab === 'inventory' && (
             <div className="inventory-grid">
-              <div className="inventory-item">
-                <span className="item-icon">🍒</span>
-                <span className="item-name">Berries</span>
-                <span className="item-count">×0</span>
-              </div>
-              <div className="inventory-item">
-                <span className="item-icon">🥕</span>
-                <span className="item-name">Crops</span>
-                <span className="item-count">×0</span>
-              </div>
-              <div className="inventory-item empty">
-                <span className="item-icon">📦</span>
-                <span className="item-name">Empty</span>
-                <span className="item-count">—</span>
-              </div>
+              {inventory.length === 0 ? (
+                <p className="empty-history">No items yet. Visit the Trading Post to buy items!</p>
+              ) : (
+                inventory.map((item) => (
+                  <div key={item.item_id} className="inventory-item">
+                    <span className="item-icon">{ITEM_ICONS[item.item_id] || '📦'}</span>
+                    <span className="item-name">{item.name}</span>
+                    <span className="item-count">×{item.quantity}</span>
+                  </div>
+                ))
+              )}
             </div>
           )}
 
