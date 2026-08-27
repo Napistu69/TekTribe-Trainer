@@ -2,7 +2,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { SettingsModal } from './SettingsModal';
 import { WalletModal } from './WalletModal';
 import { useState } from 'react';
-import { useEconomyStore } from '../stores/economyStore';
+import { useEconomyStore } from '../../stores/economyStore';
 
 export function AppShell() {
   const location = useLocation();
