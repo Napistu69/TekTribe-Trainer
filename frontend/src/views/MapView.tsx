@@ -48,7 +48,7 @@ const STATIONS: Station[] = [
     id: 'training_grounds',
     name: 'Training Grounds',
     description: 'Train your companion in mini-games',
-    image: '/assets/Habitat & Camp/habitat.png',
+    image: '/assets/Habitat & Camp/training_grounds.png',
     route: '/training',
     locked: false,
   },

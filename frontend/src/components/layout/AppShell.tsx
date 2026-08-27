@@ -13,7 +13,7 @@ export function AppShell() {
     { id: 'hatchery', label: 'Hatchery', image: '/assets/Habitat & Camp/hatchery.png', path: '/hatchery' },
     { id: 'nursery', label: 'Nursery', image: '/assets/Habitat & Camp/nursery.png', path: '/nursery' },
     { id: 'camp', label: 'Camp', image: '/assets/Habitat & Camp/camp_bg.jpg', path: '/camp' },
-    { id: 'training', label: 'Training', image: '/assets/Habitat & Camp/habitat.png', path: '/training' },
+    { id: 'training', label: 'Training', image: '/assets/Habitat & Camp/icon_target.png', path: '/training' },
     { id: 'explore', label: 'Explore', image: '/assets/Habitat & Camp/expedition_gate.png', path: '/explore' },
     { id: 'economy', label: 'Economy', image: '/assets/Currency & Resource/ELE_Dust.png', path: '/economy' },
     { id: 'overseer', label: 'Overseer', image: '/assets/Overseer & Lore/overseer.png', path: '/overseer' },
