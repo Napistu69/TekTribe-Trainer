@@ -2587,3 +2587,62 @@ select {
   color: var(--color-emerald);
   font-weight: 600;
 }
+
+/* Reward Popup */
+.reward-popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.reward-popup {
+  background: linear-gradient(135deg, #0a2a3a 0%, #0d1b2a 100%);
+  border: 2px solid var(--color-cyan);
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  animation: popIn 0.3s ease;
+}
+
+@keyframes popIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.reward-popup h3 {
+  color: var(--color-cyan);
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.reward-biome {
+  color: var(--color-text-muted);
+  text-transform: capitalize;
+  margin-bottom: 1rem;
+}
+
+.reward-list {
+  color: var(--color-text);
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+}
+
+.reward-popup .btn-primary {
+  width: 100%;
+}

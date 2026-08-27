@@ -66,6 +66,30 @@ async def award_shards(user_id: str, amount: int, source: str) -> int:
         return ledger.shard_balance
 
 
+async def award_cuboids(user_id: str, amount: int, source: str) -> int:
+    """Award Cuboids to a user. Returns new balance."""
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(
+            select(CurrencyLedger).where(CurrencyLedger.user_id == user_id)
+        )
+        ledger = result.scalar_one_or_none()
+        if not ledger:
+            ledger = CurrencyLedger(user_id=user_id)
+            session.add(ledger)
+        
+        ledger.cuboid_balance += amount
+        ledger.updated_at = datetime.now(timezone.utc)
+        ledger.transaction_log.append({
+            "type": "award",
+            "currency": "cuboid",
+            "amount": amount,
+            "source": source,
+            "timestamp": str(datetime.now(timezone.utc)),
+        })
+        await session.commit()
+        return ledger.cuboid_balance
+
+
 async def spend_dust(user_id: str, amount: int, sink: str) -> tuple[bool, int]:
     """Spend Dust. Returns (success, new_balance)."""
     async with AsyncSessionLocal() as session:

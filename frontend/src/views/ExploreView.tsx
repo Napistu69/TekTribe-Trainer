@@ -26,6 +26,10 @@ interface Expedition {
       imprint_change: number;
     }>;
     total_dust_gained: number;
+    rewards?: Record<string, number>;
+    total_shards_gained?: number;
+    total_cuboids_gained?: number;
+    eggs_gained?: number;
   };
 }
 
@@ -77,6 +81,7 @@ export function ExploreView() {
   const [loading, setLoading] = useState(false);
   const [now, setNow] = useState(Date.now());
   const [selectedCompanions, setSelectedCompanions] = useState<string[]>([]);
+  const [rewardPopup, setRewardPopup] = useState<{ show: boolean; rewards: Record<string, number>; biome: string } | null>(null);
   const { showTutorial, completeTutorial } = useTutorial('tutorial-explore');
   const sessionToken = useAuthStore((s) => s.sessionToken);
   const mountedRef = useRef(true);
@@ -202,10 +207,15 @@ export function ExploreView() {
       });
       if (!mountedRef.current) return;
       if (response.ok) {
+        const data = await response.json();
+        if (data.rewards) {
+          setRewardPopup({ show: true, rewards: data.rewards, biome: data.biome_zone });
+        } else {
+          setDispatchMsg('Resources collected!');
+        }
         await fetchExpeditions();
         await fetchHistory();
         await fetchCompanions();
-        setDispatchMsg('Resources collected!');
       } else {
         try { const err = await response.json(); setDispatchMsg(err.detail || 'Collect failed'); } catch { setDispatchMsg('Collect failed'); }
       }
@@ -253,12 +263,47 @@ export function ExploreView() {
   const dispatchedCompanionUuids = biomeExpeditions.flatMap(e => e.companion_uuids);
   const dispatchedCompanions = companions.filter(c => dispatchedCompanionUuids.includes(c.uuid));
 
+  const formatRewards = (rewards: Record<string, number>) => {
+    const parts: string[] = [];
+    if (rewards.dust) parts.push(`✦ ${rewards.dust} Dust`);
+    if (rewards.shard) parts.push(`◆ ${rewards.shard} Shards`);
+    if (rewards.cuboid) parts.push(`◈ ${rewards.cuboid} Cuboids`);
+    if (rewards.meat) parts.push(`🥩 ${rewards.meat} Meat`);
+    if (rewards.jerky) parts.push(`🥓 ${rewards.jerky} Jerky`);
+    if (rewards.berries) parts.push(`🍒 ${rewards.berries} Berries`);
+    if (rewards.crops) parts.push(`🥕 ${rewards.crops} Crops`);
+    if (rewards.sponge) parts.push(`🧽 ${rewards.sponge} Sponge`);
+    if (rewards.imprint_boost) parts.push(`💫 ${rewards.imprint_boost} Imprint Boost`);
+    if (rewards.care_kit) parts.push(`🧰 ${rewards.care_kit} Care Kit`);
+    if (rewards.common_egg) parts.push(`🥚 ${rewards.common_egg} Common Egg${rewards.common_egg > 1 ? 's' : ''}`);
+    if (rewards.uncommon_egg) parts.push(`🥚 ${rewards.uncommon_egg} Uncommon Egg${rewards.uncommon_egg > 1 ? 's' : ''}`);
+    if (rewards.rare_egg) parts.push(`🥚 ${rewards.rare_egg} Rare Egg${rewards.rare_egg > 1 ? 's' : ''}`);
+    if (rewards.epic_egg) parts.push(`🥚 ${rewards.epic_egg} Epic Egg${rewards.epic_egg > 1 ? 's' : ''}`);
+    if (rewards.ascendant_egg) parts.push(`🥚 ${rewards.ascendant_egg} Ascendant Egg${rewards.ascendant_egg > 1 ? 's' : ''}`);
+    return parts.join(' • ');
+  };
+
   if (view === 'detail' && selected) {
     const biomeHistory = history.filter(e => e.biome_zone === selectedBiome);
 
     return (
       <div className="biome-detail-view">
         {showTutorial && <TutorialOverlay steps={TUTORIAL_STEPS} storageKey="tutorial-explore" onComplete={completeTutorial} />}
+        
+        {/* Reward Popup */}
+        {rewardPopup?.show && (
+          <div className="reward-popup-overlay" onClick={() => setRewardPopup(null)}>
+            <div className="reward-popup" onClick={e => e.stopPropagation()}>
+              <h3>🎉 Expedition Complete!</h3>
+              <p className="reward-biome">{rewardPopup.biome}</p>
+              <div className="reward-list">
+                {formatRewards(rewardPopup.rewards)}
+              </div>
+              <button className="btn-primary" onClick={() => setRewardPopup(null)}>Collect</button>
+            </div>
+          </div>
+        )}
+        
         <div className="biome-detail-hero">
           <img
             src={`/assets/Explore & Biomes/${selected.imagePrefix}_Landscape.avif`}
@@ -384,7 +429,7 @@ export function ExploreView() {
                 <div key={exp.uuid} className="history-row">
                   <span>{exp.biome_zone}</span>
                   <span>{exp.result?.companion_results?.length || 0} companions</span>
-                  <span>+{exp.result?.total_dust_gained || 0} dust</span>
+                  <span>{exp.result?.rewards ? formatRewards(exp.result.rewards) : `+${exp.result?.total_dust_gained || 0} dust`}</span>
                 </div>
               ))}
             </div>

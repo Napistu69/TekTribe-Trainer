@@ -181,6 +181,7 @@ def serialize_companion(companion: Companion) -> dict:
         "imprint_level": companion.imprint_level,
         "is_locked": companion.is_locked,
         "rarity": companion.rarity,
+        "diet": companion.diet,
         "care_streak": companion.care_streak,
         "parent_a_uuid": str(companion.parent_a_uuid) if companion.parent_a_uuid else None,
         "parent_b_uuid": str(companion.parent_b_uuid) if companion.parent_b_uuid else None,
