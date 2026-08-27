@@ -30,7 +30,8 @@ export function AppShell() {
         </div>
         <div className="header-right">
           <button className="wallet-btn" onClick={() => setShowWallet(true)} aria-label="Open Wallet">
-            ✦ <span className="wallet-balance-display">{dust.toLocaleString()}</span>
+            <img className="wallet-btn-icon" src="/assets/Currency & Resource/ELE_Dust_20.png" alt="" />
+            <span className="wallet-balance-display">{dust.toLocaleString()}</span>
           </button>
           <button
             className="icon-btn"

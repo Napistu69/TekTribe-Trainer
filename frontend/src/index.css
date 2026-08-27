@@ -2203,7 +2203,9 @@ select {
 }
 
 .currency-card .currency-icon {
-  font-size: 1.5rem;
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
 }
 
 .currency-card .currency-name {
@@ -2336,6 +2338,12 @@ select {
   transition: all 0.2s;
 }
 
+.wallet-btn-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
 .wallet-btn:hover {
   background: rgba(0, 212, 255, 0.2);
   border-color: var(--color-cyan);
@@ -2364,8 +2372,9 @@ select {
 }
 
 .economy-balance .balance-icon {
-  color: var(--color-cyan);
-  font-size: 1.2rem;
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
 }
 
 .economy-balance .balance-amount {

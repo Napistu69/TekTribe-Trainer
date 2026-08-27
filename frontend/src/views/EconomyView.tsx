@@ -112,7 +112,7 @@ export function EconomyView({ companionUuid }: EconomyViewProps) {
       <div className="economy-header">
         <h1>Trading Post</h1>
         <div className="economy-balance">
-          <span className="balance-icon">✦</span>
+          <img className="balance-icon" src="/assets/Currency & Resource/ELE_Dust_20.png" alt="" />
           <span className="balance-amount">{dust.toLocaleString()}</span>
         </div>
       </div>

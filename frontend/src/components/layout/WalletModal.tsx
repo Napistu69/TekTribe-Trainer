@@ -88,17 +88,17 @@ export function WalletModal({ onClose }: WalletModalProps) {
           {activeTab === 'currencies' && (
             <div className="currency-grid">
               <div className="currency-card dust">
-                <span className="currency-icon">✦</span>
+                <img className="currency-icon" src="/assets/Currency & Resource/ELE_Dust_48.png" alt="Dust" />
                 <span className="currency-name">Dust</span>
                 <span className="currency-value">{dust.toLocaleString()}</span>
               </div>
               <div className="currency-card shard">
-                <span className="currency-icon">◆</span>
+                <img className="currency-icon" src="/assets/Currency & Resource/ELE_Shard_48.png" alt="Shards" />
                 <span className="currency-name">Shards</span>
                 <span className="currency-value">{shard.toLocaleString()}</span>
               </div>
               <div className="currency-card cuboid">
-                <span className="currency-icon">◈</span>
+                <img className="currency-icon" src="/assets/Currency & Resource/ELE_Cuboid_48.png" alt="Cuboids" />
                 <span className="currency-name">Cuboids</span>
                 <span className="currency-value">{cuboid.toLocaleString()}</span>
               </div>
