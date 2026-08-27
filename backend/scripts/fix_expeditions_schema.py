@@ -31,16 +31,6 @@ async def fix_schema():
     else:
         print('companion_uuids column already exists')
     
-    # Add max_companions column if it doesn't exist
-    if 'max_companions' not in columns:
-        try:
-            await conn.execute("ALTER TABLE expeditions ADD COLUMN max_companions INTEGER DEFAULT 3")
-            print('max_companions column added')
-        except Exception as e:
-            print(f'max_companions: {e}')
-    else:
-        print('max_companions column already exists')
-    
     # Drop old companion_uuid column if it exists (we now use companion_uuids)
     if 'companion_uuid' in columns:
         try:

@@ -1,8 +1,12 @@
-"""Expedition model — dispatched and completed expeditions."""
+"""Expedition model — dispatched and completed expeditions.
+
+NOTE: max_companions is stored as application logic (MAX_COMPANIONS = 3),
+NOT as a database column. This avoids schema migration issues.
+"""
 from datetime import datetime, timezone
 from uuid import uuid4
 
-from sqlalchemy import DateTime, Float, ForeignKey, Integer, String
+from sqlalchemy import DateTime, Float, ForeignKey, String
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -26,7 +30,6 @@ class Expedition(Base):
     status: Mapped[str] = mapped_column(String(20), default="dispatched")
     result: Mapped[dict] = mapped_column(JSONB, nullable=True)
     risk_level: Mapped[float] = mapped_column(Float, default=0.5)
-    max_companions: Mapped[int] = mapped_column(Integer, default=3)
 
     # Store companion UUIDs as JSON array
     companion_uuids: Mapped[list] = mapped_column(JSONB, default=[])

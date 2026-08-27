@@ -18,6 +18,9 @@ with open(BIOMES_PATH) as f:
 
 BIOME_MAP = {b["zone_id"]: b for b in BIOMES["biomes"]}
 
+# Application constant for max companions per expedition
+MAX_COMPANIONS = 3
+
 
 async def dispatch_expedition(
     db: AsyncSession,
@@ -49,11 +52,11 @@ async def dispatch_expedition(
     
     duration_hours = BIOMES["durations"][duration_key]["hours"]
     
-    # Validate companion count (max 3)
+    # Validate companion count
     if len(companion_uuids) == 0:
         raise ValueError("At least one companion required")
-    if len(companion_uuids) > 3:
-        raise ValueError("Maximum 3 companions per expedition")
+    if len(companion_uuids) > MAX_COMPANIONS:
+        raise ValueError(f"Maximum {MAX_COMPANIONS} companions per expedition")
     
     # Verify all companions are owned and available
     for uuid in companion_uuids:
@@ -86,7 +89,6 @@ async def dispatch_expedition(
         status="dispatched",
         risk_level=risk_level,
         companion_uuids=companion_uuids,
-        max_companions=3,
     )
     db.add(expedition)
     

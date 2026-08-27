@@ -158,4 +158,3 @@ class ExpeditionResponse(BaseModel):
     returns_at: datetime
     status: str
     risk_level: float
-    max_companions: int = 3
