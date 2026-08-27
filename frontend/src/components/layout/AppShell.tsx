@@ -1,22 +1,22 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { BalanceDisplay } from '../economy/BalanceDisplay';
 import { SettingsModal } from './SettingsModal';
+import { WalletModal } from './WalletModal';
 import { useState } from 'react';
 
 export function AppShell() {
   const location = useLocation();
   const navigate = useNavigate();
   const [showSettings, setShowSettings] = useState(false);
+  const [showWallet, setShowWallet] = useState(false);
 
   const tabs = [
     { id: 'map', label: 'Map', image: '/assets/Habitat & Camp/habitat.png', path: '/' },
     { id: 'hatchery', label: 'Hatchery', image: '/assets/Habitat & Camp/hatchery.png', path: '/hatchery' },
     { id: 'nursery', label: 'Nursery', image: '/assets/Habitat & Camp/nursery.png', path: '/nursery' },
     { id: 'camp', label: 'Camp', image: '/assets/Habitat & Camp/camp_bg.jpg', path: '/camp' },
-    { id: 'training', label: 'Training', image: '/assets/Habitat & Camp/icon_target.png', path: '/training' },
+    { id: 'training', label: 'Training', image: '/assets/Habitat & Camp/training_grounds.png', path: '/training' },
     { id: 'explore', label: 'Explore', image: '/assets/Habitat & Camp/expedition_gate.png', path: '/explore' },
-    { id: 'economy', label: 'Economy', image: '/assets/Currency & Resource/ELE_Dust.png', path: '/economy' },
-    { id: 'overseer', label: 'Overseer', image: '/assets/Overseer & Lore/overseer.png', path: '/overseer' },
+    { id: 'shop', label: 'Shop', image: '/assets/Currency & Resource/ELE_Dust.png', path: '/economy' },
   ];
 
   return (
@@ -27,7 +27,9 @@ export function AppShell() {
           <span className="app-title">TekTribe Trainer</span>
         </div>
         <div className="header-right">
-          <BalanceDisplay compact />
+          <button className="wallet-btn" onClick={() => setShowWallet(true)} aria-label="Open Wallet">
+            ✦ <span className="wallet-balance-display">0</span>
+          </button>
           <button
             className="icon-btn"
             onClick={() => setShowSettings(true)}
@@ -55,9 +57,8 @@ export function AppShell() {
         ))}
       </nav>
 
-      {showSettings && (
-        <SettingsModal onClose={() => setShowSettings(false)} />
-      )}
+      {showSettings && <SettingsModal onClose={() => setShowSettings(false)} />}
+      {showWallet && <WalletModal onClose={() => setShowWallet(false)} />}
     </div>
   );
 }

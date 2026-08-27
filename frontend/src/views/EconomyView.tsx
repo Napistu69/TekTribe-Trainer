@@ -93,7 +93,7 @@ export function EconomyView({ companionUuid }: EconomyViewProps) {
 
   return (
     <div className="economy-view">
-      <h1>Economy</h1>
+      <h1>Trading Post</h1>
       
       <div className="economy-tabs">
         <button className={`tab ${tab === 'shop' ? 'active' : ''}`} onClick={() => setTab('shop')}>Shop</button>

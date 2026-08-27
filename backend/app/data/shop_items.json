@@ -31,6 +31,22 @@
       "cost": 30,
       "effect": {"type": "care_all", "value": 0.7},
       "category": "consumable"
+    },
+    {
+      "item_id": "berries",
+      "name": "Berries",
+      "description": "Herbaceous food. Restores 40% hunger",
+      "cost": 15,
+      "effect": {"type": "care", "action": "feed", "value": 0.4},
+      "category": "consumable"
+    },
+    {
+      "item_id": "crops",
+      "name": "Crops",
+      "description": "Herbaceous food. Restores 50% hunger",
+      "cost": 25,
+      "effect": {"type": "care", "action": "feed", "value": 0.5},
+      "category": "consumable"
     }
   ]
 }
