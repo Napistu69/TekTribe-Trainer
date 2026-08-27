@@ -1,8 +1,8 @@
-"""Make companion_uuid and loadout nullable in expeditions
+"""Make companion_uuid and loadout nullable
 
-Revision ID: c3d4e5f6g7h8
-Revises: b2c3d4e5f6g7
-Create Date: 2026-08-27 17:30:00.000000
+Revision ID: a1b2c3d4e5f6
+Revises: 02af346352f7
+Create Date: 2026-08-27 18:30:00.000000
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import JSONB
 
 
-revision = 'c3d4e5f6g7h8'
-down_revision = 'b2c3d4e5f6g7'
+revision = 'a1b2c3d4e5f6'
+down_revision = '02af346352f7'
 branch_labels = None
 depends_on = None
 
