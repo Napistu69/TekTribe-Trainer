@@ -1,17 +1,20 @@
 #!/bin/bash
 # Startup script for Render
 
+set -e  # Exit on any error
+
 echo "=== Starting TekTribe Trainer ==="
 echo "Current directory: $(pwd)"
+echo "Python version: $(python3 --version)"
 
 # Step 1: Ensure expeditions table has new columns
-echo "Ensuring expeditions table columns..."
-python3 scripts/fix_expeditions_schema.py 2>&1
+echo "=== Ensuring expeditions table columns ==="
+python3 scripts/fix_expeditions_schema.py 2>&1 || echo "Schema fix failed (continuing anyway)"
 
 # Step 2: Run alembic migrations
-echo "Running database migrations..."
+echo "=== Running database migrations ==="
 alembic upgrade head 2>&1 || echo "Alembic migration failed (continuing anyway)"
 
 # Step 3: Start uvicorn
-echo "Starting uvicorn..."
-uvicorn app.main:app --host 0.0.0.0 --port $PORT
+echo "=== Starting uvicorn ==="
+exec uvicorn app.main:app --host 0.0.0.0 --port $PORT
