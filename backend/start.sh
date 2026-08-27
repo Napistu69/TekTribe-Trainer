@@ -14,7 +14,16 @@ async def fix():
     if not url:
         print('No DATABASE_URL')
         return
-    conn = await asyncpg.connect(url)
+    
+    # Convert SQLAlchemy URL format to asyncpg format
+    connect_url = url
+    if connect_url.startswith('postgresql+asyncpg://'):
+        connect_url = connect_url.replace('postgresql+asyncpg://', 'postgresql://', 1)
+    elif connect_url.startswith('postgres://'):
+        connect_url = connect_url.replace('postgres://', 'postgresql://', 1)
+    
+    print(f'Connecting to DB...')
+    conn = await asyncpg.connect(connect_url)
     
     # Make companion_uuid nullable in expeditions
     try:
@@ -61,6 +70,7 @@ async def fix():
         print(f'index: {e}')
     
     await conn.close()
+    print('Schema fix complete!')
 
 asyncio.run(fix())
 " 2>&1 || echo "Schema fix failed (continuing)"
