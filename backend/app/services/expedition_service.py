@@ -22,15 +22,16 @@ BIOME_MAP = {b["zone_id"]: b for b in BIOMES["biomes"]}
 async def dispatch_expedition(
     db: AsyncSession,
     user_id: str,
-    companion_uuid: str,
+    companion_uuids: list[str],
     biome_zone: str,
     duration_key: str,
 ) -> Expedition:
-    """Dispatch a companion on an expedition.
+    """Dispatch one or more companions on an expedition.
     
-    - Sets companion state to 'on_expedition'
+    - Sets companion states to 'on_expedition'
     - Calculates return time
     - Sets risk level based on biome and duration
+    - Supports up to 3 companions per expedition
     """
     # Validate biome
     if biome_zone not in BIOME_MAP:
@@ -48,22 +49,27 @@ async def dispatch_expedition(
     
     duration_hours = BIOMES["durations"][duration_key]["hours"]
     
-    # Verify companion ownership and availability
-    result = await db.execute(
-        select(Companion).where(
-            Companion.uuid == companion_uuid,
-            Companion.user_id == user_id
+    # Validate companion count (max 3)
+    if len(companion_uuids) == 0:
+        raise ValueError("At least one companion required")
+    if len(companion_uuids) > 3:
+        raise ValueError("Maximum 3 companions per expedition")
+    
+    # Verify all companions are owned and available
+    for uuid in companion_uuids:
+        result = await db.execute(
+            select(Companion).where(
+                Companion.uuid == uuid,
+                Companion.user_id == user_id
+            )
         )
-    )
-    companion = result.scalar_one_or_none()
-    if not companion:
-        raise ValueError("Companion not found")
-    
-    if companion.current_state == "on_expedition":
-        raise ValueError("Companion is already on expedition")
-    
-    if companion.health_status < 0.5:
-        raise ValueError("Companion is too injured to dispatch (health < 0.5)")
+        companion = result.scalar_one_or_none()
+        if not companion:
+            raise ValueError(f"Companion {uuid} not found")
+        if companion.current_state == "on_expedition":
+            raise ValueError(f"Companion {companion.species} is already on expedition")
+        if companion.health_status < 0.5:
+            raise ValueError(f"Companion {companion.species} is too injured (health < 0.5)")
     
     # Calculate risk level
     base_risk = biome["base_risk"]
@@ -74,18 +80,23 @@ async def dispatch_expedition(
     now = datetime.now(timezone.utc)
     expedition = Expedition(
         user_id=user_id,
-        companion_uuid=companion_uuid,
         biome_zone=biome_zone,
         dispatched_at=now,
         returns_at=now + timedelta(hours=duration_hours),
         status="dispatched",
         risk_level=risk_level,
-        loadout={},
+        companion_uuids=companion_uuids,
+        max_companions=3,
     )
     db.add(expedition)
     
-    # Update companion state
-    companion.current_state = "on_expedition"
+    # Update all companion states
+    for uuid in companion_uuids:
+        result = await db.execute(
+            select(Companion).where(Companion.uuid == uuid)
+        )
+        companion = result.scalar_one()
+        companion.current_state = "on_expedition"
     
     await db.commit()
     await db.refresh(expedition)
@@ -93,15 +104,7 @@ async def dispatch_expedition(
 
 
 async def resolve_expedition(db: AsyncSession, expedition_uuid: str) -> dict:
-    """Resolve a completed expedition.
-    
-    Calculates outcome based on:
-    - Companion stats vs biome risk
-    - Duration (longer = more rewards but higher injury risk)
-    - RNG factor (10-20% variance)
-    
-    Returns result dict.
-    """
+    """Resolve a completed expedition."""
     result = await db.execute(
         select(Expedition).where(Expedition.uuid == expedition_uuid)
     )
@@ -116,38 +119,57 @@ async def resolve_expedition(db: AsyncSession, expedition_uuid: str) -> dict:
         raise ValueError("Expedition has not returned yet")
     
     biome = BIOME_MAP[expedition.biome_zone]
-    companion = await db.execute(
-        select(Companion).where(Companion.uuid == expedition.companion_uuid)
-    )
-    companion = companion.scalar_one()
     
-    # Calculate outcome
-    outcome = calculate_outcome(companion, biome, expedition)
+    # Calculate outcome for each companion
+    results = []
+    for uuid in expedition.companion_uuids:
+        companion_result = await db.execute(
+            select(Companion).where(Companion.uuid == uuid)
+        )
+        companion = companion_result.scalar_one()
+        outcome = calculate_outcome(companion, biome, expedition)
+        
+        # Apply results
+        if outcome["companion_injured"]:
+            companion.health_status = max(0.1, companion.health_status - 0.3)
+        
+        companion.current_state = "resting"
+        results.append({
+            "companion_uuid": str(uuid),
+            "species": companion.species,
+            **outcome
+        })
     
-    # Apply results
-    if outcome["companion_injured"]:
-        companion.health_status = max(0.1, companion.health_status - 0.3)
-    
-    companion.current_state = "resting"
     expedition.status = "completed"
-    expedition.result = outcome
+    expedition.result = {"companion_results": results}
     
-    # Award dust
-    if outcome["dust_gained"] > 0:
+    # Award dust (sum of all companions)
+    total_dust = sum(r["dust_gained"] for r in results)
+    if total_dust > 0:
         from app.services.currency_service import award_dust
-        await award_dust(expedition.user_id, outcome["dust_gained"], f"expedition_{expedition.biome_zone}")
+        await award_dust(expedition.user_id, total_dust, f"expedition_{expedition.biome_zone}")
     
-    # Apply imprint change
-    if outcome["imprint_change"] != 0:
-        companion.imprint_level += outcome["imprint_change"]
+    # Apply imprint changes
+    for uuid, result in zip(expedition.companion_uuids, results):
+        companion_result = await db.execute(
+            select(Companion).where(Companion.uuid == uuid)
+        )
+        companion = companion_result.scalar_one()
+        if result["imprint_change"] != 0:
+            companion.imprint_level += result["imprint_change"]
     
     await db.commit()
     
-    return outcome
+    return {
+        "expedition_uuid": str(expedition.uuid),
+        "biome_zone": expedition.biome_zone,
+        "companion_results": results,
+        "total_dust_gained": total_dust,
+    }
 
 
 def calculate_outcome(companion: Companion, biome: dict, expedition: Expedition) -> dict:
-    """Calculate expedition outcome."""
+    """Calculate expedition outcome for a single companion."""
     duration_key = None
     for key, d in BIOMES["durations"].items():
         if d["hours"] == (expedition.returns_at - expedition.dispatched_at).total_seconds() / 3600:

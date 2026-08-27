@@ -32,24 +32,25 @@ async def dispatch_expedition(
     authorization: str = Header(None, alias="Authorization"),
     db: AsyncSession = Depends(get_db),
 ):
-    """Dispatch a companion on an expedition."""
+    """Dispatch one or more companions on an expedition."""
     user_id = await get_current_user_id(authorization)
     
     try:
         expedition = await expedition_service.dispatch_expedition(
-            db, user_id, request.companion_uuid, request.biome_zone, request.duration_hours
+            db, user_id, request.companion_uuids, request.biome_zone, request.duration_hours
         )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     
     return ExpeditionResponse(
         uuid=str(expedition.uuid),
-        companion_uuid=str(expedition.companion_uuid),
+        companion_uuids=[str(uuid) for uuid in expedition.companion_uuids],
         biome_zone=expedition.biome_zone,
         dispatched_at=expedition.dispatched_at,
         returns_at=expedition.returns_at,
         status=expedition.status,
         risk_level=expedition.risk_level,
+        max_companions=expedition.max_companions,
     )
 
 
@@ -65,12 +66,13 @@ async def get_active_expeditions(
     return [
         {
             "uuid": str(e.uuid),
-            "companion_uuid": str(e.companion_uuid),
+            "companion_uuids": [str(uuid) for uuid in e.companion_uuids],
             "biome_zone": e.biome_zone,
             "dispatched_at": e.dispatched_at.isoformat(),
             "returns_at": e.returns_at.isoformat(),
             "status": e.status,
             "risk_level": e.risk_level,
+            "max_companions": e.max_companions,
         }
         for e in expeditions
     ]
@@ -88,7 +90,7 @@ async def get_expedition_history(
     return [
         {
             "uuid": str(e.uuid),
-            "companion_uuid": str(e.companion_uuid),
+            "companion_uuids": [str(uuid) for uuid in e.companion_uuids],
             "biome_zone": e.biome_zone,
             "dispatched_at": e.dispatched_at.isoformat(),
             "returns_at": e.returns_at.isoformat(),

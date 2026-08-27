@@ -144,7 +144,7 @@ class ShopPurchaseRequest(BaseModel):
 
 class ExpeditionDispatchRequest(BaseModel):
     """Request body for POST /expeditions/dispatch."""
-    companion_uuid: str
+    companion_uuids: list[str]  # 1-3 companion UUIDs
     biome_zone: str
     duration_hours: str  # "2h", "6h", "12h", "24h"
 
@@ -152,9 +152,10 @@ class ExpeditionDispatchRequest(BaseModel):
 class ExpeditionResponse(BaseModel):
     """Response body for expedition endpoints."""
     uuid: str
-    companion_uuid: str
+    companion_uuids: list[str]
     biome_zone: str
     dispatched_at: datetime
     returns_at: datetime
     status: str
     risk_level: float
+    max_companions: int = 3

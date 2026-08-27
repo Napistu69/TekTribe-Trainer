@@ -18,9 +18,6 @@ class Expedition(Base):
     user_id: Mapped[str] = mapped_column(
         String(36), ForeignKey("users.id"), nullable=False, index=True
     )
-    companion_uuid: Mapped[str] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("companions.uuid"), nullable=False
-    )
     biome_zone: Mapped[str] = mapped_column(String(50), nullable=False)
     dispatched_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
@@ -29,4 +26,7 @@ class Expedition(Base):
     status: Mapped[str] = mapped_column(String(20), default="dispatched")
     result: Mapped[dict] = mapped_column(JSONB, nullable=True)
     risk_level: Mapped[float] = mapped_column(Float, default=0.5)
-    loadout: Mapped[dict] = mapped_column(JSONB, default={})
+    max_companions: Mapped[int] = mapped_column(Integer, default=3)
+
+    # Store companion UUIDs as JSON array
+    companion_uuids: Mapped[list] = mapped_column(JSONB, default=[])

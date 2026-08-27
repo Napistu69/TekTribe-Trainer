@@ -10,28 +10,33 @@ const TUTORIAL_STEPS = [
 
 interface Expedition {
   uuid: string;
-  companion_uuid: string;
+  companion_uuids: string[];
   biome_zone: string;
   dispatched_at: string;
   returns_at: string;
   status: string;
   risk_level: number;
+  max_companions: number;
   result?: {
-    success: boolean;
-    dust_gained: number;
-    companion_injured: boolean;
-    oracle_fragment_found: boolean;
-    encounter_story: string;
-    imprint_change: number;
-    resources_gained: string[];
+    companion_results: Array<{
+      companion_uuid: string;
+      species: string;
+      success: boolean;
+      dust_gained: number;
+      companion_injured: boolean;
+      imprint_change: number;
+    }>;
+    total_dust_gained: number;
   };
 }
 
 interface Companion {
   uuid: string;
   species: string;
+  name: string;
   current_state: string;
-  adult_image?: string;
+  life_stage: string;
+  imprint_level: number;
 }
 
 interface Biome {
@@ -72,6 +77,7 @@ export function ExploreView() {
   const [companions, setCompanions] = useState<Companion[]>([]);
   const [loading, setLoading] = useState(false);
   const [now, setNow] = useState(Date.now());
+  const [selectedCompanions, setSelectedCompanions] = useState<string[]>([]);
   const { showTutorial, completeTutorial } = useTutorial('tutorial-explore');
   const sessionToken = useAuthStore((s) => s.sessionToken);
   const mountedRef = useRef(true);
@@ -137,34 +143,39 @@ export function ExploreView() {
   const handleBiomeClick = (zoneId: string) => {
     setSelectedBiome(zoneId);
     setView('detail');
+    setSelectedCompanions([]);
+    setDispatchMsg(null);
   };
 
   const handleBack = () => {
     setView('grid');
     setSelectedBiome(null);
+    setSelectedCompanions([]);
     setDispatchMsg(null);
   };
 
+  const toggleCompanionSelection = (uuid: string) => {
+    if (selectedCompanions.includes(uuid)) {
+      setSelectedCompanions(selectedCompanions.filter(id => id !== uuid));
+    } else if (selectedCompanions.length < 3) {
+      setSelectedCompanions([...selectedCompanions, uuid]);
+    }
+  };
+
   const handleDispatch = async () => {
-    if (!sessionToken || !selectedBiome || loading) return;
+    if (!sessionToken || !selectedBiome || loading || selectedCompanions.length === 0) return;
     setLoading(true);
     setDispatchMsg(null);
     try {
-      const availableCompanions = companions.filter(c => c.current_state !== 'on_expedition');
-      if (availableCompanions.length === 0) {
-        setDispatchMsg('No companions available (all on expedition)');
-        setLoading(false);
-        return;
-      }
-      const companionUuid = availableCompanions[0].uuid;
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/expeditions/dispatch`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${sessionToken}` },
-        body: JSON.stringify({ companion_uuid: companionUuid, biome_zone: selectedBiome, duration_hours: duration }),
+        headers: { Authorization: `Bearer ${sessionToken}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ companion_uuids: selectedCompanions, biome_zone: selectedBiome, duration_hours: duration }),
       });
       if (!mountedRef.current) return;
       if (response.ok) {
         setDispatchMsg('Expedition dispatched!');
+        setSelectedCompanions([]);
         await fetchExpeditions();
         await fetchCompanions();
       } else {
@@ -204,47 +215,6 @@ export function ExploreView() {
     }
   };
 
-  const handleCancelAll = async () => {
-    if (!sessionToken) return;
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/expeditions/cancel-all`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${sessionToken}` },
-      });
-      if (!mountedRef.current) return;
-      if (response.ok) {
-        setDispatchMsg('All expeditions cancelled — companions returned!');
-        await fetchExpeditions();
-        await fetchCompanions();
-      } else {
-        try { const err = await response.json(); setDispatchMsg(err.detail || 'Cancel all failed'); } catch { setDispatchMsg('Cancel all failed'); }
-      }
-    } catch (err) {
-      if (mountedRef.current) setDispatchMsg('Network error');
-    }
-  };
-
-  const handleForceComplete = async (expeditionUuid: string) => {
-    if (!sessionToken) return;
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/expeditions/${expeditionUuid}/force-complete`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${sessionToken}` },
-      });
-      if (!mountedRef.current) return;
-      if (response.ok) {
-        setDispatchMsg('Expedition completed! Resources collected.');
-        await fetchExpeditions();
-        await fetchHistory();
-        await fetchCompanions();
-      } else {
-        try { const err = await response.json(); setDispatchMsg(err.detail || 'Force complete failed'); } catch { setDispatchMsg('Force complete failed'); }
-      }
-    } catch (err) {
-      if (mountedRef.current) setDispatchMsg('Network error');
-    }
-  };
-
   const handleCancel = async (expeditionUuid: string) => {
     if (!sessionToken) return;
     try {
@@ -254,7 +224,7 @@ export function ExploreView() {
       });
       if (!mountedRef.current) return;
       if (response.ok) {
-        setDispatchMsg('Expedition cancelled — companion returned!');
+        setDispatchMsg('Expedition cancelled — companions returned!');
         await fetchExpeditions();
         await fetchCompanions();
       } else {
@@ -278,13 +248,14 @@ export function ExploreView() {
 
   const selected = BIOMES.find(b => b.zone_id === selectedBiome);
   const availableCompanions = companions.filter(c => c.current_state !== 'on_expedition');
-  const dispatchedCompanions = companions.filter(c => c.current_state === 'on_expedition');
-  const companion = availableCompanions[0] || dispatchedCompanions[0];
-  const companionImage = companion ? COMPANION_IMAGES[companion.species] : null;
+  
+  // Get dispatched companions for the selected biome
+  const biomeExpeditions = expeditions.filter(e => e.biome_zone === selectedBiome);
+  const dispatchedCompanionUuids = biomeExpeditions.flatMap(e => e.companion_uuids);
+  const dispatchedCompanions = companions.filter(c => dispatchedCompanionUuids.includes(c.uuid));
 
   if (view === 'detail' && selected) {
-    const biomeExpeditions = expeditions.filter(e => e.biome_zone === selected.zone_id);
-    const biomeHistory = history.filter(e => e.biome_zone === selected.zone_id);
+    const biomeHistory = history.filter(e => e.biome_zone === selectedBiome);
 
     return (
       <div className="biome-detail-view">
@@ -297,9 +268,17 @@ export function ExploreView() {
             loading="eager"
             decoding="async"
           />
-          {companionImage && (
-            <img src={companionImage} alt={companion?.species} className="biome-detail-companion" />
-          )}
+          {/* Show dispatched companions on the biome */}
+          {dispatchedCompanions.map((companion, index) => (
+            <div key={companion.uuid} className="dispatched-companion" style={{ left: `${20 + index * 25}%` }}>
+              <img 
+                src={COMPANION_IMAGES[companion.species] || COMPANION_IMAGES.raptor} 
+                alt={companion.species} 
+                className="dispatched-companion-image"
+              />
+              <span className="dispatched-companion-name">{companion.name || companion.species}</span>
+            </div>
+          ))}
           <button className="back-btn" onClick={handleBack}>← Back</button>
           <div className="biome-detail-title">
             <h1>{selected.name}</h1>
@@ -320,8 +299,36 @@ export function ExploreView() {
                   </button>
                 ))}
               </div>
-              <button className="btn-primary dispatch-btn" onClick={handleDispatch} disabled={loading || availableCompanions.length === 0}>
-                {loading ? 'Dispatching...' : availableCompanions.length === 0 ? 'No Companions Available' : `Dispatch to ${selected.name}`}
+              
+              <h4>Select Companions (max 3)</h4>
+              <div className="companion-selection">
+                {availableCompanions.length === 0 ? (
+                  <p className="no-companions">No companions available (all on expedition or too injured)</p>
+                ) : (
+                  availableCompanions.map(companion => (
+                    <div 
+                      key={companion.uuid} 
+                      className={`companion-option ${selectedCompanions.includes(companion.uuid) ? 'selected' : ''}`}
+                      onClick={() => toggleCompanionSelection(companion.uuid)}
+                    >
+                      <img 
+                        src={COMPANION_IMAGES[companion.species] || COMPANION_IMAGES.raptor} 
+                        alt={companion.species} 
+                        className="companion-option-image"
+                      />
+                      <span className="companion-option-name">{companion.name || companion.species}</span>
+                      <span className="companion-option-stage">{companion.life_stage}</span>
+                    </div>
+                  ))
+                )}
+              </div>
+              
+              <button 
+                className="btn-primary dispatch-btn" 
+                onClick={handleDispatch} 
+                disabled={loading || selectedCompanions.length === 0}
+              >
+                {loading ? 'Dispatching...' : `Dispatch ${selectedCompanions.length} Companion${selectedCompanions.length !== 1 ? 's' : ''}`}
               </button>
             </div>
           ) : (
@@ -331,36 +338,43 @@ export function ExploreView() {
             </div>
           )}
 
+          {/* Active Expeditions for this biome */}
           {biomeExpeditions.length > 0 && (
             <div className="expeditions-panel">
-              <div className="panel-header">
-                <h3>Active Expeditions</h3>
-                {biomeExpeditions.length > 1 && (
-                  <button className="btn-secondary cancel-all-btn" onClick={handleCancelAll}>
-                    Cancel All
-                  </button>
-                )}
-              </div>
-              {biomeExpeditions.map(exp => (
-                <div key={exp.uuid} className="expedition-row">
-                  <div className="expedition-info">
-                    <span className="expedition-biome">{exp.biome_zone}</span>
-                    <span className="expedition-countdown">{getCountdown(exp.returns_at)}</span>
+              <h3>Active Expeditions</h3>
+              {biomeExpeditions.map(exp => {
+                const expCompanions = companions.filter(c => exp.companion_uuids.includes(c.uuid));
+                return (
+                  <div key={exp.uuid} className="expedition-card">
+                    <div className="expedition-companions">
+                      {expCompanions.map(companion => (
+                        <div key={companion.uuid} className="expedition-companion">
+                          <img 
+                            src={COMPANION_IMAGES[companion.species] || COMPANION_IMAGES.raptor} 
+                            alt={companion.species} 
+                            className="expedition-companion-image"
+                          />
+                          <span className="expedition-companion-name">{companion.name || companion.species}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="expedition-countdown">
+                      {isReady(exp.returns_at) ? (
+                        <span className="ready-text">Ready to collect!</span>
+                      ) : (
+                        <span className="countdown-timer">{getCountdown(exp.returns_at)}</span>
+                      )}
+                    </div>
+                    <div className="expedition-actions">
+                      {isReady(exp.returns_at) ? (
+                        <button className="btn-primary collect-btn" onClick={() => handleCollect(exp.uuid)}>Collect</button>
+                      ) : (
+                        <button className="btn-secondary cancel-btn" onClick={() => handleCancel(exp.uuid)}>Cancel</button>
+                      )}
+                    </div>
                   </div>
-                  {isReady(exp.returns_at) ? (
-                    <div className="expedition-actions">
-                      <button className="btn-primary collect-btn" onClick={() => handleCollect(exp.uuid)}>Collect</button>
-                      <button className="btn-secondary force-complete-btn" onClick={() => handleForceComplete(exp.uuid)}>Force Complete</button>
-                      <button className="btn-secondary cancel-btn" onClick={() => handleCancel(exp.uuid)}>Cancel</button>
-                    </div>
-                  ) : (
-                    <div className="expedition-actions">
-                      <button className="btn-secondary force-complete-btn" onClick={() => handleForceComplete(exp.uuid)}>Force Complete</button>
-                      <button className="btn-secondary cancel-btn" onClick={() => handleCancel(exp.uuid)}>Cancel</button>
-                    </div>
-                  )}
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
 
@@ -370,8 +384,8 @@ export function ExploreView() {
               {biomeHistory.slice(0, 5).map(exp => (
                 <div key={exp.uuid} className="history-row">
                   <span>{exp.biome_zone}</span>
-                  <span>{exp.result?.success ? 'Success' : 'Failed'}</span>
-                  <span>+{exp.result?.dust_gained || 0} dust</span>
+                  <span>{exp.result?.companion_results?.length || 0} companions</span>
+                  <span>+{exp.result?.total_dust_gained || 0} dust</span>
                 </div>
               ))}
             </div>
@@ -386,30 +400,35 @@ export function ExploreView() {
       {showTutorial && <TutorialOverlay steps={TUTORIAL_STEPS} storageKey="tutorial-explore" onComplete={completeTutorial} />}
       <h1>Explore</h1>
       <div className="biome-grid">
-        {BIOMES.map(biome => (
-          <div
-            key={biome.zone_id}
-            className={`biome-card ${!biome.in_phase1 ? 'locked' : ''} ${selectedBiome === biome.zone_id ? 'selected' : ''}`}
-            onClick={() => biome.in_phase1 && handleBiomeClick(biome.zone_id)}
-          >
-            <div className="biome-image-container">
-              <img
-                src={`/assets/Explore & Biomes/${biome.imagePrefix}_Square.avif`}
-                alt={biome.name}
-                className="biome-card-image"
-                loading="lazy"
-                decoding="async"
-              />
+        {BIOMES.map(biome => {
+          // Count active expeditions for this biome
+          const activeCount = expeditions.filter(e => e.biome_zone === biome.zone_id).length;
+          return (
+            <div
+              key={biome.zone_id}
+              className={`biome-card ${!biome.in_phase1 ? 'locked' : ''} ${selectedBiome === biome.zone_id ? 'selected' : ''}`}
+              onClick={() => biome.in_phase1 && handleBiomeClick(biome.zone_id)}
+            >
+              <div className="biome-image-container">
+                <img
+                  src={`/assets/Explore & Biomes/${biome.imagePrefix}_Square.avif`}
+                  alt={biome.name}
+                  className="biome-card-image"
+                  loading="lazy"
+                  decoding="async"
+                />
+                {activeCount > 0 && <div className="active-expeditions-badge">{activeCount}</div>}
+              </div>
+              <div className="biome-info">
+                <h3>{biome.name}</h3>
+                <p>{biome.description}</p>
+                <div className="biome-resources">{biome.resources.map(r => <span key={r} className="resource-tag">{r}</span>)}</div>
+                <div className="risk-meter"><span>Risk:</span><div className="meter small"><div className="meter-fill risk" style={{ width: `${biome.risk_level * 100}%` }} /></div></div>
+              </div>
+              {!biome.in_phase1 && <div className="lock-overlay">🔒</div>}
             </div>
-            <div className="biome-info">
-              <h3>{biome.name}</h3>
-              <p>{biome.description}</p>
-              <div className="biome-resources">{biome.resources.map(r => <span key={r} className="resource-tag">{r}</span>)}</div>
-              <div className="risk-meter"><span>Risk:</span><div className="meter small"><div className="meter-fill risk" style={{ width: `${biome.risk_level * 100}%` }} /></div></div>
-            </div>
-            {!biome.in_phase1 && <div className="lock-overlay">🔒</div>}
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
