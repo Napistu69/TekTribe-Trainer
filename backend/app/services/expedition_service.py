@@ -1,4 +1,8 @@
-"""Expedition service — dispatches and resolves idle expeditions."""
+"""Expedition service — dispatches and resolves idle expeditions.
+
+NOTE: companion_uuids is stored in the `result` JSONB column to avoid
+schema migration issues. max_companions is an app constant (MAX_COMPANIONS = 3).
+"""
 import json
 import secrets
 from datetime import datetime, timedelta, timezone
@@ -79,7 +83,7 @@ async def dispatch_expedition(
     injury_chance = BIOMES["injury_chances"][duration_key]
     risk_level = min(1.0, base_risk + injury_chance * 0.5)
     
-    # Create expedition
+    # Create expedition - store companion_uuids in result JSONB
     now = datetime.now(timezone.utc)
     expedition = Expedition(
         user_id=user_id,
@@ -88,7 +92,7 @@ async def dispatch_expedition(
         returns_at=now + timedelta(hours=duration_hours),
         status="dispatched",
         risk_level=risk_level,
-        companion_uuids=companion_uuids,
+        result={"companion_uuids": companion_uuids, "companion_results": []},
     )
     db.add(expedition)
     
@@ -122,9 +126,12 @@ async def resolve_expedition(db: AsyncSession, expedition_uuid: str) -> dict:
     
     biome = BIOME_MAP[expedition.biome_zone]
     
+    # Get companion_uuids from result JSONB
+    companion_uuids = expedition.result.get("companion_uuids", []) if expedition.result else []
+    
     # Calculate outcome for each companion
     results = []
-    for uuid in expedition.companion_uuids:
+    for uuid in companion_uuids:
         companion_result = await db.execute(
             select(Companion).where(Companion.uuid == uuid)
         )
@@ -143,7 +150,10 @@ async def resolve_expedition(db: AsyncSession, expedition_uuid: str) -> dict:
         })
     
     expedition.status = "completed"
-    expedition.result = {"companion_results": results}
+    expedition.result = {
+        "companion_uuids": companion_uuids,
+        "companion_results": results
+    }
     
     # Award dust (sum of all companions)
     total_dust = sum(r["dust_gained"] for r in results)
@@ -152,7 +162,7 @@ async def resolve_expedition(db: AsyncSession, expedition_uuid: str) -> dict:
         await award_dust(expedition.user_id, total_dust, f"expedition_{expedition.biome_zone}")
     
     # Apply imprint changes
-    for uuid, result in zip(expedition.companion_uuids, results):
+    for uuid, result in zip(companion_uuids, results):
         companion_result = await db.execute(
             select(Companion).where(Companion.uuid == uuid)
         )

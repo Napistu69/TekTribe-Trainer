@@ -44,7 +44,7 @@ async def dispatch_expedition(
     
     return ExpeditionResponse(
         uuid=str(expedition.uuid),
-        companion_uuids=[str(uuid) for uuid in expedition.companion_uuids],
+        companion_uuids=expedition.result.get("companion_uuids", []) if expedition.result else [],
         biome_zone=expedition.biome_zone,
         dispatched_at=expedition.dispatched_at,
         returns_at=expedition.returns_at,
@@ -65,7 +65,7 @@ async def get_active_expeditions(
     return [
         {
             "uuid": str(e.uuid),
-            "companion_uuids": [str(uuid) for uuid in e.companion_uuids],
+            "companion_uuids": e.result.get("companion_uuids", []) if e.result else [],
             "biome_zone": e.biome_zone,
             "dispatched_at": e.dispatched_at.isoformat(),
             "returns_at": e.returns_at.isoformat(),
@@ -88,7 +88,7 @@ async def get_expedition_history(
     return [
         {
             "uuid": str(e.uuid),
-            "companion_uuids": [str(uuid) for uuid in e.companion_uuids],
+            "companion_uuids": e.result.get("companion_uuids", []) if e.result else [],
             "biome_zone": e.biome_zone,
             "dispatched_at": e.dispatched_at.isoformat(),
             "returns_at": e.returns_at.isoformat(),

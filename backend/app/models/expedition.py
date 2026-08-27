@@ -1,7 +1,7 @@
 """Expedition model — dispatched and completed expeditions.
 
-NOTE: max_companions is stored as application logic (MAX_COMPANIONS = 3),
-NOT as a database column. This avoids schema migration issues.
+NOTE: companion_uuids is stored in the `result` JSONB column to avoid
+schema migration issues. max_companions is an app constant (MAX_COMPANIONS = 3).
 """
 from datetime import datetime, timezone
 from uuid import uuid4
@@ -30,6 +30,3 @@ class Expedition(Base):
     status: Mapped[str] = mapped_column(String(20), default="dispatched")
     result: Mapped[dict] = mapped_column(JSONB, nullable=True)
     risk_level: Mapped[float] = mapped_column(Float, default=0.5)
-
-    # Store companion UUIDs as JSON array
-    companion_uuids: Mapped[list] = mapped_column(JSONB, default=[])

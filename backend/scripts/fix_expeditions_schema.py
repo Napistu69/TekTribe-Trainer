@@ -1,50 +1,52 @@
-"""Fix expeditions table schema - adds missing columns if they don't exist."""
+"""Fix expeditions table schema - run before alembic."""
 import asyncio
-import asyncpg
 import os
+import sys
 
-
-async def fix_schema():
+async def fix():
     db_url = os.environ.get('DATABASE_URL')
     if not db_url:
         print('ERROR: DATABASE_URL not set!')
-        return False
+        return
     
     print(f'Connecting to database...')
+    
+    try:
+        import asyncpg
+    except ImportError:
+        print('asyncpg not installed!')
+        return
+    
     conn = await asyncpg.connect(db_url)
     
-    # Get existing columns
-    existing = await conn.fetch("""
-        SELECT column_name FROM information_schema.columns 
-        WHERE table_name = 'expeditions'
-    """)
-    columns = {row['column_name'] for row in existing}
-    print(f'Existing columns: {columns}')
+    # Get current columns
+    rows = await conn.fetch("SELECT column_name FROM information_schema.columns WHERE table_name = 'expeditions'")
+    cols = {r['column_name'] for r in rows}
+    print(f'Current columns: {cols}')
     
-    # Add companion_uuids column if it doesn't exist
-    if 'companion_uuids' not in columns:
-        try:
-            await conn.execute("ALTER TABLE expeditions ADD COLUMN companion_uuids JSONB DEFAULT '[]'")
-            print('companion_uuids column added')
-        except Exception as e:
-            print(f'companion_uuids: {e}')
+    # Add companion_uuids if missing
+    if 'companion_uuids' not in cols:
+        await conn.execute("ALTER TABLE expeditions ADD COLUMN companion_uuids JSONB DEFAULT '[]'")
+        print('Added companion_uuids')
     else:
-        print('companion_uuids column already exists')
+        print('companion_uuids already exists')
     
-    # Drop old companion_uuid column if it exists (we now use companion_uuids)
-    if 'companion_uuid' in columns:
-        try:
-            await conn.execute("ALTER TABLE expeditions DROP COLUMN companion_uuid")
-            print('old companion_uuid column dropped')
-        except Exception as e:
-            print(f'drop companion_uuid: {e}')
+    # Drop max_companions if exists
+    if 'max_companions' in cols:
+        await conn.execute("ALTER TABLE expeditions DROP COLUMN max_companions")
+        print('Dropped max_companions')
     else:
-        print('companion_uuid column already gone')
+        print('max_companions already gone')
     
-    print('Expeditions table schema updated!')
+    # Drop companion_uuid if exists
+    if 'companion_uuid' in cols:
+        await conn.execute("ALTER TABLE expeditions DROP COLUMN companion_uuid")
+        print('Dropped companion_uuid')
+    else:
+        print('companion_uuid already gone')
+    
     await conn.close()
-    return True
-
+    print('Schema fix complete!')
 
 if __name__ == '__main__':
-    asyncio.run(fix_schema())
+    asyncio.run(fix())

@@ -39,7 +39,8 @@ async def cancel_expedition(
         raise HTTPException(status_code=400, detail="Expedition is not active")
     
     # Set all companions back to resting
-    for companion_uuid in expedition.companion_uuids:
+    companion_uuids = expedition.result.get("companion_uuids", []) if expedition.result else []
+    for companion_uuid in companion_uuids:
         companion_result = await db.execute(
             select(Companion).where(Companion.uuid == companion_uuid)
         )
@@ -52,7 +53,7 @@ async def cancel_expedition(
     
     await db.commit()
     
-    return {"status": "cancelled", "companion_uuids": [str(uuid) for uuid in expedition.companion_uuids]}
+    return {"status": "cancelled", "companion_uuids": companion_uuids}
 
 
 @router.post("/{expedition_uuid}/force-complete")
@@ -109,7 +110,8 @@ async def cancel_all_expeditions(
     
     cancelled = []
     for expedition in expeditions:
-        for companion_uuid in expedition.companion_uuids:
+        companion_uuids = expedition.result.get("companion_uuids", []) if expedition.result else []
+        for companion_uuid in companion_uuids:
             companion_result = await db.execute(
                 select(Companion).where(Companion.uuid == companion_uuid)
             )

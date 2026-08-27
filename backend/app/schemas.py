@@ -158,3 +158,4 @@ class ExpeditionResponse(BaseModel):
     returns_at: datetime
     status: str
     risk_level: float
+    result: dict | None = None
