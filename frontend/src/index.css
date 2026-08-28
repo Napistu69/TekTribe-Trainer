@@ -1164,11 +1164,42 @@ body::before {
   padding: 1rem;
 }
 
+.biome-rewards {
+  margin-top: 0.5rem;
+}
+
+.biome-rewards h4 {
+  color: var(--color-cyan);
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.rewards-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.reward-tag {
+  background: rgba(0, 212, 255, 0.1);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: 4px;
+  padding: 0.2rem 0.4rem;
+  font-size: 0.75rem;
+  color: var(--color-text);
+}
+
 .biome-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 0.75rem;
   margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .biome-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 .biome-card {
@@ -1188,6 +1219,12 @@ body::before {
   aspect-ratio: 1;
   overflow: hidden;
   background: var(--color-bg-primary);
+}
+
+@media (min-width: 768px) {
+  .biome-image-container {
+    aspect-ratio: 4/3;
+  }
 }
 
 .biome-card-image {

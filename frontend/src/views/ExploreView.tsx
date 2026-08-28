@@ -50,15 +50,16 @@ interface Biome {
   risk_level: number;
   in_phase1: boolean;
   imagePrefix: string;
+  rewards: string[];
 }
 
 const BIOMES: Biome[] = [
-  { zone_id: 'verdant_hollow', name: 'Verdant Hollow', description: 'A lush forest clearing with gentle creatures', resources: ['Basic food', 'Common materials', 'Dust'], risk_level: 0.125, in_phase1: true, imagePrefix: 'Verdant_Hollow' },
-  { zone_id: 'mirelands', name: 'Mirelands', description: 'Decay and renewal in the swamp', resources: ['Rare herbs', 'Mutagenic compounds'], risk_level: 0.3, in_phase1: false, imagePrefix: 'Mirelands' },
-  { zone_id: 'stonecrest', name: 'Stonecrest', description: 'Endurance and perspective in the mountains', resources: ['Minerals', 'Shard precursors'], risk_level: 0.5, in_phase1: false, imagePrefix: 'Stonecrest' },
-  { zone_id: 'emberfall', name: 'Emberfall', description: 'Transformation and danger in the volcanic zone', resources: ['Rare minerals', 'Cuboid shards'], risk_level: 0.7, in_phase1: false, imagePrefix: 'Emberfall' },
-  { zone_id: 'tek_ruins', name: 'Tek-Ruins', description: 'Memory and the Oracle in ancient ruins', resources: ['Oracle fragments', 'Data crystals'], risk_level: 0.8, in_phase1: false, imagePrefix: 'Tek_Ruins' },
-  { zone_id: 'void_center', name: 'Void Center', description: 'The space between worlds', resources: ['Legacy fragments', 'Rescue signals'], risk_level: 0.9, in_phase1: false, imagePrefix: 'Void_Center' },
+  { zone_id: 'verdant_hollow', name: 'Verdant Hollow', description: 'A lush forest clearing with gentle creatures', resources: ['Dust', 'Meat', 'Berries', 'Common Eggs'], risk_level: 0.125, in_phase1: true, imagePrefix: 'Verdant_Hollow', rewards: ['Dust', 'Meat 🥩', 'Berries 🍒', 'Common Egg 🥚', 'Uncommon Egg 🥚'] },
+  { zone_id: 'mirelands', name: 'Mirelands', description: 'Decay and renewal in the swamp', resources: ['Dust', 'Shards', 'Jerky', 'Crops', 'Uncommon Eggs'], risk_level: 0.3, in_phase1: false, imagePrefix: 'Mirelands', rewards: ['Dust', 'Shards ◆', 'Jerky 🥓', 'Crops 🥕', 'Uncommon Egg 🥚', 'Rare Egg 🥚'] },
+  { zone_id: 'stonecrest', name: 'Stonecrest', description: 'Endurance and perspective in the mountains', resources: ['Dust', 'Shards', 'Cuboids', 'Rare Eggs'], risk_level: 0.5, in_phase1: false, imagePrefix: 'Stonecrest', rewards: ['Dust', 'Shards ◆', 'Cuboids ◈', 'Rare Egg 🥚', 'Epic Egg 🥚'] },
+  { zone_id: 'emberfall', name: 'Emberfall', description: 'Transformation and danger in the volcanic zone', resources: ['Dust', 'Shards', 'Cuboids', 'Sponge', 'Rare Eggs'], risk_level: 0.7, in_phase1: false, imagePrefix: 'Emberfall', rewards: ['Dust', 'Shards ◆', 'Cuboids ◈', 'Sponge 🧽', 'Rare Egg 🥚', 'Epic Egg 🥚'] },
+  { zone_id: 'tek_ruins', name: 'Tek-Ruins', description: 'Memory and the Oracle in ancient ruins', resources: ['Dust', 'Shards', 'Cuboids', 'Imprint Boost', 'Epic Eggs'], risk_level: 0.8, in_phase1: false, imagePrefix: 'Tek_Ruins', rewards: ['Dust', 'Shards ◆', 'Cuboids ◈', 'Imprint Boost 💫', 'Epic Egg 🥚', 'Ascendant Egg 🥚'] },
+  { zone_id: 'void_center', name: 'Void Center', description: 'The space between worlds', resources: ['Dust', 'Shards', 'Cuboids', 'Care Kit', 'Epic Eggs'], risk_level: 0.9, in_phase1: false, imagePrefix: 'Void_Center', rewards: ['Dust', 'Shards ◆', 'Cuboids ◈', 'Care Kit 🧰', 'Epic Egg 🥚', 'Ascendant Egg 🥚'] },
 ];
 
 const COMPANION_IMAGES: Record<string, string> = {
@@ -343,6 +344,14 @@ export function ExploreView() {
           <div className="biome-detail-title">
             <h1>{selected.name}</h1>
             <p>{selected.description}</p>
+            <div className="biome-rewards">
+              <h4>Possible Rewards</h4>
+              <div className="rewards-list">
+                {selected.rewards.map((reward, i) => (
+                  <span key={i} className="reward-tag">{reward}</span>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -482,7 +491,7 @@ export function ExploreView() {
               <div className="biome-info">
                 <h3>{biome.name}</h3>
                 <p>{biome.description}</p>
-                <div className="biome-resources">{biome.resources.map(r => <span key={r} className="resource-tag">{r}</span>)}</div>
+                <div className="biome-resources">{biome.resources.slice(0, 3).map(r => <span key={r} className="resource-tag">{r}</span>)}</div>
                 <div className="risk-meter"><span>Risk:</span><div className="meter small"><div className="meter-fill risk" style={{ width: `${biome.risk_level * 100}%` }} /></div></div>
               </div>
               {!biome.in_phase1 && <div className="lock-overlay">🔒</div>}
