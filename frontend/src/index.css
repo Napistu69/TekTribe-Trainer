@@ -2437,6 +2437,15 @@ select {
 .shop-card-purchase .item-cost {
   color: var(--color-gold);
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.cost-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
 }
 
 .btn-buy {

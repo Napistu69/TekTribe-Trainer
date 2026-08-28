@@ -20,13 +20,13 @@ interface EggOffering {
 }
 
 const ITEM_ICONS: Record<string, string> = {
-  meat: '/assets/Hatch System/Egg_Common.png',
-  jerky: '/assets/Hatch System/Egg_Common.png',
-  berries: '/assets/Hatch System/Egg_Common.png',
-  crops: '/assets/Hatch System/Egg_Common.png',
-  sponge: '/assets/Hatch System/Egg_Common.png',
-  imprint_boost: '/assets/Hatch System/Egg_Common.png',
-  care_kit: '/assets/Hatch System/Egg_Common.png',
+  meat: '🥩',
+  jerky: '🥓',
+  berries: '🍒',
+  crops: '🥕',
+  sponge: '🧽',
+  imprint_boost: '💫',
+  care_kit: '🧰',
 };
 
 const EGG_IMAGES: Record<string, string> = {
@@ -208,14 +208,14 @@ export function EconomyView(_companionUuid?: EconomyViewProps) {
           {items.map((item) => (
             <div key={item.item_id} className="shop-card">
               <div className="shop-card-icon">
-                <img className="item-image" src={ITEM_ICONS[item.item_id] || '/assets/Hatch System/Egg_Common.png'} alt={item.name} />
+                <span className="item-emoji">{ITEM_ICONS[item.item_id] || '📦'}</span>
               </div>
               <div className="shop-card-info">
                 <span className="item-name">{item.name}</span>
                 <span className="item-description">{item.description}</span>
               </div>
               <div className="shop-card-purchase">
-                <span className="item-cost">✦ {item.cost}</span>
+                <span className="item-cost"><img className="cost-icon" src="/assets/Currency & Resource/ELE_Dust_20.png" alt="✦" /> {item.cost}</span>
                 <button
                   className="btn-buy"
                   onClick={() => handlePurchase(item.item_id)}
@@ -244,7 +244,7 @@ export function EconomyView(_companionUuid?: EconomyViewProps) {
                 </span>
               </div>
               <div className="shop-card-purchase">
-                <span className="item-cost">◆ {egg.cost}</span>
+                <span className="item-cost"><img className="cost-icon" src="/assets/Currency & Resource/ELE_Shard_20.png" alt="◆" /> {egg.cost}</span>
                 <button
                   className="btn-buy"
                   onClick={() => handleEggPurchase(egg.rarity)}
