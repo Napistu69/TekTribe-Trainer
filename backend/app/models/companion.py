@@ -104,6 +104,13 @@ class Companion(Base):
         return SPECIES_DIET.get(self.species, DEFAULT_DIET)
 
     @property
+    def biological_sex(self) -> str:
+        """Biological sex stored in origin_metadata. NOT a database column."""
+        if not self.origin_metadata:
+            return "unknown"
+        return self.origin_metadata.get("_biological_sex", "unknown")
+
+    @property
     def is_locked(self) -> bool:
         """Lock status stored in origin_metadata. NOT a database column."""
         if not self.origin_metadata:

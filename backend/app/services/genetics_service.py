@@ -15,6 +15,11 @@ async def generate_hidden_potential() -> float:
     return secrets.randbelow(10000) / 10000.0
 
 
+def generate_biological_sex() -> str:
+    """Generate random biological sex (male or female)."""
+    return "male" if secrets.randbelow(2) == 0 else "female"
+
+
 def generate_base_stats(species: str) -> dict:
     """Generate base stats for a creature based on species.
     

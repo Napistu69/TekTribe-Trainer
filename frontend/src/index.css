@@ -2529,6 +2529,14 @@ select {
 .maturation-bar .meter-fill {
   background: linear-gradient(90deg, #00c853, #64dd17);
 }
+/* Sex Tag */
+.sex-tag {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-left: 0.5rem;
+  color: var(--color-text);
+}
+
 .diet-tag {
   font-size: 0.75rem;
   font-weight: 600;

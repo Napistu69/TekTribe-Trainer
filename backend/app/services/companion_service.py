@@ -37,6 +37,7 @@ async def hatch_egg(db: AsyncSession, user_id: str, egg_uuid: str) -> Optional[C
     personality_type, personality_traits, behavioral_quirks = genetics_service.generate_personality(species)
     color_regions = genetics_service.generate_color_regions()
     hidden_potential = await genetics_service.generate_hidden_potential()
+    biological_sex = genetics_service.generate_biological_sex()
     
     # Create companion
     companion = Companion(
@@ -44,7 +45,7 @@ async def hatch_egg(db: AsyncSession, user_id: str, egg_uuid: str) -> Optional[C
         species=species,
         name=None,  # Player names it later
         origin_type=egg.source,
-        origin_metadata={"egg_uuid": str(egg.uuid), "source": egg.source},
+        origin_metadata={"egg_uuid": str(egg.uuid), "source": egg.source, "_biological_sex": biological_sex},
         creation_timestamp=datetime.now(timezone.utc),
         life_stage="hatchling",
         maturation_progress=0.0,
@@ -199,6 +200,7 @@ def serialize_companion(companion: Companion) -> dict:
         "is_locked": companion.is_locked,
         "rarity": companion.rarity,
         "diet": companion.diet,
+        "biological_sex": companion.biological_sex,
         "care_streak": companion.care_streak,
         "parent_a_uuid": str(companion.parent_a_uuid) if companion.parent_a_uuid else None,
         "parent_b_uuid": str(companion.parent_b_uuid) if companion.parent_b_uuid else None,

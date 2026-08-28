@@ -45,6 +45,7 @@ interface Companion {
   imprint_level: number;
   is_locked: boolean;
   current_state: string;
+  biological_sex: string;
   maturation_progress: number;
   base_stats: Record<string, number>;
   mutated_stats: Record<string, number>;
@@ -343,6 +344,7 @@ export function NurseryView() {
             </div>
             <span className="life-stage">{companion.life_stage.charAt(0).toUpperCase() + companion.life_stage.slice(1)}</span>
             <span className="diet-tag" style={{ color: DIET_COLORS[companion.diet] || '#2196f3' }}>{companion.diet ? companion.diet.charAt(0).toUpperCase() + companion.diet.slice(1) : 'Unknown'}</span>
+            <span className="sex-tag">{companion.biological_sex === 'male' ? '♂' : companion.biological_sex === 'female' ? '♀' : '?'}</span>
             <div className="imprint-bar">
               <span>Imprint: {companion.imprint_level}/100</span>
               <div className="meter">
