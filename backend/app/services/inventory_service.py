@@ -62,13 +62,13 @@ async def purchase_item(db: AsyncSession, user_id: str, item_id: str, quantity: 
     total_cost = item_def["cost"] * quantity
     
     # Check user balance
-    from app.services.currency_service import get_balance, deduct_dust
+    from app.services.currency_service import get_balance, spend_dust
     balance = await get_balance(user_id)
-    if balance["dust"] < total_cost:
+    if not balance or balance.dust_balance < total_cost:
         return {"success": False, "error": "Insufficient dust"}
     
     # Deduct dust
-    await deduct_dust(user_id, total_cost, f"shop_purchase_{item_id}")
+    await spend_dust(user_id, total_cost, f"shop_purchase_{item_id}")
     
     # Add to inventory
     result = await db.execute(

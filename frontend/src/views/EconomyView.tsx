@@ -237,7 +237,7 @@ export function EconomyView(_companionUuid?: EconomyViewProps) {
                 <img className="item-image" src={EGG_IMAGES[egg.rarity] || EGG_IMAGES.common} alt={egg.rarity} />
               </div>
               <div className="shop-card-info">
-                <span className="item-name" style={{ color: RARITY_COLORS[egg.rarity] }}>{egg.rarity}</span>
+                <span className="item-name" style={{ color: RARITY_COLORS[egg.rarity] }}>{egg.rarity.charAt(0).toUpperCase() + egg.rarity.slice(1)}</span>
                 <span className="item-description">
                   Random {egg.rarity} companion
                   {egg.upgrade_chance > 0 && ` (${Math.round(egg.upgrade_chance * 100)}% chance for next tier)`}

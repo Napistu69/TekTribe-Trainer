@@ -44,6 +44,7 @@ interface Companion {
   diet: string;
   imprint_level: number;
   is_locked: boolean;
+  current_state: string;
   base_stats: Record<string, number>;
   mutated_stats: Record<string, number>;
   care_state: {
@@ -332,6 +333,9 @@ export function NurseryView() {
               </div>
             </div>
             <div className="rarity-tag" style={{ color: RARITY_COLORS[companion.rarity] }}>{companion.rarity}</div>
+            {companion.current_state === 'on_expedition' && (
+              <span className="expedition-badge">🗺️ On Expedition</span>
+            )}
           </div>
         </div>
 
@@ -395,7 +399,7 @@ export function NurseryView() {
         </div>
         <div className="care-actions">
           <div className="care-action-group">
-            <button className="care-action-btn" onClick={() => setShowFeedMenu(!showFeedMenu)} disabled={loading}>
+            <button className="care-action-btn" onClick={() => setShowFeedMenu(!showFeedMenu)} disabled={loading || companion.current_state === 'on_expedition'}>
               <span className="care-icon">🥩</span>
               <span className="care-label">Feed</span>
             </button>
@@ -416,15 +420,15 @@ export function NurseryView() {
               </div>
             )}
           </div>
-          <button className="care-action-btn" onClick={() => handleUseItem('sponge')} disabled={loading || sponges.length === 0}>
+          <button className="care-action-btn" onClick={() => handleUseItem('sponge')} disabled={loading || sponges.length === 0 || companion.current_state === 'on_expedition'}>
             <span className="care-icon">🧽</span>
             <span className="care-label">Clean {sponges.length > 0 && `(${sponges[0].quantity})`}</span>
           </button>
-          <button className="care-action-btn" onClick={() => handleFreeAction('imprint')} disabled={loading}>
+          <button className="care-action-btn" onClick={() => handleFreeAction('imprint')} disabled={loading || companion.current_state === 'on_expedition'}>
             <span className="care-icon">💚</span>
             <span className="care-label">Imprint</span>
           </button>
-          <button className="care-action-btn" onClick={() => handleFreeAction('rest')} disabled={loading}>
+          <button className="care-action-btn" onClick={() => handleFreeAction('rest')} disabled={loading || companion.current_state === 'on_expedition'}>
             <span className="care-icon">💤</span>
             <span className="care-label">Rest</span>
           </button>
