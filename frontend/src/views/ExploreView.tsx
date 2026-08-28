@@ -54,12 +54,12 @@ interface Biome {
 }
 
 const BIOMES: Biome[] = [
-  { zone_id: 'verdant_hollow', name: 'Verdant Hollow', description: 'A lush forest clearing with gentle creatures', resources: ['Dust', 'Meat', 'Berries', 'Common Eggs'], risk_level: 0.125, in_phase1: true, imagePrefix: 'Verdant_Hollow', rewards: ['Dust', 'Meat 🥩', 'Berries 🍒', 'Common Egg 🥚', 'Uncommon Egg 🥚'] },
-  { zone_id: 'mirelands', name: 'Mirelands', description: 'Decay and renewal in the swamp', resources: ['Dust', 'Shards', 'Jerky', 'Crops', 'Uncommon Eggs'], risk_level: 0.3, in_phase1: false, imagePrefix: 'Mirelands', rewards: ['Dust', 'Shards ◆', 'Jerky 🥓', 'Crops 🥕', 'Uncommon Egg 🥚', 'Rare Egg 🥚'] },
-  { zone_id: 'stonecrest', name: 'Stonecrest', description: 'Endurance and perspective in the mountains', resources: ['Dust', 'Shards', 'Cuboids', 'Rare Eggs'], risk_level: 0.5, in_phase1: false, imagePrefix: 'Stonecrest', rewards: ['Dust', 'Shards ◆', 'Cuboids ◈', 'Rare Egg 🥚', 'Epic Egg 🥚'] },
-  { zone_id: 'emberfall', name: 'Emberfall', description: 'Transformation and danger in the volcanic zone', resources: ['Dust', 'Shards', 'Cuboids', 'Sponge', 'Rare Eggs'], risk_level: 0.7, in_phase1: false, imagePrefix: 'Emberfall', rewards: ['Dust', 'Shards ◆', 'Cuboids ◈', 'Sponge 🧽', 'Rare Egg 🥚', 'Epic Egg 🥚'] },
-  { zone_id: 'tek_ruins', name: 'Tek-Ruins', description: 'Memory and the Oracle in ancient ruins', resources: ['Dust', 'Shards', 'Cuboids', 'Imprint Boost', 'Epic Eggs'], risk_level: 0.8, in_phase1: false, imagePrefix: 'Tek_Ruins', rewards: ['Dust', 'Shards ◆', 'Cuboids ◈', 'Imprint Boost 💫', 'Epic Egg 🥚', 'Ascendant Egg 🥚'] },
-  { zone_id: 'void_center', name: 'Void Center', description: 'The space between worlds', resources: ['Dust', 'Shards', 'Cuboids', 'Care Kit', 'Epic Eggs'], risk_level: 0.9, in_phase1: false, imagePrefix: 'Void_Center', rewards: ['Dust', 'Shards ◆', 'Cuboids ◈', 'Care Kit 🧰', 'Epic Egg 🥚', 'Ascendant Egg 🥚'] },
+  { zone_id: 'verdant_hollow', name: 'Verdant Hollow', description: 'A lush forest clearing with gentle creatures and abundant resources. Perfect for new companions.', resources: ['Dust', 'Meat', 'Berries', 'Common Eggs'], risk_level: 0.125, in_phase1: true, imagePrefix: 'Verdant_Hollow', rewards: ['Dust', 'Meat 🥩', 'Berries 🍒', 'Common Egg 🥚', 'Uncommon Egg 🥚'] },
+  { zone_id: 'mirelands', name: 'Mirelands', description: 'A swampy wetland teeming with rare herbs and hidden dangers.', resources: ['Dust', 'Shards', 'Jerky', 'Crops', 'Uncommon Eggs'], risk_level: 0.3, in_phase1: false, imagePrefix: 'Mirelands', rewards: ['Dust', 'Shards ◆', 'Jerky 🥓', 'Crops 🥕', 'Uncommon Egg 🥚', 'Rare Egg 🥚'] },
+  { zone_id: 'stonecrest', name: 'Stonecrest', description: 'Mountain peaks offering rare minerals and challenging climbs.', resources: ['Dust', 'Shards', 'Cuboids', 'Rare Eggs'], risk_level: 0.5, in_phase1: false, imagePrefix: 'Stonecrest', rewards: ['Dust', 'Shards ◆', 'Cuboids ◈', 'Rare Egg 🥚', 'Epic Egg 🥚'] },
+  { zone_id: 'emberfall', name: 'Emberfall', description: 'Volcanic terrain with rare minerals and extreme hazards.', resources: ['Dust', 'Shards', 'Cuboids', 'Sponge', 'Rare Eggs'], risk_level: 0.7, in_phase1: false, imagePrefix: 'Emberfall', rewards: ['Dust', 'Shards ◆', 'Cuboids ◈', 'Sponge 🧽', 'Rare Egg 🥚', 'Epic Egg 🥚'] },
+  { zone_id: 'tek_ruins', name: 'Tek-Ruins', description: 'Ancient ruins filled with Oracle fragments and technological remnants.', resources: ['Dust', 'Shards', 'Cuboids', 'Imprint Boost', 'Epic Eggs'], risk_level: 0.8, in_phase1: false, imagePrefix: 'Tek_Ruins', rewards: ['Dust', 'Shards ◆', 'Cuboids ◈', 'Imprint Boost 💫', 'Epic Egg 🥚', 'Ascendant Egg 🥚'] },
+  { zone_id: 'void_center', name: 'Void Center', description: 'A liminal space between worlds, filled with legacy fragments and rescue signals.', resources: ['Dust', 'Shards', 'Cuboids', 'Care Kit', 'Epic Eggs'], risk_level: 0.9, in_phase1: false, imagePrefix: 'Void_Center', rewards: ['Dust', 'Shards ◆', 'Cuboids ◈', 'Care Kit 🧰', 'Epic Egg 🥚', 'Ascendant Egg 🥚'] },
 ];
 
 const COMPANION_IMAGES: Record<string, string> = {
@@ -270,11 +270,11 @@ export function ExploreView() {
       sponge: '🧽', imprint_boost: '💫', care_kit: '🧰',
     };
     const EGG_IMAGES: Record<string, string> = {
-      common_egg: '/assets/Hatch System/Egg_Common.png',
-      uncommon_egg: '/assets/Hatch System/Egg_Uncommon.png',
-      rare_egg: '/assets/Hatch System/Egg_Rare.png',
-      epic_egg: '/assets/Hatch System/Egg_Epic.png',
-      ascendant_egg: '/assets/Hatch System/Egg_Ascendant.png',
+      'Common Egg': '/assets/Hatch System/Egg_Common.png',
+      'Uncommon Egg': '/assets/Hatch System/Egg_Uncommon.png',
+      'Rare Egg': '/assets/Hatch System/Egg_Rare.png',
+      'Epic Egg': '/assets/Hatch System/Egg_Epic.png',
+      'Ascendant Egg': '/assets/Hatch System/Egg_Ascendant.png',
     };
     const parts: JSX.Element[] = [];
     if (rewards.dust) parts.push(<span key="dust"><img className="reward-icon" src="/assets/Currency & Resource/ELE_Dust_20.png" alt="" /> {rewards.dust} Dust</span>);
@@ -287,12 +287,31 @@ export function ExploreView() {
     if (rewards.sponge) parts.push(<span key="sponge">{ITEM_EMOJI.sponge} {rewards.sponge} Sponge</span>);
     if (rewards.imprint_boost) parts.push(<span key="imprint_boost">{ITEM_EMOJI.imprint_boost} {rewards.imprint_boost} Imprint Boost</span>);
     if (rewards.care_kit) parts.push(<span key="care_kit">{ITEM_EMOJI.care_kit} {rewards.care_kit} Care Kit</span>);
-    if (rewards.common_egg) parts.push(<span key="common_egg"><img className="reward-icon" src={EGG_IMAGES.common_egg} alt="" /> {rewards.common_egg} Common Egg{rewards.common_egg > 1 ? 's' : ''}</span>);
-    if (rewards.uncommon_egg) parts.push(<span key="uncommon_egg"><img className="reward-icon" src={EGG_IMAGES.uncommon_egg} alt="" /> {rewards.uncommon_egg} Uncommon Egg{rewards.uncommon_egg > 1 ? 's' : ''}</span>);
-    if (rewards.rare_egg) parts.push(<span key="rare_egg"><img className="reward-icon" src={EGG_IMAGES.rare_egg} alt="" /> {rewards.rare_egg} Rare Egg{rewards.rare_egg > 1 ? 's' : ''}</span>);
-    if (rewards.epic_egg) parts.push(<span key="epic_egg"><img className="reward-icon" src={EGG_IMAGES.epic_egg} alt="" /> {rewards.epic_egg} Epic Egg{rewards.epic_egg > 1 ? 's' : ''}</span>);
-    if (rewards.ascendant_egg) parts.push(<span key="ascendant_egg"><img className="reward-icon" src={EGG_IMAGES.ascendant_egg} alt="" /> {rewards.ascendant_egg} Ascendant Egg{rewards.ascendant_egg > 1 ? 's' : ''}</span>);
+    if (rewards.common_egg) parts.push(<span key="common_egg"><img className="reward-icon" src={EGG_IMAGES['Common Egg']} alt="" /> {rewards.common_egg} Common Egg{rewards.common_egg > 1 ? 's' : ''}</span>);
+    if (rewards.uncommon_egg) parts.push(<span key="uncommon_egg"><img className="reward-icon" src={EGG_IMAGES['Uncommon Egg']} alt="" /> {rewards.uncommon_egg} Uncommon Egg{rewards.uncommon_egg > 1 ? 's' : ''}</span>);
+    if (rewards.rare_egg) parts.push(<span key="rare_egg"><img className="reward-icon" src={EGG_IMAGES['Rare Egg']} alt="" /> {rewards.rare_egg} Rare Egg{rewards.rare_egg > 1 ? 's' : ''}</span>);
+    if (rewards.epic_egg) parts.push(<span key="epic_egg"><img className="reward-icon" src={EGG_IMAGES['Epic Egg']} alt="" /> {rewards.epic_egg} Epic Egg{rewards.epic_egg > 1 ? 's' : ''}</span>);
+    if (rewards.ascendant_egg) parts.push(<span key="ascendant_egg"><img className="reward-icon" src={EGG_IMAGES['Ascendant Egg']} alt="" /> {rewards.ascendant_egg} Ascendant Egg{rewards.ascendant_egg > 1 ? 's' : ''}</span>);
     return parts;
+  };
+
+  const getRewardIcon = (reward: string): string | null => {
+    if (reward.startsWith('Dust')) return '/assets/Currency & Resource/ELE_Dust_20.png';
+    if (reward.startsWith('Shards')) return '/assets/Currency & Resource/ELE_Shard_20.png';
+    if (reward.startsWith('Cuboids')) return '/assets/Currency & Resource/ELE_Cuboid_20.png';
+    if (reward.startsWith('Meat')) return '/assets/Hatch System/Egg_Common.png';
+    if (reward.startsWith('Berries')) return '/assets/Hatch System/Egg_Common.png';
+    if (reward.startsWith('Jerky')) return '/assets/Hatch System/Egg_Common.png';
+    if (reward.startsWith('Crops')) return '/assets/Hatch System/Egg_Common.png';
+    if (reward.startsWith('Sponge')) return '/assets/Hatch System/Egg_Common.png';
+    if (reward.startsWith('Imprint Boost')) return '/assets/Hatch System/Egg_Common.png';
+    if (reward.startsWith('Care Kit')) return '/assets/Hatch System/Egg_Common.png';
+    if (reward.startsWith('Common Egg')) return '/assets/Hatch System/Egg_Common.png';
+    if (reward.startsWith('Uncommon Egg')) return '/assets/Hatch System/Egg_Uncommon.png';
+    if (reward.startsWith('Rare Egg')) return '/assets/Hatch System/Egg_Rare.png';
+    if (reward.startsWith('Epic Egg')) return '/assets/Hatch System/Egg_Epic.png';
+    if (reward.startsWith('Ascendant Egg')) return '/assets/Hatch System/Egg_Ascendant.png';
+    return null;
   };
 
   const getBiomeName = (zoneId: string) => {
@@ -347,9 +366,15 @@ export function ExploreView() {
             <div className="biome-rewards">
               <h4>Possible Rewards</h4>
               <div className="rewards-list">
-                {selected.rewards.map((reward, i) => (
-                  <span key={i} className="reward-tag">{reward}</span>
-                ))}
+                {selected.rewards.map((reward, i) => {
+                  const icon = getRewardIcon(reward);
+                  return (
+                    <span key={i} className="reward-tag">
+                      {icon && <img className="reward-icon" src={icon} alt="" />}
+                      {reward}
+                    </span>
+                  );
+                })}
               </div>
             </div>
           </div>

@@ -1187,6 +1187,15 @@ body::before {
   padding: 0.2rem 0.4rem;
   font-size: 0.75rem;
   color: var(--color-text);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.reward-tag img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
 }
 
 .biome-grid {
