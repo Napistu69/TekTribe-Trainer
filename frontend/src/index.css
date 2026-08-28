@@ -2550,6 +2550,15 @@ select {
 /* Feed Menu */
 .care-action-group {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.care-action-group .care-action-btn {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 .feed-menu {
