@@ -44,6 +44,7 @@ MATURATION_PER_IMPRINT = 0.02
 MATURATION_PER_REST = 0.01
 MATURATION_PER_FEED = 0.01
 MATURATION_PER_CLEAN = 0.01
+MATURATION_PER_PREMIUM_FEED = 0.03
 
 
 async def get_inventory(db: AsyncSession, user_id: str) -> list[dict]:
@@ -174,8 +175,11 @@ async def use_item_on_companion(
         
         # Award dust (30% of item cost)
         dust_gained = floor(item_def["cost"] * DUST_PAYOUT_RATE)
-        # Add maturation progress
-        companion.maturation_progress = min(1.0, companion.maturation_progress + MATURATION_PER_FEED)
+        # Add maturation progress (premium feed = 3%, basic = 1%)
+        if item_id in ("jerky", "crops"):
+            companion.maturation_progress = min(1.0, companion.maturation_progress + MATURATION_PER_PREMIUM_FEED)
+        else:
+            companion.maturation_progress = min(1.0, companion.maturation_progress + MATURATION_PER_FEED)
         
     elif action_type == "care" and effect.get("action") == "clean":
         # Apply cleanliness restore

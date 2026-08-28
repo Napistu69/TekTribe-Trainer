@@ -4,7 +4,7 @@
       "item_id": "meat",
       "name": "Meat",
       "description": "Carnivore feed. Restores 40% hunger",
-      "cost": 10,
+      "cost": 15,
       "effect": {"type": "care", "action": "feed", "value": 0.4},
       "category": "feed"
     },
@@ -20,7 +20,7 @@
       "item_id": "berries",
       "name": "Berries",
       "description": "Herbivore feed. Restores 40% hunger",
-      "cost": 10,
+      "cost": 15,
       "effect": {"type": "care", "action": "feed", "value": 0.4},
       "category": "feed"
     },
