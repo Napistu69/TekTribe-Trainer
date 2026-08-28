@@ -1198,6 +1198,10 @@ body::before {
   object-fit: contain;
 }
 
+.reward-emoji {
+  font-size: 0.9rem;
+}
+
 .biome-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

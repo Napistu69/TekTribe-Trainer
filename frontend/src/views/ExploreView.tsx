@@ -299,18 +299,22 @@ export function ExploreView() {
     if (reward.startsWith('Dust')) return '/assets/Currency & Resource/ELE_Dust_20.png';
     if (reward.startsWith('Shards')) return '/assets/Currency & Resource/ELE_Shard_20.png';
     if (reward.startsWith('Cuboids')) return '/assets/Currency & Resource/ELE_Cuboid_20.png';
-    if (reward.startsWith('Meat')) return '/assets/Hatch System/Egg_Common.png';
-    if (reward.startsWith('Berries')) return '/assets/Hatch System/Egg_Common.png';
-    if (reward.startsWith('Jerky')) return '/assets/Hatch System/Egg_Common.png';
-    if (reward.startsWith('Crops')) return '/assets/Hatch System/Egg_Common.png';
-    if (reward.startsWith('Sponge')) return '/assets/Hatch System/Egg_Common.png';
-    if (reward.startsWith('Imprint Boost')) return '/assets/Hatch System/Egg_Common.png';
-    if (reward.startsWith('Care Kit')) return '/assets/Hatch System/Egg_Common.png';
     if (reward.startsWith('Common Egg')) return '/assets/Hatch System/Egg_Common.png';
     if (reward.startsWith('Uncommon Egg')) return '/assets/Hatch System/Egg_Uncommon.png';
     if (reward.startsWith('Rare Egg')) return '/assets/Hatch System/Egg_Rare.png';
     if (reward.startsWith('Epic Egg')) return '/assets/Hatch System/Egg_Epic.png';
     if (reward.startsWith('Ascendant Egg')) return '/assets/Hatch System/Egg_Ascendant.png';
+    return null;
+  };
+
+  const getRewardEmoji = (reward: string): string | null => {
+    if (reward.startsWith('Meat')) return '🥩';
+    if (reward.startsWith('Berries')) return '🍒';
+    if (reward.startsWith('Jerky')) return '🥓';
+    if (reward.startsWith('Crops')) return '🥕';
+    if (reward.startsWith('Sponge')) return '🧽';
+    if (reward.startsWith('Imprint Boost')) return '💫';
+    if (reward.startsWith('Care Kit')) return '🧰';
     return null;
   };
 
@@ -368,9 +372,11 @@ export function ExploreView() {
               <div className="rewards-list">
                 {selected.rewards.map((reward, i) => {
                   const icon = getRewardIcon(reward);
+                  const emoji = getRewardEmoji(reward);
                   return (
                     <span key={i} className="reward-tag">
                       {icon && <img className="reward-icon" src={icon} alt="" />}
+                      {emoji && <span className="reward-emoji">{emoji}</span>}
                       {reward}
                     </span>
                   );
@@ -516,7 +522,7 @@ export function ExploreView() {
               <div className="biome-info">
                 <h3>{biome.name}</h3>
                 <p>{biome.description}</p>
-                <div className="biome-resources">{biome.resources.slice(0, 3).map(r => <span key={r} className="resource-tag">{r}</span>)}</div>
+                <div className="biome-resources">{biome.resources.map(r => <span key={r} className="resource-tag">{r}</span>)}</div>
                 <div className="risk-meter"><span>Risk:</span><div className="meter small"><div className="meter-fill risk" style={{ width: `${biome.risk_level * 100}%` }} /></div></div>
               </div>
               {!biome.in_phase1 && <div className="lock-overlay">🔒</div>}
