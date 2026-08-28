@@ -2491,12 +2491,47 @@ select {
   50% { opacity: 0.6; }
 }
 
-/* Diet Tag */
+/* Companion Name Row */
+.companion-name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.companion-name-row h2 {
+  margin-bottom: 0;
+}
+
+.btn-rename {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+  padding: 0.25rem;
+}
+
+.btn-rename:hover {
+  opacity: 1;
+}
+
+/* Maturation Progress */
+.maturation-bar {
+  margin-top: 0.5rem;
+}
+
+.maturation-bar .meter {
+  height: 6px;
+}
+
+.maturation-bar .meter-fill {
+  background: linear-gradient(90deg, #00c853, #64dd17);
+}
 .diet-tag {
   font-size: 0.75rem;
-  color: var(--color-cyan);
-  background: rgba(0, 212, 255, 0.1);
-  border: 1px solid rgba(0, 212, 255, 0.3);
+  font-weight: 600;
   border-radius: 4px;
   padding: 0.2rem 0.5rem;
   display: inline-block;

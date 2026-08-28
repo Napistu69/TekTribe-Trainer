@@ -75,24 +75,20 @@ async def rename_companion(
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid UUID format")
     
-    companion = await companion_service.get_companion(db, user_id, companion_uuid)
-    if not companion:
-        raise HTTPException(status_code=404, detail="Companion not found")
-    
     # Validate name
     if len(name) < 1 or len(name) > 32:
         raise HTTPException(status_code=400, detail="Name must be 1-32 characters")
     
-    # Only allow alphanumeric, spaces, and basic punctuation
     import re
     if not re.match(r'^[\w\s\-]+$', name):
         raise HTTPException(status_code=400, detail="Name contains invalid characters")
     
-    # Force capitalization (first letter of each word)
+    # Force capitalization
     name = name.title()
     
-    companion.name = name
-    await db.commit()
+    companion = await companion_service.rename_companion(db, user_id, companion_uuid, name)
+    if not companion:
+        raise HTTPException(status_code=404, detail="Companion not found")
     
     return {"status": "renamed", "name": name}
 

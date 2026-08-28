@@ -41,11 +41,11 @@
       "category": "clean"
     },
     {
-      "item_id": "imprint_boost",
-      "name": "Imprint Boost",
-      "description": "Premium imprint. +20% imprint instantly",
+      "item_id": "imprint_elixir",
+      "name": "Imprint Elixir",
+      "description": "Premium imprint. +50% imprint instantly (1-time use per companion)",
       "cost": 150,
-      "effect": {"type": "imprint_boost", "value": 0.2},
+      "effect": {"type": "imprint_elixir", "value": 0.5},
       "category": "imprint"
     },
     {

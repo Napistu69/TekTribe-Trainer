@@ -93,12 +93,29 @@ async def hatch_egg(db: AsyncSession, user_id: str, egg_uuid: str) -> Optional[C
     return companion
 
 
+async def rename_companion(db: AsyncSession, user_id: str, companion_uuid: str, new_name: str) -> Optional[Companion]:
+    """Rename a companion. Returns updated companion or None."""
+    result = await db.execute(
+        select(Companion).where(
+            Companion.uuid == companion_uuid,
+            Companion.user_id == user_id,
+        )
+    )
+    companion = result.scalar_one_or_none()
+    if not companion:
+        return None
+    
+    companion.name = new_name[:32]  # Max 32 chars
+    await db.commit()
+    return companion
+
+
 async def get_companion(db: AsyncSession, user_id: str, companion_uuid: str) -> Optional[Companion]:
     """Get a companion by UUID, ensuring user ownership."""
     result = await db.execute(
         select(Companion).where(
             Companion.uuid == companion_uuid,
-            Companion.user_id == user_id
+            Companion.user_id == user_id,
         )
     )
     return result.scalar_one_or_none()

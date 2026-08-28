@@ -28,11 +28,11 @@ const RARITY_COLORS: Record<string, string> = {
   mythic: '#ff4444',
 };
 
-const DIET_LABELS: Record<string, string> = {
-  carnivore: 'Carnivore',
-  herbivore: 'Herbivore',
-  omnivore: 'Omnivore',
-  aquatic: 'Aquatic',
+const DIET_COLORS: Record<string, string> = {
+  carnivore: '#ff4444',
+  herbivore: '#00c853',
+  omnivore: '#2196f3',
+  aquatic: '#00bcd4',
 };
 
 interface Companion {
@@ -45,6 +45,7 @@ interface Companion {
   imprint_level: number;
   is_locked: boolean;
   current_state: string;
+  maturation_progress: number;
   base_stats: Record<string, number>;
   mutated_stats: Record<string, number>;
   care_state: {
@@ -321,9 +322,25 @@ export function CampView() {
         <div className="companion-visual">
           <img src={COMPANION_IMAGES[companion.species] || COMPANION_IMAGES.raptor} alt={companion.species} className="companion-image" />
           <div className="companion-info">
-            <h2>{companion.name || companion.species.charAt(0).toUpperCase() + companion.species.slice(1)}</h2>
+            <div className="companion-name-row">
+              <h2>{companion.name || companion.species.charAt(0).toUpperCase() + companion.species.slice(1)}</h2>
+              <button className="btn-rename" onClick={() => {
+                const newName = prompt('Enter a name for your companion:', companion.name || companion.species);
+                if (newName && newName.trim()) {
+                  fetch(`${import.meta.env.VITE_API_URL}/api/companions/${companion.uuid}/name`, {
+                    method: 'PATCH',
+                    headers: { Authorization: `Bearer ${sessionToken}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: newName.trim() }),
+                  }).then(r => r.json()).then(() => {
+                    if (mountedRef.current) {
+                      setCompanion({ ...companion, name: newName.trim() });
+                    }
+                  });
+                }
+              }}>✏️</button>
+            </div>
             <span className="life-stage">{companion.life_stage.charAt(0).toUpperCase() + companion.life_stage.slice(1)}</span>
-            <span className="diet-tag">{DIET_LABELS[companion.diet] || 'Unknown'}</span>
+            <span className="diet-tag" style={{ color: DIET_COLORS[companion.diet] || '#2196f3' }}>{companion.diet ? companion.diet.charAt(0).toUpperCase() + companion.diet.slice(1) : 'Unknown'}</span>
             <div className="imprint-bar">
               <span>Imprint: {companion.imprint_level}/100</span>
               <div className="meter">
@@ -331,6 +348,10 @@ export function CampView() {
               </div>
             </div>
             <div className="rarity-tag" style={{ color: RARITY_COLORS[companion.rarity] }}>{companion.rarity}</div>
+            <div className="maturation-bar">
+              <span>Maturation: {Math.round((companion.maturation_progress || 0) * 100)}%</span>
+              <div className="meter"><div className="meter-fill" style={{ width: `${(companion.maturation_progress || 0) * 100}%` }} /></div>
+            </div>
             {companion.current_state === 'on_expedition' && (
               <span className="expedition-badge">🗺️ On Expedition</span>
             )}
