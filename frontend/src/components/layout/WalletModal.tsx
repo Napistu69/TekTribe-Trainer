@@ -169,11 +169,8 @@ export function WalletModal({ onClose }: WalletModalProps) {
               ) : (
                 transactions.map((tx: any, i: number) => (
                   <div key={i} className="history-row">
-                    <span className={`tx-type ${tx.type}`}>{tx.type}</span>
+                    <span className={`tx-type ${tx.type}`}>{tx.type === 'award' ? '+' : '-'}{tx.amount}</span>
                     <span className="tx-currency">{tx.currency}</span>
-                    <span className={`tx-amount ${tx.type === 'award' ? 'positive' : 'negative'}`}>
-                      {tx.type === 'award' ? '+' : '-'}{tx.amount}
-                    </span>
                     <span className="tx-source">{tx.source || tx.sink}</span>
                   </div>
                 ))

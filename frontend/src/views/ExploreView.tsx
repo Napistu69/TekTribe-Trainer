@@ -264,23 +264,28 @@ export function ExploreView() {
   const dispatchedCompanions = companions.filter(c => dispatchedCompanionUuids.includes(c.uuid));
 
   const formatRewards = (rewards: Record<string, number>) => {
-    const parts: string[] = [];
-    if (rewards.dust) parts.push(`✦ ${rewards.dust} Dust`);
-    if (rewards.shard) parts.push(`◆ ${rewards.shard} Shards`);
-    if (rewards.cuboid) parts.push(`◈ ${rewards.cuboid} Cuboids`);
-    if (rewards.meat) parts.push(`🥩 ${rewards.meat} Meat`);
-    if (rewards.jerky) parts.push(`🥓 ${rewards.jerky} Jerky`);
-    if (rewards.berries) parts.push(`🍒 ${rewards.berries} Berries`);
-    if (rewards.crops) parts.push(`🥕 ${rewards.crops} Crops`);
-    if (rewards.sponge) parts.push(`🧽 ${rewards.sponge} Sponge`);
-    if (rewards.imprint_boost) parts.push(`💫 ${rewards.imprint_boost} Imprint Boost`);
-    if (rewards.care_kit) parts.push(`🧰 ${rewards.care_kit} Care Kit`);
-    if (rewards.common_egg) parts.push(`🥚 ${rewards.common_egg} Common Egg${rewards.common_egg > 1 ? 's' : ''}`);
-    if (rewards.uncommon_egg) parts.push(`🥚 ${rewards.uncommon_egg} Uncommon Egg${rewards.uncommon_egg > 1 ? 's' : ''}`);
-    if (rewards.rare_egg) parts.push(`🥚 ${rewards.rare_egg} Rare Egg${rewards.rare_egg > 1 ? 's' : ''}`);
-    if (rewards.epic_egg) parts.push(`🥚 ${rewards.epic_egg} Epic Egg${rewards.epic_egg > 1 ? 's' : ''}`);
-    if (rewards.ascendant_egg) parts.push(`🥚 ${rewards.ascendant_egg} Ascendant Egg${rewards.ascendant_egg > 1 ? 's' : ''}`);
-    return parts.join(' • ');
+    const parts: JSX.Element[] = [];
+    if (rewards.dust) parts.push(<span key="dust"><img className="reward-icon" src="/assets/Currency & Resource/ELE_Dust_20.png" alt="" /> {rewards.dust} Dust</span>);
+    if (rewards.shard) parts.push(<span key="shard"><img className="reward-icon" src="/assets/Currency & Resource/ELE_Shard_20.png" alt="" /> {rewards.shard} Shards</span>);
+    if (rewards.cuboid) parts.push(<span key="cuboid"><img className="reward-icon" src="/assets/Currency & Resource/ELE_Cuboid_20.png" alt="" /> {rewards.cuboid} Cuboids</span>);
+    if (rewards.meat) parts.push(<span key="meat"><img className="reward-icon" src="/assets/Hatch System/Egg_Common.png" alt="" /> {rewards.meat} Meat</span>);
+    if (rewards.jerky) parts.push(<span key="jerky"><img className="reward-icon" src="/assets/Hatch System/Egg_Common.png" alt="" /> {rewards.jerky} Jerky</span>);
+    if (rewards.berries) parts.push(<span key="berries"><img className="reward-icon" src="/assets/Hatch System/Egg_Common.png" alt="" /> {rewards.berries} Berries</span>);
+    if (rewards.crops) parts.push(<span key="crops"><img className="reward-icon" src="/assets/Hatch System/Egg_Common.png" alt="" /> {rewards.crops} Crops</span>);
+    if (rewards.sponge) parts.push(<span key="sponge"><img className="reward-icon" src="/assets/Hatch System/Egg_Common.png" alt="" /> {rewards.sponge} Sponge</span>);
+    if (rewards.imprint_boost) parts.push(<span key="imprint_boost"><img className="reward-icon" src="/assets/Hatch System/Egg_Common.png" alt="" /> {rewards.imprint_boost} Imprint Boost</span>);
+    if (rewards.care_kit) parts.push(<span key="care_kit"><img className="reward-icon" src="/assets/Hatch System/Egg_Common.png" alt="" /> {rewards.care_kit} Care Kit</span>);
+    if (rewards.common_egg) parts.push(<span key="common_egg"><img className="reward-icon" src="/assets/Hatch System/Egg_Common.png" alt="" /> {rewards.common_egg} Common Egg{rewards.common_egg > 1 ? 's' : ''}</span>);
+    if (rewards.uncommon_egg) parts.push(<span key="uncommon_egg"><img className="reward-icon" src="/assets/Hatch System/Egg_Uncommon.png" alt="" /> {rewards.uncommon_egg} Uncommon Egg{rewards.uncommon_egg > 1 ? 's' : ''}</span>);
+    if (rewards.rare_egg) parts.push(<span key="rare_egg"><img className="reward-icon" src="/assets/Hatch System/Egg_Rare.png" alt="" /> {rewards.rare_egg} Rare Egg{rewards.rare_egg > 1 ? 's' : ''}</span>);
+    if (rewards.epic_egg) parts.push(<span key="epic_egg"><img className="reward-icon" src="/assets/Hatch System/Egg_Epic.png" alt="" /> {rewards.epic_egg} Epic Egg{rewards.epic_egg > 1 ? 's' : ''}</span>);
+    if (rewards.ascendant_egg) parts.push(<span key="ascendant_egg"><img className="reward-icon" src="/assets/Hatch System/Egg_Ascendant.png" alt="" /> {rewards.ascendant_egg} Ascendant Egg{rewards.ascendant_egg > 1 ? 's' : ''}</span>);
+    return parts;
+  };
+
+  const getBiomeName = (zoneId: string) => {
+    const biome = BIOMES.find(b => b.zone_id === zoneId);
+    return biome ? biome.name : zoneId;
   };
 
   if (view === 'detail' && selected) {
@@ -295,7 +300,7 @@ export function ExploreView() {
           <div className="reward-popup-overlay" onClick={() => setRewardPopup(null)}>
             <div className="reward-popup" onClick={e => e.stopPropagation()}>
               <h3>🎉 Expedition Complete!</h3>
-              <p className="reward-biome">{rewardPopup.biome}</p>
+              <p className="reward-biome">{getBiomeName(rewardPopup.biome)}</p>
               <div className="reward-list">
                 {formatRewards(rewardPopup.rewards)}
               </div>
