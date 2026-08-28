@@ -2404,9 +2404,13 @@ select {
   text-align: center;
 }
 
+.shop-card-icon .item-emoji {
+  font-size: 3rem;
+}
+
 .shop-card-icon .item-image {
-  width: 48px;
-  height: 48px;
+  width: 64px;
+  height: 64px;
   object-fit: contain;
 }
 
