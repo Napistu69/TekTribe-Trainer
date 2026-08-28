@@ -264,22 +264,33 @@ export function ExploreView() {
   const dispatchedCompanions = companions.filter(c => dispatchedCompanionUuids.includes(c.uuid));
 
   const formatRewards = (rewards: Record<string, number>) => {
+    const ITEM_EMOJI: Record<string, string> = {
+      meat: '🥩', jerky: '🥓', berries: '🍒', crops: '🥕',
+      sponge: '🧽', imprint_boost: '💫', care_kit: '🧰',
+    };
+    const EGG_IMAGES: Record<string, string> = {
+      common_egg: '/assets/Hatch System/Egg_Common.png',
+      uncommon_egg: '/assets/Hatch System/Egg_Uncommon.png',
+      rare_egg: '/assets/Hatch System/Egg_Rare.png',
+      epic_egg: '/assets/Hatch System/Egg_Epic.png',
+      ascendant_egg: '/assets/Hatch System/Egg_Ascendant.png',
+    };
     const parts: JSX.Element[] = [];
     if (rewards.dust) parts.push(<span key="dust"><img className="reward-icon" src="/assets/Currency & Resource/ELE_Dust_20.png" alt="" /> {rewards.dust} Dust</span>);
     if (rewards.shard) parts.push(<span key="shard"><img className="reward-icon" src="/assets/Currency & Resource/ELE_Shard_20.png" alt="" /> {rewards.shard} Shards</span>);
     if (rewards.cuboid) parts.push(<span key="cuboid"><img className="reward-icon" src="/assets/Currency & Resource/ELE_Cuboid_20.png" alt="" /> {rewards.cuboid} Cuboids</span>);
-    if (rewards.meat) parts.push(<span key="meat"><img className="reward-icon" src="/assets/Hatch System/Egg_Common.png" alt="" /> {rewards.meat} Meat</span>);
-    if (rewards.jerky) parts.push(<span key="jerky"><img className="reward-icon" src="/assets/Hatch System/Egg_Common.png" alt="" /> {rewards.jerky} Jerky</span>);
-    if (rewards.berries) parts.push(<span key="berries"><img className="reward-icon" src="/assets/Hatch System/Egg_Common.png" alt="" /> {rewards.berries} Berries</span>);
-    if (rewards.crops) parts.push(<span key="crops"><img className="reward-icon" src="/assets/Hatch System/Egg_Common.png" alt="" /> {rewards.crops} Crops</span>);
-    if (rewards.sponge) parts.push(<span key="sponge"><img className="reward-icon" src="/assets/Hatch System/Egg_Common.png" alt="" /> {rewards.sponge} Sponge</span>);
-    if (rewards.imprint_boost) parts.push(<span key="imprint_boost"><img className="reward-icon" src="/assets/Hatch System/Egg_Common.png" alt="" /> {rewards.imprint_boost} Imprint Boost</span>);
-    if (rewards.care_kit) parts.push(<span key="care_kit"><img className="reward-icon" src="/assets/Hatch System/Egg_Common.png" alt="" /> {rewards.care_kit} Care Kit</span>);
-    if (rewards.common_egg) parts.push(<span key="common_egg"><img className="reward-icon" src="/assets/Hatch System/Egg_Common.png" alt="" /> {rewards.common_egg} Common Egg{rewards.common_egg > 1 ? 's' : ''}</span>);
-    if (rewards.uncommon_egg) parts.push(<span key="uncommon_egg"><img className="reward-icon" src="/assets/Hatch System/Egg_Uncommon.png" alt="" /> {rewards.uncommon_egg} Uncommon Egg{rewards.uncommon_egg > 1 ? 's' : ''}</span>);
-    if (rewards.rare_egg) parts.push(<span key="rare_egg"><img className="reward-icon" src="/assets/Hatch System/Egg_Rare.png" alt="" /> {rewards.rare_egg} Rare Egg{rewards.rare_egg > 1 ? 's' : ''}</span>);
-    if (rewards.epic_egg) parts.push(<span key="epic_egg"><img className="reward-icon" src="/assets/Hatch System/Egg_Epic.png" alt="" /> {rewards.epic_egg} Epic Egg{rewards.epic_egg > 1 ? 's' : ''}</span>);
-    if (rewards.ascendant_egg) parts.push(<span key="ascendant_egg"><img className="reward-icon" src="/assets/Hatch System/Egg_Ascendant.png" alt="" /> {rewards.ascendant_egg} Ascendant Egg{rewards.ascendant_egg > 1 ? 's' : ''}</span>);
+    if (rewards.meat) parts.push(<span key="meat">{ITEM_EMOJI.meat} {rewards.meat} Meat</span>);
+    if (rewards.jerky) parts.push(<span key="jerky">{ITEM_EMOJI.jerky} {rewards.jerky} Jerky</span>);
+    if (rewards.berries) parts.push(<span key="berries">{ITEM_EMOJI.berries} {rewards.berries} Berries</span>);
+    if (rewards.crops) parts.push(<span key="crops">{ITEM_EMOJI.crops} {rewards.crops} Crops</span>);
+    if (rewards.sponge) parts.push(<span key="sponge">{ITEM_EMOJI.sponge} {rewards.sponge} Sponge</span>);
+    if (rewards.imprint_boost) parts.push(<span key="imprint_boost">{ITEM_EMOJI.imprint_boost} {rewards.imprint_boost} Imprint Boost</span>);
+    if (rewards.care_kit) parts.push(<span key="care_kit">{ITEM_EMOJI.care_kit} {rewards.care_kit} Care Kit</span>);
+    if (rewards.common_egg) parts.push(<span key="common_egg"><img className="reward-icon" src={EGG_IMAGES.common_egg} alt="" /> {rewards.common_egg} Common Egg{rewards.common_egg > 1 ? 's' : ''}</span>);
+    if (rewards.uncommon_egg) parts.push(<span key="uncommon_egg"><img className="reward-icon" src={EGG_IMAGES.uncommon_egg} alt="" /> {rewards.uncommon_egg} Uncommon Egg{rewards.uncommon_egg > 1 ? 's' : ''}</span>);
+    if (rewards.rare_egg) parts.push(<span key="rare_egg"><img className="reward-icon" src={EGG_IMAGES.rare_egg} alt="" /> {rewards.rare_egg} Rare Egg{rewards.rare_egg > 1 ? 's' : ''}</span>);
+    if (rewards.epic_egg) parts.push(<span key="epic_egg"><img className="reward-icon" src={EGG_IMAGES.epic_egg} alt="" /> {rewards.epic_egg} Epic Egg{rewards.epic_egg > 1 ? 's' : ''}</span>);
+    if (rewards.ascendant_egg) parts.push(<span key="ascendant_egg"><img className="reward-icon" src={EGG_IMAGES.ascendant_egg} alt="" /> {rewards.ascendant_egg} Ascendant Egg{rewards.ascendant_egg > 1 ? 's' : ''}</span>);
     return parts;
   };
 
@@ -432,7 +443,7 @@ export function ExploreView() {
               <h3>Expedition History</h3>
               {biomeHistory.slice(0, 5).map(exp => (
                 <div key={exp.uuid} className="history-row">
-                  <span>{exp.biome_zone}</span>
+                  <span>{getBiomeName(exp.biome_zone)}</span>
                   <span>{exp.result?.companion_results?.length || 0} companions</span>
                   <span>{exp.result?.rewards ? formatRewards(exp.result.rewards) : `+${exp.result?.total_dust_gained || 0} dust`}</span>
                 </div>
