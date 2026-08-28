@@ -185,8 +185,13 @@ export function NurseryView() {
       if (response.ok) {
         const data = await response.json();
         setMessage(`+${data.dust_gained || 0} dust`);
-        if (companion && data.care_state) {
-          setCompanion({ ...companion, care_state: data.care_state, imprint_level: data.imprint_level ?? companion.imprint_level });
+        if (companion) {
+          setCompanion({
+            ...companion,
+            care_state: data.care_state,
+            imprint_level: data.imprint_level ?? companion.imprint_level,
+            maturation_progress: data.maturation_progress ?? companion.maturation_progress,
+          });
         }
         await fetchInventory();
       } else {
@@ -217,8 +222,13 @@ export function NurseryView() {
       if (response.ok) {
         const data = await response.json();
         setMessage(`+${data.dust_gained || 0} dust`);
-        if (companion && data.care_state) {
-          setCompanion({ ...companion, care_state: data.care_state, imprint_level: data.imprint_level ?? companion.imprint_level });
+        if (companion) {
+          setCompanion({
+            ...companion,
+            care_state: data.care_state,
+            imprint_level: data.imprint_level ?? companion.imprint_level,
+            maturation_progress: data.maturation_progress ?? companion.maturation_progress,
+          });
         }
       } else {
         const err = await response.json();
