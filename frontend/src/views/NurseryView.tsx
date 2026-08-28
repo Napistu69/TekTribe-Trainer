@@ -105,7 +105,7 @@ export function NurseryView() {
     }
   }, [message]);
 
-  const isJuvenileOrHatchling = (c: Companion) => c.life_stage === 'baby' || c.life_stage === 'juvenile' || c.life_stage === 'adolescent';
+  const isJuvenileOrHatchling = (c: Companion) => c.life_stage === 'baby' || c.life_stage === 'hatchling' || c.life_stage === 'juvenile' || c.life_stage === 'adolescent';
 
   const fetchCompanions = async () => {
     if (!sessionToken) return;
