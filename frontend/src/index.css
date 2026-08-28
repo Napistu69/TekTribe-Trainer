@@ -957,7 +957,6 @@ body::before {
   height: 150px;
   border-radius: 12px;
   object-fit: contain;
-  background: #000000;
   padding: 0.5rem;
 }
 
@@ -1555,7 +1554,6 @@ body::before {
   width: 60px;
   height: 60px;
   object-fit: contain;
-  background: #000;
   border-radius: 8px;
   padding: 0.25rem;
 }
@@ -1656,7 +1654,6 @@ body::before {
   width: 40px;
   height: 40px;
   object-fit: contain;
-  background: #000;
   border-radius: 6px;
   padding: 0.15rem;
 }
@@ -2078,7 +2075,6 @@ select {
   width: 120px;
   height: 120px;
   object-fit: contain;
-  background: #000000;
   border-radius: 12px;
   padding: 0.5rem;
 }
