@@ -56,7 +56,7 @@ export function WalletModal({ onClose }: WalletModalProps) {
   }, [sessionToken, setBalance]);
 
   useEffect(() => {
-    if (!sessionToken) return;
+    if (!sessionToken || activeTab !== 'history') return;
     const fetchHistory = async () => {
       try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/economy/history`, {
@@ -71,7 +71,7 @@ export function WalletModal({ onClose }: WalletModalProps) {
       }
     };
     fetchHistory();
-  }, [sessionToken, setTransactions]);
+  }, [sessionToken, activeTab]);
 
   useEffect(() => {
     if (!sessionToken) return;
