@@ -21,7 +21,7 @@ const ITEM_ICONS: Record<string, string> = {
   berries: '🍒',
   crops: '🥕',
   sponge: '🧽',
-  imprint_boost: '💫',
+  imprint_elixir: '🧪',
   care_kit: '🧰',
 };
 
