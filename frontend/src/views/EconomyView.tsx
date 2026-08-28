@@ -20,13 +20,23 @@ interface EggOffering {
 }
 
 const ITEM_ICONS: Record<string, string> = {
-  meat: '🥩',
-  jerky: '🥓',
-  berries: '🍒',
-  crops: '🥕',
-  sponge: '🧽',
-  imprint_boost: '💫',
-  care_kit: '🧰',
+  meat: '/assets/Hatch System/Egg_Common.png',
+  jerky: '/assets/Hatch System/Egg_Common.png',
+  berries: '/assets/Hatch System/Egg_Common.png',
+  crops: '/assets/Hatch System/Egg_Common.png',
+  sponge: '/assets/Hatch System/Egg_Common.png',
+  imprint_boost: '/assets/Hatch System/Egg_Common.png',
+  care_kit: '/assets/Hatch System/Egg_Common.png',
+};
+
+const EGG_IMAGES: Record<string, string> = {
+  common: '/assets/Hatch System/Egg_Common.png',
+  uncommon: '/assets/Hatch System/Egg_Uncommon.png',
+  rare: '/assets/Hatch System/Egg_Rare.png',
+  epic: '/assets/Hatch System/Egg_Epic.png',
+  ascendant: '/assets/Hatch System/Egg_Ascendant.png',
+  legendary: '/assets/Hatch System/Egg_Legendary.png',
+  mythic: '/assets/Hatch System/Egg_Mythic.png',
 };
 
 const RARITY_COLORS: Record<string, string> = {
@@ -198,7 +208,7 @@ export function EconomyView(_companionUuid?: EconomyViewProps) {
           {items.map((item) => (
             <div key={item.item_id} className="shop-card">
               <div className="shop-card-icon">
-                <span className="item-emoji">{ITEM_ICONS[item.item_id] || '📦'}</span>
+                <img className="item-image" src={ITEM_ICONS[item.item_id] || '/assets/Hatch System/Egg_Common.png'} alt={item.name} />
               </div>
               <div className="shop-card-info">
                 <span className="item-name">{item.name}</span>
@@ -220,21 +230,21 @@ export function EconomyView(_companionUuid?: EconomyViewProps) {
       )}
 
       {tab === 'eggs' && (
-        <div className="egg-shop-grid">
+        <div className="shop-grid">
           {eggOfferings.map((egg) => (
-            <div key={egg.rarity} className="egg-card">
-              <div className="egg-card-icon">
-                <span className="egg-emoji">🥚</span>
+            <div key={egg.rarity} className="shop-card">
+              <div className="shop-card-icon">
+                <img className="item-image" src={EGG_IMAGES[egg.rarity] || EGG_IMAGES.common} alt={egg.rarity} />
               </div>
-              <div className="egg-card-info">
-                <span className="egg-rarity" style={{ color: RARITY_COLORS[egg.rarity] }}>{egg.rarity}</span>
-                <span className="egg-description">
+              <div className="shop-card-info">
+                <span className="item-name" style={{ color: RARITY_COLORS[egg.rarity] }}>{egg.rarity}</span>
+                <span className="item-description">
                   Random {egg.rarity} companion
                   {egg.upgrade_chance > 0 && ` (${Math.round(egg.upgrade_chance * 100)}% chance for next tier)`}
                 </span>
               </div>
-              <div className="egg-card-purchase">
-                <span className="egg-cost">◆ {egg.cost}</span>
+              <div className="shop-card-purchase">
+                <span className="item-cost">◆ {egg.cost}</span>
                 <button
                   className="btn-buy"
                   onClick={() => handleEggPurchase(egg.rarity)}
