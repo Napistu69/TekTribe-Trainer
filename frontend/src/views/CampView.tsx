@@ -4,7 +4,7 @@ import { TutorialOverlay, useTutorial } from '../components/shared/TutorialOverl
 import { useNavigate } from 'react-router-dom';
 
 const TUTORIAL_STEPS = [
-  { title: 'Welcome to the Camp', text: 'This is where adult and elder companions reside. They can be cared for here just like in the Nursery.' },
+  { title: 'Welcome to the Camp', text: 'This is where adult companions reside. They can be cared for here just like in the Nursery.' },
   { title: 'Camp Background', text: 'Your companion is displayed on the camp background. Watch them bounce gently as they enjoy their home.' },
   { title: 'Unlocking the Camp', text: 'The Camp unlocks when you raise a companion to adulthood through care and training.' },
 ];
@@ -114,7 +114,7 @@ export function CampView() {
       if (!response.ok) return;
       const data = await response.json();
       if (!mountedRef.current) return;
-      const filtered = data.filter((c: Companion) => c.life_stage === 'adult' || c.life_stage === 'elder');
+      const filtered = data.filter((c: Companion) => c.life_stage === 'adult');
       setCompanions(filtered);
       if (filtered.length > 0 && !selectedCompanion) {
         setSelectedCompanion(filtered[0].uuid);
@@ -252,7 +252,7 @@ export function CampView() {
         });
         if (updatedResponse.ok && mountedRef.current) {
           const data = await updatedResponse.json();
-          const filtered = data.filter((c: Companion) => c.life_stage === 'adult' || c.life_stage === 'elder');
+          const filtered = data.filter((c: Companion) => c.life_stage === 'adult');
           setCompanions(filtered);
           if (filtered.length > 0) {
             setSelectedCompanion(filtered[0].uuid);
@@ -298,7 +298,7 @@ export function CampView() {
         {showTutorial && <TutorialOverlay steps={TUTORIAL_STEPS} storageKey="tutorial-camp" onComplete={completeTutorial} />}
         <h1>Camp</h1>
         <div className="empty-camp">
-          <p>No adult or elder companions yet. Raise a companion to adulthood to unlock the Camp!</p>
+          <p>No adult companions yet. Raise a companion to adulthood to unlock the Camp!</p>
         </div>
       </div>
     );

@@ -23,7 +23,7 @@ const STATIONS: Station[] = [
   {
     id: 'nursery',
     name: 'Nursery',
-    description: 'Care for hatchlings and juveniles',
+    description: 'Care for babies, juveniles, and adolescents',
     image: '/assets/Habitat & Camp/nursery.png',
     route: '/nursery',
     locked: false,

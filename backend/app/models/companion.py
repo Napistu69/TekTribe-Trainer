@@ -49,7 +49,7 @@ class Companion(Base):
     creation_timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
     # Life stage
-    life_stage: Mapped[str] = mapped_column(String(20), default="hatchling")
+    life_stage: Mapped[str] = mapped_column(String(20), default="baby")
     maturation_progress: Mapped[float] = mapped_column(Float, default=0.0)
 
     # Stats
@@ -102,6 +102,13 @@ class Companion(Base):
     def diet(self) -> str:
         """Computed diet based on species. NOT a database column."""
         return SPECIES_DIET.get(self.species, DEFAULT_DIET)
+
+    @property
+    def display_life_stage(self) -> str:
+        """Life stage for display on card. Adult (100%) shows no tag."""
+        if self.maturation_progress >= 1.0:
+            return "adult"
+        return self.life_stage
 
     @property
     def biological_sex(self) -> str:

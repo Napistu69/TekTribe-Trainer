@@ -4,7 +4,7 @@ import { TutorialOverlay, useTutorial } from '../components/shared/TutorialOverl
 import { useNavigate } from 'react-router-dom';
 
 const TUTORIAL_STEPS = [
-  { title: 'Welcome to the Nursery', text: 'This is where hatchlings and juveniles are cared for. Feed, clean, imprint, and rest your young companions.' },
+  { title: 'Welcome to the Nursery', text: 'This is where babies, juveniles, and adolescents are cared for. Feed, clean, imprint, and rest your young companions.' },
   { title: 'Care Actions', text: 'Use items from your inventory to care for companions. Imprint and Rest are always free.' },
   { title: 'Growth', text: 'As your companion grows, they will eventually become adults and move to the Camp!' },
 ];
@@ -105,7 +105,7 @@ export function NurseryView() {
     }
   }, [message]);
 
-  const isJuvenileOrHatchling = (c: Companion) => c.life_stage === 'hatchling' || c.life_stage === 'juvenile';
+  const isJuvenileOrHatchling = (c: Companion) => c.life_stage === 'baby' || c.life_stage === 'juvenile' || c.life_stage === 'adolescent';
 
   const fetchCompanions = async () => {
     if (!sessionToken) return;
@@ -300,7 +300,7 @@ export function NurseryView() {
         {showTutorial && <TutorialOverlay steps={TUTORIAL_STEPS} storageKey="tutorial-nursery" onComplete={completeTutorial} />}
         <h1>Nursery</h1>
         <div className="empty-nursery">
-          <p>No hatchlings or juveniles yet. Hatch an egg to get started!</p>
+          <p>No babies, juveniles, or adolescents yet. Hatch an egg to get started!</p>
         </div>
       </div>
     );

@@ -47,7 +47,7 @@ async def hatch_egg(db: AsyncSession, user_id: str, egg_uuid: str) -> Optional[C
         origin_type=egg.source,
         origin_metadata={"egg_uuid": str(egg.uuid), "source": egg.source, "_biological_sex": biological_sex},
         creation_timestamp=datetime.now(timezone.utc),
-        life_stage="hatchling",
+        life_stage="baby",
         maturation_progress=0.0,
         base_stats=base_stats,
         mutated_stats={},  # No mutations on first hatch
@@ -134,7 +134,13 @@ async def get_companions(db: AsyncSession, user_id: str) -> list[Companion]:
 
 
 async def update_life_stage(db: AsyncSession, companion_uuid: str) -> Optional[str]:
-    """Check and update life stage based on maturation progress and imprint level.
+    """Check and update life stage based on maturation progress.
+    
+    ARK-style thresholds (no imprint requirements):
+    - Baby = 0-9%
+    - Juvenile = 10%-49%
+    - Adolescent = 50-100%
+    - Adult = 100% maturation (tag drops from card but remains in metadata)
     
     Returns the new life stage if changed, None otherwise.
     """
@@ -147,15 +153,15 @@ async def update_life_stage(db: AsyncSession, companion_uuid: str) -> Optional[s
     
     old_stage = companion.life_stage
     
-    # Stage progression rules
-    if companion.maturation_progress >= 1.0 and companion.imprint_level >= 100:
-        companion.life_stage = "elder"
-    elif companion.maturation_progress >= 0.7 and companion.imprint_level >= 50:
+    # Stage progression rules (maturation only, no imprint requirement)
+    if companion.maturation_progress >= 1.0:
         companion.life_stage = "adult"
-    elif companion.maturation_progress >= 0.3 and companion.imprint_level >= 10:
-        companion.life_stage = "juvenile"
+    elif companion.maturation_progress >= 0.5:
+        companion.life_stage = "adolescent"
     elif companion.maturation_progress >= 0.1:
-        companion.life_stage = "hatchling"
+        companion.life_stage = "juvenile"
+    else:
+        companion.life_stage = "baby"
     
     if companion.life_stage != old_stage:
         await db.commit()

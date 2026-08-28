@@ -226,7 +226,7 @@ async def get_available_games(db: AsyncSession, user_id: str, companion_uuid: st
             })
     
     # General games (juvenile+)
-    if companion.life_stage in ["juvenile", "adult", "elder"]:
+    if companion.life_stage in ["juvenile", "adolescent", "adult"]:
         for game_id, game in GENERAL_MINI_GAMES.items():
             can_play, remaining = await check_cooldown(db, companion_uuid, game_id)
             available.append({
