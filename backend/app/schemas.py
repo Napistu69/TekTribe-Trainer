@@ -215,3 +215,23 @@ class ForgeRefineResponse(BaseModel):
     output_amount: int
     times: int
     new_balances: dict
+
+
+# === Training Schemas ===
+
+class TrainingSubmitRequest(BaseModel):
+    """Request body for POST /training/submit."""
+    companion_uuid: str
+    game_id: str
+    score: int = Field(..., ge=0, le=100)
+    duration_seconds: int = Field(..., ge=0, le=3600)
+
+
+class TrainingResultResponse(BaseModel):
+    """Response body for POST /training/submit."""
+    success: bool
+    companion_uuid: str
+    game_id: str
+    stat_gains: dict
+    dust_gained: int
+    cooldown_until: Optional[str] = None
