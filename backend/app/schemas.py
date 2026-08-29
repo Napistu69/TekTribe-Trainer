@@ -90,6 +90,18 @@ class EggResponse(BaseModel):
     stability: float
 
 
+class EggDetailResponse(BaseModel):
+    """Detailed egg data (for single egg endpoint)."""
+    uuid: str
+    rarity: str
+    source: str
+    pulled_at: str
+    hatched: bool
+    incubation_started_at: Optional[str] = None
+    temperature: float
+    stability: float
+
+
 class EggHatchRequest(BaseModel):
     """Request body for POST /eggs/{uuid}/hatch."""
     pass
