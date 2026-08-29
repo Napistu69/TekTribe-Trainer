@@ -1037,9 +1037,16 @@ body::before {
   text-transform: capitalize;
 }
 
+.rarity-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
 .rarity-tag {
   display: inline-block;
-  margin-top: 0.5rem;
   padding: 0.25rem 0.5rem;
   font-size: 0.75rem;
   border-radius: 6px;
@@ -2526,7 +2533,6 @@ select {
 /* Expedition Badge */
 .expedition-badge {
   display: inline-block;
-  margin-top: 0.5rem;
   padding: 0.25rem 0.5rem;
   background: rgba(0, 212, 255, 0.15);
   border: 1px solid rgba(0, 212, 255, 0.4);
