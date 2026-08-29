@@ -193,6 +193,7 @@ def serialize_companion(companion: Companion) -> dict:
         "origin_metadata": companion.origin_metadata,
         "creation_timestamp": companion.creation_timestamp.isoformat(),
         "life_stage": companion.life_stage,
+        "display_life_stage": companion.display_life_stage,
         "maturation_progress": companion.maturation_progress,
         "base_stats": companion.base_stats,
         "mutated_stats": companion.mutated_stats,

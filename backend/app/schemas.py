@@ -73,6 +73,7 @@ class CompanionResponse(BaseModel):
     origin_metadata: dict
     creation_timestamp: str
     life_stage: str
+    display_life_stage: str
     maturation_progress: float
     base_stats: dict
     mutated_stats: dict

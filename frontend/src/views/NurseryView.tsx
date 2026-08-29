@@ -40,6 +40,7 @@ interface Companion {
   species: string;
   name: string;
   life_stage: string;
+  display_life_stage: string;
   rarity: string;
   diet: string;
   imprint_level: number;
@@ -362,10 +363,12 @@ export function NurseryView() {
               </div>
             </div>
             <div className="rarity-tag" style={{ color: RARITY_COLORS[companion.rarity] }}>{companion.rarity}</div>
-            <div className="maturation-bar">
-              <span>Maturation: {Math.round((companion.maturation_progress || 0) * 100)}%</span>
-              <div className="meter"><div className="meter-fill" style={{ width: `${(companion.maturation_progress || 0) * 100}%` }} /></div>
-            </div>
+            {companion.display_life_stage !== 'adult' && (
+              <div className="maturation-bar">
+                <span>Maturation: {Math.round((companion.maturation_progress || 0) * 100)}%</span>
+                <div className="meter"><div className="meter-fill" style={{ width: `${(companion.maturation_progress || 0) * 100}%` }} /></div>
+              </div>
+            )}
             {companion.current_state === 'on_expedition' && (
               <span className="expedition-badge">🗺️ On Expedition</span>
             )}
