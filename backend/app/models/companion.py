@@ -16,10 +16,18 @@ from app.models.base import Base
 SPECIES_RARITY = {
     "parasaur": "common",
     "dilo": "common",
+    "dodo": "common",
     "trike": "uncommon",
     "ptera": "uncommon",
-    "raptor": "rare",
-    "rex": "epic",
+    "raptor": "uncommon",
+    "stego": "rare",
+    "carno": "rare",
+    "ankylo": "rare",
+    "argent": "epic",
+    "allo": "epic",
+    "mantis": "epic",
+    "rex": "legendary",
+    "spino": "legendary",
 }
 DEFAULT_RARITY = "common"
 
@@ -27,10 +35,18 @@ DEFAULT_RARITY = "common"
 SPECIES_DIET = {
     "parasaur": "herbivore",
     "dilo": "carnivore",
+    "dodo": "herbivore",
     "trike": "herbivore",
     "ptera": "carnivore",
     "raptor": "carnivore",
+    "stego": "herbivore",
+    "carno": "carnivore",
+    "ankylo": "herbivore",
+    "argent": "carnivore",
+    "allo": "carnivore",
+    "mantis": "carnivore",
     "rex": "carnivore",
+    "spino": "carnivore",
 }
 DEFAULT_DIET = "omnivore"
 

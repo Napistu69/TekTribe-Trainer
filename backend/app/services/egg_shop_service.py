@@ -23,6 +23,7 @@ EGG_SHOP_PRICING = {
     "uncommon": 150,
     "rare": 400,
     "epic": 750,
+    "legendary": 1500,
 }
 
 # Daily stock per tier
@@ -31,6 +32,7 @@ EGG_SHOP_STOCK = {
     "uncommon": 3,
     "rare": 2,
     "epic": 1,
+    "legendary": 1,
 }
 
 # 5% chance to upgrade to next tier
@@ -48,7 +50,7 @@ def get_egg_shop_offerings() -> list[dict]:
             "cost": EGG_SHOP_PRICING[rarity],
             "currency": "shard",
             "daily_stock": EGG_SHOP_STOCK.get(rarity, 0),
-            "upgrade_chance": UPGRADE_CHANCE if rarity != "epic" else 0,
+            "upgrade_chance": UPGRADE_CHANCE if rarity != "legendary" else 0,
         })
     return offerings
 
