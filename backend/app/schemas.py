@@ -28,33 +28,6 @@ class UserResponse(BaseModel):
     email: str
     created_at: datetime
     lockdown_graduated: bool
-    lockdown_started_at: datetime
-    care_action_count: int
-
-
-# === Egg Schemas ===
-
-class EggResponse(BaseModel):
-    """Egg data for list endpoints. Species is hidden until hatch."""
-    uuid: str
-    rarity: str
-    source: str
-    pulled_at: datetime
-    incubation_started_at: Optional[datetime] = None
-    temperature: float
-    stability: float
-
-
-class EggDetailResponse(BaseModel):
-    """Detailed egg data for single egg endpoint."""
-    uuid: str
-    rarity: str
-    source: str
-    pulled_at: datetime
-    hatched: bool
-    incubation_started_at: Optional[datetime] = None
-    temperature: float
-    stability: float
 
 
 # === Companion Schemas ===
@@ -90,26 +63,65 @@ class CompanionResponse(BaseModel):
     current_state: str
     health_status: float
     breeding_cooldown_until: Optional[str] = None
-    on_chain_record: Optional[dict] = None
-    care_state: dict = {}
 
 
-# === Training Schemas ===
+class CompanionReleaseRequest(BaseModel):
+    """Request body for POST /companions/{uuid}/release."""
+    confirm: bool = False
 
-class TrainingSubmitRequest(BaseModel):
-    """Request body for POST /training/submit."""
+
+class CompanionNameRequest(BaseModel):
+    """Request body for PATCH /companions/{uuid}/name."""
+    name: str = Field(..., min_length=1, max_length=32)
+
+
+# === Egg Schemas ===
+
+class EggResponse(BaseModel):
+    """Egg data."""
+    uuid: str
+    user_id: str
+    species: str
+    rarity: str
+    source: str
+    pulled_at: str
+    hatched: bool
+    temperature: float
+    stability: float
+
+
+class EggHatchRequest(BaseModel):
+    """Request body for POST /eggs/{uuid}/hatch."""
+    pass
+
+
+# === Care Schemas ===
+
+class CareStateResponse(BaseModel):
+    """Care state data."""
     companion_uuid: str
-    game_id: str
-    score: float = Field(..., ge=0, le=100)
-    duration_seconds: float = Field(..., ge=5, le=300)
+    hunger: float
+    energy: float
+    morale: float
+    cleanliness: float
+    last_fed: Optional[str] = None
+    last_cleaned: Optional[str] = None
+    last_imprint: Optional[str] = None
+    last_rest: Optional[str] = None
+    imprint_quality: int = 0
 
 
-class TrainingResultResponse(BaseModel):
-    """Response body for POST /training/submit."""
-    score: float
-    stat_gains: dict
-    imprint_gained: int
-    dust_earned: int
+class CareActionRequest(BaseModel):
+    """Request body for POST /care/{companion_uuid}/{action}."""
+    action: str
+
+
+class CareCooldownsResponse(BaseModel):
+    """Response for GET /care/{companion_uuid}/cooldowns."""
+    imprint_available: bool
+    imprint_cooldown_remaining: int
+    rest_available: bool
+    rest_cooldown_remaining: int
 
 
 # === Economy Schemas ===
@@ -117,9 +129,9 @@ class TrainingResultResponse(BaseModel):
 class EconomyBalanceResponse(BaseModel):
     """Response body for GET /economy/balance."""
     dust: int
-    shard: int = 0
-    cuboid: int = 0
-    ele: int = 0
+    shard: int
+    cuboid: int
+    ele: int
 
 
 class EconomyHistoryResponse(BaseModel):
@@ -162,3 +174,32 @@ class ExpeditionResponse(BaseModel):
     status: str
     risk_level: float
     result: dict | None = None
+
+
+# === Forge Schemas ===
+
+class ForgeOptionResponse(BaseModel):
+    """Forge refinement option."""
+    id: str
+    input_currency: str
+    input_amount: int
+    output_currency: str
+    output_amount: int
+
+
+class ForgeRefineRequest(BaseModel):
+    """Request body for POST /forge/refine."""
+    refinement_type: str  # "dust_to_shard", "shard_to_cuboid", "cuboid_to_ele"
+    times: int = Field(default=1, ge=1, le=100)
+
+
+class ForgeRefineResponse(BaseModel):
+    """Response body for POST /forge/refine."""
+    success: bool
+    refinement_type: str
+    input_currency: str
+    input_amount: int
+    output_currency: str
+    output_amount: int
+    times: int
+    new_balances: dict

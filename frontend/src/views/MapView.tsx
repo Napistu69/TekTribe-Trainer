@@ -41,8 +41,8 @@ const STATIONS: Station[] = [
     name: 'Forge',
     description: 'Refine Dust into Shards and Cuboids',
     image: '/assets/Habitat & Camp/forge.png',
-    locked: true,
-    unlockHint: 'Complete 5 hatches to unlock',
+    route: '/forge',
+    locked: false,
   },
   {
     id: 'training_grounds',

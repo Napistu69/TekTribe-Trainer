@@ -2530,6 +2530,140 @@ select {
   cursor: not-allowed;
 }
 
+/* Forge View */
+.forge-view {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.forge-description {
+  color: var(--color-text-secondary);
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.forge-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.forge-option {
+  background: var(--color-bg-card);
+  border: 2px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.forge-option:hover {
+  border-color: var(--color-teal);
+}
+
+.forge-option.selected {
+  border-color: var(--color-teal);
+  background: rgba(0, 212, 255, 0.1);
+}
+
+.forge-option-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.forge-option-header .currency-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.forge-arrow {
+  color: var(--color-text-secondary);
+  font-size: 1.2rem;
+}
+
+.forge-option-label {
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+
+.forge-option-rate {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+.forge-refine-panel {
+  background: var(--color-bg-card);
+  border: 2px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.forge-refine-panel h3 {
+  margin-bottom: 1rem;
+  color: var(--color-cyan);
+}
+
+.forge-calc {
+  margin-bottom: 1rem;
+}
+
+.forge-calc-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.forge-times {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.forge-times input {
+  width: 80px;
+  padding: 0.5rem;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  color: var(--color-text);
+  text-align: center;
+}
+
+.forge-refine-btn {
+  width: 100%;
+}
+
+.forge-result {
+  background: rgba(0, 212, 255, 0.1);
+  border: 1px solid var(--color-teal);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.forge-result h4 {
+  color: var(--color-teal);
+  margin-bottom: 0.5rem;
+}
+
+.forge-error {
+  background: rgba(255, 68, 68, 0.1);
+  border: 1px solid rgba(255, 68, 68, 0.4);
+  border-radius: 8px;
+  padding: 1rem;
+  color: #ff4444;
+}
+
 /* Expedition Badge */
 .expedition-badge {
   display: inline-block;

@@ -10,6 +10,7 @@ import { TrainingView } from './views/TrainingView';
 import { ExploreView } from './views/ExploreView';
 import { EconomyView } from './views/EconomyView';
 import { OverseerView } from './views/OverseerView';
+import { ForgeView } from './views/ForgeView';
 import { MapView } from './views/MapView';
 import { LoginScreen } from './components/auth/LoginScreen';
 import { AuthGuard } from './components/auth/AuthGuard';
@@ -49,6 +50,7 @@ function App() {
           <Route path="training" element={<TrainingView />} />
           <Route path="explore" element={<ExploreView />} />
           <Route path="economy" element={<EconomyView />} />
+          <Route path="forge" element={<ForgeView />} />
           <Route path="overseer" element={<OverseerView />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
