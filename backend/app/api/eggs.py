@@ -62,10 +62,12 @@ async def pull_egg(
     
     return EggResponse(
         uuid=str(egg.uuid),
+        user_id=egg.user_id,
+        species=egg.species,
         rarity=egg.rarity,
         source=egg.source,
-        pulled_at=egg.pulled_at,
-        incubation_started_at=egg.incubation_started_at,
+        pulled_at=egg.pulled_at.isoformat(),
+        hatched=egg.hatched,
         temperature=egg.temperature,
         stability=egg.stability,
     )
@@ -89,10 +91,12 @@ async def list_eggs(
     return [
         EggResponse(
             uuid=str(e.uuid),
+            user_id=e.user_id,
+            species=e.species,
             rarity=e.rarity,
             source=e.source,
-            pulled_at=e.pulled_at,
-            incubation_started_at=e.incubation_started_at,
+            pulled_at=e.pulled_at.isoformat(),
+            hatched=e.hatched,
             temperature=e.temperature,
             stability=e.stability,
         )
@@ -120,11 +124,13 @@ async def get_egg(
     
     return EggDetailResponse(
         uuid=str(egg.uuid),
+        user_id=egg.user_id,
+        species=egg.species,
         rarity=egg.rarity,
         source=egg.source,
-        pulled_at=egg.pulled_at,
+        pulled_at=egg.pulled_at.isoformat(),
         hatched=egg.hatched,
-        incubation_started_at=egg.incubation_started_at,
+        incubation_started_at=egg.incubation_started_at.isoformat() if egg.incubation_started_at else None,
         temperature=egg.temperature,
         stability=egg.stability,
     )
@@ -145,6 +151,9 @@ async def release_egg(
         raise HTTPException(status_code=400, detail=str(e))
     
     return {"status": "released", "shards_gained": shards}
+
+
+@router.post("/{egg_uuid}/incubate")
 async def start_incubation(
     egg_uuid: str,
     authorization: str = Header(None, alias="Authorization"),

@@ -93,6 +93,8 @@ class EggResponse(BaseModel):
 class EggDetailResponse(BaseModel):
     """Detailed egg data (for single egg endpoint)."""
     uuid: str
+    user_id: str
+    species: str
     rarity: str
     source: str
     pulled_at: str
