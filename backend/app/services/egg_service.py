@@ -17,15 +17,23 @@ with open(ROSTER_PATH) as f:
     ROSTER = json.load(f)
 
 CREATURES = ROSTER["creatures"]
-RARITY_ORDER = ROSTER["rarity_order"]
+RARITY_ORDER = ["common", "uncommon", "rare", "epic", "legendary"]
 PITY_THRESHOLD = ROSTER["pity_threshold"]
 PITY_MIN_RARITY = ROSTER["pity_minimum_rarity"]
 LOCKDOWN_MAX_EGGS = ROSTER["lockdown_max_eggs"]
 LOCKDOWN_DAILY_LIMIT = ROSTER["lockdown_daily_limit"]
 
-# Build weighted list
-WEIGHTS = {c["creature_id"]: c["hatch_rate_percent"] for c in CREATURES}
-TOTAL_WEIGHT = int(sum(WEIGHTS.values()))  # int() required: secrets.randbelow needs int
+# Rarity pull rates for hatchery (Common → Legendary, no Ascendant/Mythic yet)
+# Rates: Common 50%, Uncommon 35%, Rare 10%, Epic 4%, Legendary 1%
+RARITY_PULL_RATES = {
+    "common": 50,
+    "uncommon": 35,
+    "rare": 10,
+    "epic": 4,
+    "legendary": 1,
+}
+
+TOTAL_RARITY_WEIGHT = int(sum(RARITY_PULL_RATES.values()))  # 100
 
 
 def _get_pity_min_index() -> int:
@@ -38,15 +46,23 @@ def _is_rarity_at_least(rarity: str, minimum: str) -> bool:
     return RARITY_ORDER.index(rarity) >= RARITY_ORDER.index(minimum)
 
 
-def _weighted_random_select() -> dict:
-    """Select a creature using cryptographically secure weighted random."""
-    rand = secrets.randbelow(TOTAL_WEIGHT)
+def _roll_rarity() -> str:
+    """Roll for egg rarity based on pull rates."""
+    rand = secrets.randbelow(TOTAL_RARITY_WEIGHT)
     cumulative = 0
-    for creature in CREATURES:
-        cumulative += creature["hatch_rate_percent"]
+    for rarity in RARITY_ORDER:
+        cumulative += RARITY_PULL_RATES[rarity]
         if rand < cumulative:
-            return creature
-    return CREATURES[-1]  # Fallback
+            return rarity
+    return RARITY_ORDER[-1]  # Fallback
+
+
+def _select_creature_from_rarity(rarity: str) -> dict:
+    """Select a random creature from a given rarity pool."""
+    pool = [c for c in CREATURES if c["rarity"] == rarity]
+    if not pool:
+        pool = CREATURES
+    return secrets.choice(pool)
 
 
 async def _count_user_pulls(db: AsyncSession, user_id: str) -> int:
@@ -63,10 +79,9 @@ async def _count_pulls_since_rare(db: AsyncSession, user_id: str) -> int:
         select(Egg).where(Egg.user_id == user_id).order_by(Egg.pulled_at.desc())
     )
     eggs = result.scalars().all()
-    
+
     count = 0
     for egg in eggs:
-        # Check if this egg was Rare+
         creature = next((c for c in CREATURES if c["creature_id"] == egg.species), None)
         if creature and _is_rarity_at_least(creature["rarity"], PITY_MIN_RARITY):
             break
@@ -88,40 +103,43 @@ async def _count_eggs_today(db: AsyncSession, user_id: str) -> int:
 
 async def can_pull(db: AsyncSession, user_id: str) -> tuple[bool, Optional[str]]:
     """Check if user can pull an egg. Returns (allowed, reason)."""
-    # Check lockdown limits
     from app.services.lockdown_service import can_perform
     if not await can_perform(user_id, "egg_pull"):
         return False, "Lockdown egg limit reached (max 3 during lockdown, 1 per day)"
-    
+
     return True, None
 
 
 async def pull_egg(db: AsyncSession, user_id: str, source: str = "starter") -> Egg:
-    """Pull a new egg. Server-side RNG determines species.
-    
+    """Pull a new egg. Server-side RNG determines rarity then species.
+
+    Rarity rates: Common 50%, Uncommon 35%, Rare 10%, Epic 4%, Legendary 1%
     Pity rule: guaranteed Rare+ within 10 pulls.
     """
     # Check pity counter
     pulls_since_rare = await _count_pulls_since_rare(db, user_id)
-    
+
     if pulls_since_rare >= PITY_THRESHOLD - 1:
         # Pity triggered — guarantee Rare+
-        rare_creatures = [c for c in CREATURES if _is_rarity_at_least(c["rarity"], PITY_MIN_RARITY)]
-        weights = [c["hatch_rate_percent"] for c in rare_creatures]
+        pity_rarities = [r for r in RARITY_ORDER if _is_rarity_at_least(r, PITY_MIN_RARITY)]
+        weights = [RARITY_PULL_RATES[r] for r in pity_rarities]
         total = int(sum(weights))
         rand = secrets.randbelow(total)
         cumulative = 0
-        selected = rare_creatures[-1]
+        selected_rarity = pity_rarities[-1]
         for i, w in enumerate(weights):
             cumulative += w
             if rand < cumulative:
-                selected = rare_creatures[i]
+                selected_rarity = pity_rarities[i]
                 break
     else:
-        # Normal pull
-        selected = _weighted_random_select()
-    
-    # Create egg (species hidden until hatch)
+        # Normal pull — roll rarity
+        selected_rarity = _roll_rarity()
+
+    # Select random creature from rarity pool
+    selected = _select_creature_from_rarity(selected_rarity)
+
+    # Create egg
     egg = Egg(
         user_id=user_id,
         species=selected["creature_id"],
@@ -151,17 +169,17 @@ async def release_egg(db: AsyncSession, user_id: str, egg_uuid: str) -> Optional
     egg = result.scalar_one_or_none()
     if not egg or egg.hatched:
         return None
-    
+
     creature = next((c for c in CREATURES if c["creature_id"] == egg.species), None)
     if not creature:
         return None
-    
+
     shards = creature["duplicate_yield_shards"]
-    
+
     await db.delete(egg)
-    
+
     from app.services.currency_service import award_shards
     await award_shards(user_id, shards, "release")
-    
+
     await db.commit()
     return shards

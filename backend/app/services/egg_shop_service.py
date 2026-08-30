@@ -1,4 +1,4 @@
-"""Egg shop service — handles egg purchases by rarity."""
+"""Egg shop service — handles egg purchases by rarity tier."""
 import json
 import secrets
 from datetime import datetime, timezone
@@ -15,7 +15,7 @@ with open(ROSTER_PATH) as f:
     ROSTER = json.load(f)
 
 CREATURES = ROSTER["creatures"]
-RARITY_ORDER = ROSTER["rarity_order"]
+RARITY_ORDER = ["common", "uncommon", "rare", "epic", "legendary"]
 
 # Egg shop pricing (shards)
 EGG_SHOP_PRICING = {
@@ -56,18 +56,22 @@ def get_egg_shop_offerings() -> list[dict]:
 
 
 async def purchase_egg(db: AsyncSession, user_id: str, rarity: str) -> dict:
-    """Purchase an egg by rarity tier."""
+    """Purchase an egg by rarity tier.
+    
+    Companion rarity matches egg tier with 5% chance to upgrade to next tier.
+    e.g. common egg → random common companion, 5% chance for uncommon.
+    """
     if rarity not in EGG_SHOP_PRICING:
         return {"success": False, "error": "Invalid rarity tier"}
-    
+
     cost = EGG_SHOP_PRICING[rarity]
-    
+
     # Check shard balance
     from app.services.currency_service import get_balance, spend_shards
     balance = await get_balance(user_id)
     if not balance or balance.shard_balance < cost:
         return {"success": False, "error": "Insufficient shards"}
-    
+
     # Check daily stock
     today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
     result = await db.execute(
@@ -81,26 +85,26 @@ async def purchase_egg(db: AsyncSession, user_id: str, rarity: str) -> dict:
     eggs_today = len(result.scalars().all())
     if eggs_today >= EGG_SHOP_STOCK.get(rarity, 0):
         return {"success": False, "error": f"Daily stock for {rarity} eggs exhausted"}
-    
+
     # Spend shards
     success, new_balance = await spend_shards(user_id, cost, f"egg_shop_{rarity}")
     if not success:
         return {"success": False, "error": "Failed to spend shards"}
-    
+
     # Roll for upgrade (5% chance to get next tier)
     actual_rarity = rarity
-    roll = secrets.randbelow(100) / 100
-    if roll < UPGRADE_CHANCE and rarity != "epic":
+    roll = secrets.randbelow(100)
+    if roll < int(UPGRADE_CHANCE * 100) and rarity != "legendary":
         rarity_idx = RARITY_ORDER.index(rarity)
         if rarity_idx < len(RARITY_ORDER) - 1:
             actual_rarity = RARITY_ORDER[rarity_idx + 1]
-    
-    # Select random creature from tier
+
+    # Select random creature from tier pool
     tier_creatures = [c for c in CREATURES if c["rarity"] == actual_rarity]
     if not tier_creatures:
         tier_creatures = CREATURES
     selected = secrets.choice(tier_creatures)
-    
+
     # Create egg
     egg = Egg(
         user_id=user_id,
@@ -115,7 +119,7 @@ async def purchase_egg(db: AsyncSession, user_id: str, rarity: str) -> dict:
     db.add(egg)
     await db.commit()
     await db.refresh(egg)
-    
+
     return {
         "success": True,
         "egg_uuid": str(egg.uuid),
