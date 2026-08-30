@@ -50,6 +50,7 @@ interface Companion {
   maturation_progress: number;
   base_stats: Record<string, number>;
   mutated_stats: Record<string, number>;
+  color_regions: Record<string, { name: string; color_id: number | null; color_name: string | null; hex: string | null }>;
   care_state: {
     hunger: number;
     energy: number;
@@ -367,6 +368,13 @@ export function NurseryView() {
               {companion.current_state === 'on_expedition' && (
                 <span className="expedition-badge">🗺️ On Expedition</span>
               )}
+            </div>
+            <div className="color-regions">
+              {Object.entries(companion.color_regions || {}).map(([regionId, region]) => (
+                <div key={regionId} className="color-region-swatch" title={`${region.name || regionId}${region.color_name ? ` - ${region.color_name}` : ''}`}>
+                  <div className="color-region-fill" style={{ background: region.hex || '#333' }} />
+                </div>
+              ))}
             </div>
             {companion.display_life_stage !== 'adult' && (
               <div className="maturation-bar">

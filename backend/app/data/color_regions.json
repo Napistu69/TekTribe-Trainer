@@ -1,0 +1,203 @@
+{
+  "species": {
+    "parasaur": {
+      "display_name": "Parasaurolophus",
+      "regions": {
+        "R0": {"name": "Body", "color_id": 33, "color": "Medium Brown"},
+        "R1": {"name": "Frill Edge", "color_id": 37, "color": "Pale Beige"},
+        "R2": {"name": "Crest", "color_id": 30, "color": "Light Purple"},
+        "R3": {"name": "Beak and Frill", "color_id": 41, "color": "Dark Grey"},
+        "R4": {"name": "Patterning", "color_id": 71, "color": "Dark Red-Brown"},
+        "R5": {"name": "Belly", "color_id": 77, "color": "Dark Brown"}
+      }
+    },
+    "dilo": {
+      "display_name": "Dilophosaurus",
+      "regions": {
+        "R0": {"name": "Body", "color_id": 34, "color": "Dark Brown"},
+        "R1": {"name": "Spike Tips", "color_id": 21, "color": "Pale Pink"},
+        "R2": {"name": "Spine and Spike Base", "color_id": 42, "color": "Medium Brown"},
+        "R3": {"name": "Back and Face", "color_id": 43, "color": "Light Brown"},
+        "R4": {"name": "Frill, Crest and Belly", "color_id": 49, "color": "Light Purple"},
+        "R5": {"name": "Legs and Arms", "color_id": 76, "color": "Orange"}
+      }
+    },
+    "dodo": {
+      "display_name": "Dodo",
+      "regions": {
+        "R0": {"name": "Body", "color_id": 33, "color": "Medium Brown"},
+        "R1": {"name": "Beak", "color_id": 32, "color": "Light Tan"},
+        "R2": {"name": "Forehead, Neck and Feet", "color_id": 41, "color": "Dark Grey"},
+        "R3": {"name": "Face", "color_id": 37, "color": "Pale Beige"},
+        "R4": {"name": "Head", "color_id": 30, "color": "Light Purple"},
+        "R5": {"name": "Wings and Patterning", "color_id": 77, "color": "Dark Brown"}
+      }
+    },
+    "trike": {
+      "display_name": "Triceratops",
+      "regions": {
+        "R0": {"name": "Main Body", "color_id": 35, "color": "Very Dark Brown"},
+        "R1": {"name": "unused", "color_id": null, "color": null},
+        "R2": {"name": "Scale Edges", "color_id": 43, "color": "Light Brown"},
+        "R3": {"name": "Top", "color_id": 40, "color": "Medium Grey"},
+        "R4": {"name": "Back", "color_id": 41, "color": "Dark Grey"},
+        "R5": {"name": "Belly", "color_id": 74, "color": "Orange"}
+      }
+    },
+    "ptera": {
+      "display_name": "Pteranodon",
+      "regions": {
+        "R0": {"name": "Patterning", "color_id": 40, "color": "Medium Grey"},
+        "R1": {"name": "Face, Crest and Hands", "color_id": 37, "color": "Pale Beige"},
+        "R2": {"name": "Inner Crest", "color_id": 30, "color": "Light Purple"},
+        "R3": {"name": "Wing Base", "color_id": 41, "color": "Dark Grey"},
+        "R4": {"name": "Wing Membrane", "color_id": 71, "color": "Dark Red-Brown"},
+        "R5": {"name": "Body", "color_id": 33, "color": "Medium Brown"}
+      }
+    },
+    "raptor": {
+      "display_name": "Raptor",
+      "regions": {
+        "R0": {"name": "Body Accent", "color_id": 33, "color": "Medium Brown"},
+        "R1": {"name": "Feather Tips", "color_id": 21, "color": "Pale Pink"},
+        "R2": {"name": "unused", "color_id": null, "color": null},
+        "R3": {"name": "Body and Feathers", "color_id": 42, "color": "Medium Brown"},
+        "R4": {"name": "Spine", "color_id": 49, "color": "Light Purple"},
+        "R5": {"name": "Belly", "color_id": 76, "color": "Orange"}
+      }
+    },
+    "stego": {
+      "display_name": "Stegosaurus",
+      "regions": {
+        "R0": {"name": "Body", "color_id": 34, "color": "Dark Brown"},
+        "R1": {"name": "Plate/Spike Base", "color_id": 40, "color": "Medium Grey"},
+        "R2": {"name": "Back", "color_id": 41, "color": "Dark Grey"},
+        "R3": {"name": "Spine", "color_id": 43, "color": "Light Brown"},
+        "R4": {"name": "Plate Edge and Spike Tips", "color_id": 74, "color": "Orange"},
+        "R5": {"name": "Belly", "color_id": 77, "color": "Dark Brown"}
+      }
+    },
+    "carno": {
+      "display_name": "Carnotaurus",
+      "regions": {
+        "R0": {"name": "Body", "color_id": 35, "color": "Very Dark Brown"},
+        "R1": {"name": "unused", "color_id": null, "color": null},
+        "R2": {"name": "unused", "color_id": null, "color": null},
+        "R3": {"name": "Horns", "color_id": 38, "color": "Light Pinkish Beige"},
+        "R4": {"name": "Patterning", "color_id": 43, "color": "Light Brown"},
+        "R5": {"name": "Belly", "color_id": 71, "color": "Dark Red-Brown"}
+      }
+    },
+    "ankylo": {
+      "display_name": "Ankylosaurus",
+      "regions": {
+        "R0": {"name": "Shell and Plates", "color_id": 41, "color": "Dark Grey"},
+        "R1": {"name": "unused", "color_id": null, "color": null},
+        "R2": {"name": "unused", "color_id": null, "color": null},
+        "R3": {"name": "Spikes and Claws", "color_id": 40, "color": "Medium Grey"},
+        "R4": {"name": "Shell Patterning", "color_id": 36, "color": "Light Grey"},
+        "R5": {"name": "Underside", "color_id": 77, "color": "Dark Brown"}
+      }
+    },
+    "argent": {
+      "display_name": "Argentavis",
+      "regions": {
+        "R0": {"name": "Body", "color_id": 40, "color": "Medium Grey"},
+        "R1": {"name": "Wing Tips", "color_id": 37, "color": "Pale Beige"},
+        "R2": {"name": "Legs", "color_id": 41, "color": "Dark Grey"},
+        "R3": {"name": "unused", "color_id": null, "color": null},
+        "R4": {"name": "Head Feathers", "color_id": 30, "color": "Light Purple"},
+        "R5": {"name": "Underside", "color_id": 76, "color": "Orange"}
+      }
+    },
+    "allo": {
+      "display_name": "Allosaurus",
+      "regions": {
+        "R0": {"name": "Body", "color_id": 34, "color": "Dark Brown"},
+        "R1": {"name": "unused", "color_id": null, "color": null},
+        "R2": {"name": "unused", "color_id": null, "color": null},
+        "R3": {"name": "unused", "color_id": null, "color": null},
+        "R4": {"name": "Spine", "color_id": 49, "color": "Light Purple"},
+        "R5": {"name": "Belly", "color_id": 71, "color": "Dark Red-Brown"}
+      }
+    },
+    "mantis": {
+      "display_name": "Mantis",
+      "regions": {
+        "R0": {"name": "Body", "color_id": 33, "color": "Medium Brown"},
+        "R1": {"name": "unused", "color_id": null, "color": null},
+        "R2": {"name": "unused", "color_id": null, "color": null},
+        "R3": {"name": "unused", "color_id": null, "color": null},
+        "R4": {"name": "Top", "color_id": 40, "color": "Medium Grey"},
+        "R5": {"name": "Underside", "color_id": 74, "color": "Orange"}
+      }
+    },
+    "rex": {
+      "display_name": "Tyrannosaurus Rex",
+      "regions": {
+        "R0": {"name": "Body", "color_id": 35, "color": "Very Dark Brown"},
+        "R1": {"name": "unused", "color_id": null, "color": null},
+        "R2": {"name": "unused", "color_id": null, "color": null},
+        "R3": {"name": "Spine", "color_id": 43, "color": "Light Brown"},
+        "R4": {"name": "Back", "color_id": 41, "color": "Dark Grey"},
+        "R5": {"name": "Belly", "color_id": 77, "color": "Dark Brown"}
+      }
+    },
+    "spino": {
+      "display_name": "Spinosaurus",
+      "regions": {
+        "R0": {"name": "Body", "color_id": 34, "color": "Dark Brown"},
+        "R1": {"name": "unused", "color_id": null, "color": null},
+        "R2": {"name": "unused", "color_id": null, "color": null},
+        "R3": {"name": "Sail Edge", "color_id": 41, "color": "Dark Grey"},
+        "R4": {"name": "Face, Tail, Inner Sail, and Frill", "color_id": 49, "color": "Light Purple"},
+        "R5": {"name": "Belly", "color_id": 76, "color": "Orange"}
+      }
+    }
+  },
+  "color_reference": {
+    "8": "Light Grey",
+    "14": "Dark Muted",
+    "17": "Light All",
+    "21": "Pale Pink",
+    "22": "Light All",
+    "23": "Light Greenish Beige",
+    "24": "Dark Muted",
+    "30": "Light Purple",
+    "31": "Dark Muted",
+    "32": "Light Tan",
+    "33": "Medium Brown",
+    "34": "Dark Brown",
+    "35": "Very Dark Brown",
+    "36": "Light Grey",
+    "37": "Pale Beige",
+    "38": "Light Pinkish Beige",
+    "39": "Light Tan",
+    "40": "Medium Grey",
+    "41": "Dark Grey",
+    "42": "Medium Brown",
+    "43": "Light Brown",
+    "49": "Light Purple",
+    "51": "Light All",
+    "52": "Light All",
+    "56": "Dark Brown",
+    "62": "Dark Grey",
+    "63": "Medium Grey",
+    "64": "Light Grey",
+    "65": "Medium Grey",
+    "71": "Dark Red-Brown",
+    "74": "Orange",
+    "75": "Orange",
+    "76": "Orange",
+    "77": "Dark Brown",
+    "78": "Dark Brown",
+    "80": "Light Grey",
+    "81": "Medium Grey",
+    "82": "Medium Grey",
+    "96": "Dark Muted",
+    "97": "Dark Muted",
+    "98": "Dark Muted",
+    "99": "Dark Muted",
+    "100": "Pale Off-White/Cream"
+  }
+}

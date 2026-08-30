@@ -35,7 +35,7 @@ async def hatch_egg(db: AsyncSession, user_id: str, egg_uuid: str) -> Optional[C
     # Generate companion data
     base_stats = genetics_service.generate_base_stats(species)
     personality_type, personality_traits, behavioral_quirks = genetics_service.generate_personality(species)
-    color_regions = genetics_service.generate_color_regions()
+    color_regions = genetics_service.generate_color_regions(species)
     hidden_potential = await genetics_service.generate_hidden_potential()
     biological_sex = genetics_service.generate_biological_sex()
     

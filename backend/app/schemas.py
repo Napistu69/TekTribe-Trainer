@@ -48,9 +48,9 @@ class CompanionResponse(BaseModel):
     life_stage: str
     display_life_stage: str
     maturation_progress: float
+    color_regions: dict
     base_stats: dict
     mutated_stats: dict
-    color_regions: dict
     seasonal_pattern: Optional[str] = None
     personality_type: str
     personality_traits: list
