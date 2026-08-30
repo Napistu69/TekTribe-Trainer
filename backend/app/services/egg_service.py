@@ -25,7 +25,7 @@ LOCKDOWN_DAILY_LIMIT = ROSTER["lockdown_daily_limit"]
 
 # Build weighted list
 WEIGHTS = {c["creature_id"]: c["hatch_rate_percent"] for c in CREATURES}
-TOTAL_WEIGHT = sum(WEIGHTS.values())
+TOTAL_WEIGHT = int(sum(WEIGHTS.values()))  # int() required: secrets.randbelow needs int
 
 
 def _get_pity_min_index() -> int:
@@ -108,7 +108,7 @@ async def pull_egg(db: AsyncSession, user_id: str, source: str = "starter") -> E
         # Pity triggered — guarantee Rare+
         rare_creatures = [c for c in CREATURES if _is_rarity_at_least(c["rarity"], PITY_MIN_RARITY)]
         weights = [c["hatch_rate_percent"] for c in rare_creatures]
-        total = sum(weights)
+        total = int(sum(weights))
         rand = secrets.randbelow(total)
         cumulative = 0
         selected = rare_creatures[-1]
