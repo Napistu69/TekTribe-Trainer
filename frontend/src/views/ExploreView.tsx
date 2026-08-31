@@ -42,6 +42,17 @@ interface Companion {
   imprint_level: number;
 }
 
+interface BiomeProgress {
+  zone_id: string;
+  criteria_type: string;
+  description: string;
+  icon: string;
+  current: number;
+  threshold: number;
+  unlocked: boolean;
+  progress_percent: number;
+}
+
 interface Biome {
   zone_id: string;
   name: string;
@@ -51,15 +62,21 @@ interface Biome {
   in_phase1: boolean;
   imagePrefix: string;
   rewards: string[];
+  unlock_criteria?: {
+    type: string;
+    threshold: number;
+    description: string;
+    icon: string;
+  };
 }
 
 const BIOMES: Biome[] = [
   { zone_id: 'verdant_hollow', name: 'Verdant Hollow', description: 'A lush forest clearing with gentle creatures and abundant resources. Perfect for new companions.', resources: ['Dust', 'Meat', 'Berries', 'Common Eggs'], risk_level: 0.125, in_phase1: true, imagePrefix: 'Verdant_Hollow', rewards: ['Dust', 'Meat', 'Berries', 'Common Egg', 'Uncommon Egg'] },
-  { zone_id: 'mirelands', name: 'Mirelands', description: 'A swampy wetland teeming with rare herbs and hidden dangers.', resources: ['Dust', 'Shards', 'Jerky', 'Crops', 'Uncommon Eggs'], risk_level: 0.3, in_phase1: false, imagePrefix: 'Mirelands', rewards: ['Dust', 'Shards', 'Jerky', 'Crops', 'Uncommon Egg', 'Rare Egg'] },
-  { zone_id: 'stonecrest', name: 'Stonecrest', description: 'Mountain peaks offering rare minerals and challenging climbs.', resources: ['Dust', 'Shards', 'Cuboids', 'Rare Eggs'], risk_level: 0.5, in_phase1: false, imagePrefix: 'Stonecrest', rewards: ['Dust', 'Shards', 'Cuboids', 'Rare Egg', 'Epic Egg'] },
-  { zone_id: 'emberfall', name: 'Emberfall', description: 'Volcanic terrain with rare minerals and extreme hazards.', resources: ['Dust', 'Shards', 'Cuboids', 'Sponge', 'Rare Eggs'], risk_level: 0.7, in_phase1: false, imagePrefix: 'Emberfall', rewards: ['Dust', 'Shards', 'Cuboids', 'Sponge', 'Rare Egg', 'Epic Egg'] },
-  { zone_id: 'tek_ruins', name: 'Tek-Ruins', description: 'Ancient ruins filled with Oracle fragments and technological remnants.', resources: ['Dust', 'Shards', 'Cuboids', 'Imprint Boost', 'Epic Eggs'], risk_level: 0.8, in_phase1: false, imagePrefix: 'Tek_Ruins', rewards: ['Dust', 'Shards', 'Cuboids', 'Imprint Boost', 'Epic Egg', 'Ascendant Egg'] },
-  { zone_id: 'void_center', name: 'Void Center', description: 'A liminal space between worlds, filled with legacy fragments and rescue signals.', resources: ['Dust', 'Shards', 'Cuboids', 'Care Kit', 'Epic Eggs'], risk_level: 0.9, in_phase1: false, imagePrefix: 'Void_Center', rewards: ['Dust', 'Shards', 'Cuboids', 'Care Kit', 'Epic Egg', 'Ascendant Egg'] },
+  { zone_id: 'mirelands', name: 'Mirelands', description: 'A swampy wetland teeming with rare herbs and hidden dangers.', resources: ['Dust', 'Shards', 'Jerky', 'Crops', 'Uncommon Eggs'], risk_level: 0.3, in_phase1: false, imagePrefix: 'Mirelands', rewards: ['Dust', 'Shards', 'Jerky', 'Crops', 'Uncommon Egg', 'Rare Egg'], unlock_criteria: { type: 'adult_companions', threshold: 1, description: 'Raise your first Adult companion', icon: '🦕' } },
+  { zone_id: 'stonecrest', name: 'Stonecrest', description: 'Mountain peaks offering rare minerals and challenging climbs.', resources: ['Dust', 'Shards', 'Cuboids', 'Rare Eggs'], risk_level: 0.5, in_phase1: false, imagePrefix: 'Stonecrest', rewards: ['Dust', 'Shards', 'Cuboids', 'Rare Egg', 'Epic Egg'], unlock_criteria: { type: 'dust_spent', threshold: 1000, description: 'Spend 1,000 Dust total', icon: '✨' } },
+  { zone_id: 'emberfall', name: 'Emberfall', description: 'Volcanic terrain with rare minerals and extreme hazards.', resources: ['Dust', 'Shards', 'Cuboids', 'Sponge', 'Rare Eggs'], risk_level: 0.7, in_phase1: false, imagePrefix: 'Emberfall', rewards: ['Dust', 'Shards', 'Cuboids', 'Sponge', 'Rare Egg', 'Epic Egg'], unlock_criteria: { type: 'shards_spent', threshold: 1000, description: 'Spend 1,000 Shards total', icon: '💎' } },
+  { zone_id: 'tek_ruins', name: 'Tek Ruins', description: 'Ancient ruins filled with Oracle fragments and technological remnants.', resources: ['Dust', 'Shards', 'Cuboids', 'Imprint Boost', 'Epic Eggs'], risk_level: 0.8, in_phase1: false, imagePrefix: 'Tek_Ruins', rewards: ['Dust', 'Shards', 'Cuboids', 'Imprint Boost', 'Epic Egg', 'Ascendant Egg'], unlock_criteria: { type: 'expeditions_completed', threshold: 250, description: 'Complete 250 expeditions', icon: '🗺️' } },
+  { zone_id: 'void_center', name: 'Void Center', description: 'A liminal space between worlds, filled with legacy fragments and rescue signals.', resources: ['Dust', 'Shards', 'Cuboids', 'Care Kit', 'Epic Eggs'], risk_level: 0.9, in_phase1: false, imagePrefix: 'Void_Center', rewards: ['Dust', 'Shards', 'Cuboids', 'Care Kit', 'Epic Egg', 'Ascendant Egg'], unlock_criteria: { type: 'expeditions_completed', threshold: 500, description: 'Complete 500 expeditions', icon: '🌌' } },
 ];
 
 const COMPANION_IMAGES: Record<string, string> = {
@@ -87,6 +104,7 @@ export function ExploreView() {
   const [expeditions, setExpeditions] = useState<Expedition[]>([]);
   const [history, setHistory] = useState<Expedition[]>([]);
   const [companions, setCompanions] = useState<Companion[]>([]);
+  const [biomeProgress, setBiomeProgress] = useState<Record<string, BiomeProgress>>({});
   const [loading, setLoading] = useState(false);
   const [now, setNow] = useState(Date.now());
   const [selectedCompanions, setSelectedCompanions] = useState<string[]>([]);
@@ -147,10 +165,25 @@ export function ExploreView() {
     }
   };
 
+  const fetchBiomeProgress = async () => {
+    if (!sessionToken) return;
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/biomes/progress`, {
+        headers: { Authorization: `Bearer ${sessionToken}` },
+      });
+      if (!response.ok) return;
+      const data = await response.json();
+      if (mountedRef.current) setBiomeProgress(data.biomes || {});
+    } catch (err) {
+      console.error('Failed to fetch biome progress:', err);
+    }
+  };
+
   useEffect(() => {
     fetchExpeditions();
     fetchHistory();
     fetchCompanions();
+    fetchBiomeProgress();
   }, [sessionToken]);
 
   const handleBiomeClick = (zoneId: string) => {
@@ -442,7 +475,22 @@ export function ExploreView() {
           ) : (
             <div className="locked-panel">
               <h3>🔒 Locked</h3>
-              <p>This biome is not yet accessible. Coming in a future phase.</p>
+              {selected.unlock_criteria && (
+                <div className="unlock-requirements">
+                  <span className="unlock-icon">{selected.unlock_criteria.icon}</span>
+                  <span className="unlock-desc">{selected.unlock_criteria.description}</span>
+                  {biomeProgress[selected.zone_id] && (
+                    <div className="unlock-progress-large">
+                      <div className="meter">
+                        <div className="meter-fill" style={{ width: `${biomeProgress[selected.zone_id].progress_percent}%` }} />
+                      </div>
+                      <span className="progress-text">
+                        {biomeProgress[selected.zone_id].current} / {biomeProgress[selected.zone_id].threshold}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
 
@@ -511,11 +559,13 @@ export function ExploreView() {
         {BIOMES.map(biome => {
           // Count active expeditions for this biome
           const activeCount = expeditions.filter(e => e.biome_zone === biome.zone_id).length;
+          const progress = biomeProgress[biome.zone_id];
+          const isUnlocked = biome.in_phase1 || (progress?.unlocked ?? false);
           return (
             <div
               key={biome.zone_id}
-              className={`biome-card ${!biome.in_phase1 ? 'locked' : ''} ${selectedBiome === biome.zone_id ? 'selected' : ''}`}
-              onClick={() => biome.in_phase1 && handleBiomeClick(biome.zone_id)}
+              className={`biome-card ${!isUnlocked ? 'locked' : ''} ${selectedBiome === biome.zone_id ? 'selected' : ''}`}
+              onClick={() => isUnlocked && handleBiomeClick(biome.zone_id)}
             >
               <div className="biome-image-container">
                 <img
@@ -533,7 +583,25 @@ export function ExploreView() {
                 <div className="biome-resources">{biome.resources.map(r => <span key={r} className="resource-tag">{r}</span>)}</div>
                 <div className="risk-meter"><span>Risk:</span><div className="meter small"><div className="meter-fill risk" style={{ width: `${biome.risk_level * 100}%` }} /></div></div>
               </div>
-              {!biome.in_phase1 && <div className="lock-overlay">🔒</div>}
+              {!isUnlocked && (
+                <div className="lock-overlay">
+                  <div className="lock-icon">🔒</div>
+                  {biome.unlock_criteria && (
+                    <div className="unlock-tooltip">
+                      <span className="unlock-icon">{biome.unlock_criteria.icon}</span>
+                      <span className="unlock-text">{biome.unlock_criteria.description}</span>
+                      {progress && (
+                        <div className="unlock-progress">
+                          <div className="meter small">
+                            <div className="meter-fill" style={{ width: `${progress.progress_percent}%` }} />
+                          </div>
+                          <span className="progress-text">{progress.current} / {progress.threshold}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           );
         })}

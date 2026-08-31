@@ -119,7 +119,7 @@
     },
     {
       "zone_id": "tek_ruins",
-      "name": "Tek-Ruins",
+      "name": "Tek Ruins",
       "theme": "Memory and the Oracle",
       "description": "Ancient ruins filled with Oracle fragments and technological remnants.",
       "base_risk": 0.4,

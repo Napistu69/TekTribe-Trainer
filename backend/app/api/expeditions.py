@@ -36,6 +36,11 @@ async def dispatch_expedition(
     user_id = await get_current_user_id(authorization)
     
     try:
+        # Verify biome is unlocked
+        from app.services.biome_unlock_service import check_biome_unlocked
+        if not await check_biome_unlocked(db, user_id, request.biome_zone):
+            raise ValueError("This biome is locked. Complete the unlock criteria first.")
+        
         expedition = await expedition_service.dispatch_expedition(
             db, user_id, request.companion_uuids, request.biome_zone, request.duration_hours
         )
