@@ -430,7 +430,7 @@ export function ExploreView() {
         {dispatchMsg && <div className="game-message">{dispatchMsg}</div>}
 
         <div className="biome-detail-content">
-          {selected.in_phase1 ? (
+          {selected.in_phase1 || (biomeProgress[selected.zone_id]?.unlocked ?? false) ? (
             <div className="dispatch-panel">
               <h3>Dispatch Expedition</h3>
               <div className="duration-select">
