@@ -12,10 +12,18 @@ const TUTORIAL_STEPS = [
 const COMPANION_IMAGES: Record<string, string> = {
   parasaur: '/assets/Creatures/parasaur_character.png',
   dilo: '/assets/Creatures/dilo_character.png',
+  dodo: '/assets/Creatures/dodo_character.png',
   trike: '/assets/Creatures/trike_character.png',
   ptera: '/assets/Creatures/ptera_character.png',
   raptor: '/assets/Creatures/raptor_character.png',
+  stego: '/assets/Creatures/stego_character.png',
+  carno: '/assets/Creatures/carno_character.png',
+  ankylo: '/assets/Creatures/ankylo_character.png',
+  argent: '/assets/Creatures/argent_character.png',
+  allo: '/assets/Creatures/allo_character.png',
+  mantis: '/assets/Creatures/mantis_character.png',
   rex: '/assets/Creatures/rex_character.png',
+  spino: '/assets/Creatures/spino_character.png',
 };
 
 const RARITY_COLORS: Record<string, string> = {
