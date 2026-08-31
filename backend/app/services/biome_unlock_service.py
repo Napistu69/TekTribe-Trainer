@@ -45,11 +45,11 @@ async def get_biome_unlock_progress(db: AsyncSession, user_id: str) -> dict:
     
     Returns a dict with biome zone_ids as keys and progress info as values.
     """
-    # Count adult companions
+    # Count adult companions (maturation >= 100%)
     result = await db.execute(
         select(func.count(Companion.uuid)).where(
             Companion.user_id == user_id,
-            Companion.life_stage == "adult"
+            Companion.maturation_progress >= 1.0
         )
     )
     adult_count = result.scalar() or 0
