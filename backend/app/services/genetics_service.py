@@ -126,7 +126,7 @@ def _default_color_regions() -> dict:
 
 
 def _color_id_to_hex(color_id: int) -> str:
-    """Convert ARK color ID to hex color."""
+    """Convert color ID to hex color."""
     color_map = {
         8: "#D3D3D3", 14: "#4A4A4A", 17: "#A0A0A0", 21: "#FFB6C1",
         22: "#C0C0C0", 23: "#C5D5A1", 24: "#5A5A5A", 30: "#D8BFD8",
@@ -144,7 +144,7 @@ def _color_id_to_hex(color_id: int) -> str:
 
 
 def _get_color_name(color_id: int) -> str:
-    """Get color name from ARK color ID."""
+    """Get color name from color ID."""
     names = {
         8: "Light Grey", 14: "Dark Muted", 17: "Light All", 21: "Pale Pink",
         22: "Light All", 23: "Light Greenish Beige", 24: "Dark Muted",

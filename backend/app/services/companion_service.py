@@ -136,7 +136,7 @@ async def get_companions(db: AsyncSession, user_id: str) -> list[Companion]:
 async def update_life_stage(db: AsyncSession, companion_uuid: str) -> Optional[str]:
     """Check and update life stage based on maturation progress.
     
-    ARK-style thresholds (no imprint requirements):
+    Evolution thresholds (no imprint requirements):
     - Baby = 0-9%
     - Juvenile = 10%-49%
     - Adolescent = 50-100%

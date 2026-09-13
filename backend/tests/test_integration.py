@@ -10,7 +10,7 @@ from uuid import uuid4
 from sqlalchemy import select
 
 from app.core.database import AsyncSessionLocal
-from app.models import User, Companion, Egg, Expedition, CurrencyLedger, LockdownState, BondEvent, CareState
+from app.models import User, Companion, Egg, Expedition, CurrencyLedger, LockdownState, ImprintEvent, CareState
 from app.services.user_service import create_user, get_or_create_user, get_user_by_id
 from app.services.egg_service import pull_starter_egg, pull_egg, can_pull
 from app.services.companion_service import hatch_egg, get_companions
@@ -113,7 +113,7 @@ async def test_care_actions(db_session, test_user):
     
     result = await perform_care_action(db_session, test_user.id, str(companion.uuid), 'feed')
     assert result['success'] is True
-    assert result['bond_gained'] > 0
+    assert result['imprint_given'] > 0
     assert 'hunger' in result['care_state']
 
 
