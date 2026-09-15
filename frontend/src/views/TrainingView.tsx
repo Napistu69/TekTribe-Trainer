@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { TutorialOverlay, useTutorial } from '../components/shared/TutorialOverlay';
+import { MiniGameCanvas } from '../components/MiniGameCanvas';
 
 const TUTORIAL_STEPS = [
   { title: 'Training Grounds', text: 'Train your companions in mini-games to improve their stats and earn rewards.' },
@@ -8,9 +9,19 @@ const TUTORIAL_STEPS = [
   { title: 'Cooldowns', text: 'Training has cooldowns. You can train again after the cooldown expires.' },
 ];
 
+const GAME_DURATIONS: Record<string, number> = {
+  target_tap: 30,
+  rhythm_graze: 30,
+  charge_line: 30,
+  sprint_course: 45,
+  sky_glide: 45,
+  alpha_resolve: 60,
+};
+
 export function TrainingView() {
   const [selectedGame, setSelectedGame] = useState<{id: string; name: string; icon: string; difficulty: string} | null>(null);
   const [training, setTraining] = useState(false);
+  const [playing, setPlaying] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const { showTutorial, completeTutorial } = useTutorial('tutorial-training');
   const sessionToken = useAuthStore((s) => s.sessionToken);
@@ -21,42 +32,24 @@ export function TrainingView() {
     return () => { mountedRef.current = false; };
   }, []);
 
-  const handleTrain = async (gameId: string) => {
-    if (!sessionToken || !gameId || training) return;
+  const handleGameComplete = (score: number) => {
+    if (!mountedRef.current) return;
+    setPlaying(false);
+    setTraining(false);
+    setMessage(`Training complete! Score: ${score}/100`);
+  };
+
+  const startGame = () => {
+    if (!selectedGame || training || !sessionToken) return;
+    setPlaying(true);
     setTraining(true);
     setMessage(null);
-    try {
-      const companionsResp = await fetch(`${import.meta.env.VITE_API_URL}/api/companions`, {
-        headers: { Authorization: `Bearer ${sessionToken}` },
-      });
-      if (!companionsResp.ok) {
-        if (mountedRef.current) setMessage('Failed to fetch companions');
-        if (mountedRef.current) setTraining(false);
-        return;
-      }
-      const companions = await companionsResp.json();
-      if (!companions || companions.length === 0) {
-        if (mountedRef.current) setMessage('No companions available to train');
-        if (mountedRef.current) setTraining(false);
-        return;
-      }
-      const companionUuid = companions[0].uuid;
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/training/submit`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${sessionToken}` },
-        body: JSON.stringify({ companion_uuid: companionUuid, game_id: gameId, score: Math.floor(Math.random() * 100), duration_seconds: 30 }),
-      });
-      if (!mountedRef.current) return;
-      if (response.ok) {
-        try { const result = await response.json(); if (mountedRef.current) setMessage(`Training complete! +${result.imprint_gained} imprint, +${result.dust_earned} dust`); } catch { if (mountedRef.current) setMessage('Training complete!'); }
-      } else {
-        try { const err = await response.json(); if (mountedRef.current) setMessage(err.detail || 'Training failed'); } catch { if (mountedRef.current) setMessage('Training failed'); }
-      }
-    } catch (err) {
-      if (mountedRef.current) setMessage('Network error');
-    } finally {
-      if (mountedRef.current) setTraining(false);
-    }
+  };
+
+  const cancelGame = () => {
+    setPlaying(false);
+    setTraining(false);
+    setMessage(null);
   };
 
   const games = [
@@ -85,9 +78,25 @@ export function TrainingView() {
       {selectedGame && (
         <div className="minigame-detail">
           <h3>{selectedGame.name}</h3>
-          <button className="btn-primary train-btn" onClick={() => handleTrain(selectedGame.id)} disabled={training}>
-            {training ? 'Training...' : 'Start Training'}
-          </button>
+          {playing ? (
+            <>
+              <MiniGameCanvas
+                gameId={selectedGame.id}
+                gameName={selectedGame.name}
+                difficulty={selectedGame.difficulty}
+                duration={GAME_DURATIONS[selectedGame.id] || 30}
+                onGameComplete={handleGameComplete}
+                onCancel={cancelGame}
+              />
+              <button className="btn-secondary" onClick={cancelGame}>
+                Cancel
+              </button>
+            </>
+          ) : (
+            <button className="btn-primary train-btn" onClick={startGame} disabled={training || !sessionToken}>
+              {training ? 'Starting...' : 'Start Training'}
+            </button>
+          )}
         </div>
       )}
     </div>
