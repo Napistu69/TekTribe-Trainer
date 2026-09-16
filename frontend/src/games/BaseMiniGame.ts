@@ -44,13 +44,13 @@ export abstract class BaseMiniGameScene extends Phaser.Scene {
     this.add.text(16, 16, `Time: ${this.timeRemaining}`, {
       fontSize: '20px',
       color: '#00d4ff',
-    });
+    }).setName('timer');
     
     // Score text
     this.add.text(16, 48, `Score: ${this.score}`, {
       fontSize: '20px',
       color: '#ffffff',
-    });
+    }).setName('score');
   }
 
   update(_time: number, delta: number) {

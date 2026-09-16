@@ -20,6 +20,7 @@ const GAME_DURATIONS: Record<string, number> = {
 
 export function TrainingView() {
   const [selectedGame, setSelectedGame] = useState<{id: string; name: string; icon: string; difficulty: string} | null>(null);
+  const [companionUuid, setCompanionUuid] = useState<string | null>(null);
   const [training, setTraining] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -32,6 +33,23 @@ export function TrainingView() {
     return () => { mountedRef.current = false; };
   }, []);
 
+  // Fetch the first companion on mount
+  useEffect(() => {
+    if (!sessionToken) return;
+    void fetch(`${import.meta.env.VITE_API_URL}/api/companions`, {
+      headers: { Authorization: `Bearer ${sessionToken}` },
+    })
+      .then(r => r.json())
+      .then((data: Array<{uuid: string; name?: string; species: string}>) => {
+        if (mountedRef.current) {
+          setCompanionUuid(data[0]?.uuid || null);
+        }
+      })
+      .catch(() => {
+        if (mountedRef.current) setMessage('Failed to fetch companions');
+      });
+  }, [sessionToken]);
+
   const handleGameComplete = (score: number) => {
     if (!mountedRef.current) return;
     setPlaying(false);
@@ -40,7 +58,7 @@ export function TrainingView() {
   };
 
   const startGame = () => {
-    if (!selectedGame || training || !sessionToken) return;
+    if (!selectedGame || training || !sessionToken || !companionUuid) return;
     setPlaying(true);
     setTraining(true);
     setMessage(null);
@@ -85,6 +103,7 @@ export function TrainingView() {
                 gameName={selectedGame.name}
                 difficulty={selectedGame.difficulty}
                 duration={GAME_DURATIONS[selectedGame.id] || 30}
+                companionUuid={companionUuid || ''}
                 onGameComplete={handleGameComplete}
                 onCancel={cancelGame}
               />

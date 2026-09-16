@@ -28,11 +28,12 @@ export interface MiniGameCanvasProps {
   gameName: string;
   difficulty: string;
   duration: number;
+  companionUuid: string;
   onGameComplete: (score: number) => void;
   onCancel: () => void;
 }
 
-export function MiniGameCanvas({ gameId, gameName, difficulty, duration, onGameComplete }: MiniGameCanvasProps) {
+export function MiniGameCanvas({ gameId, gameName, difficulty, duration, companionUuid, onGameComplete }: MiniGameCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<Phaser.Game | null>(null);
   const sessionToken = useAuthStore((s) => s.sessionToken);
@@ -57,6 +58,7 @@ export function MiniGameCanvas({ gameId, gameName, difficulty, duration, onGameC
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
+            companion_uuid: companionUuid,
             game_id: gameId,
             score,
             duration_seconds: duration,
@@ -64,6 +66,8 @@ export function MiniGameCanvas({ gameId, gameName, difficulty, duration, onGameC
         }).then(async (resp) => {
           if (resp.ok) {
             onGameComplete(score);
+          } else {
+            resp.json().then(err => console.error('Training submit failed:', err?.detail || err)).catch(() => {});
           }
         }).catch(console.error);
       } else {
@@ -94,7 +98,7 @@ export function MiniGameCanvas({ gameId, gameName, difficulty, duration, onGameC
         gameRef.current = null;
       }
     };
-  }, [gameId, gameName, difficulty, duration, sessionToken, onGameComplete]);
+  }, [gameId, gameName, difficulty, duration, companionUuid, sessionToken, onGameComplete]);
 
   return (
     <div className="minigame-canvas-container">
